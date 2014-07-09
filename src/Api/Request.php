@@ -53,21 +53,6 @@ class Request
     /**
      * @var array
      */
-    protected $get = array();
-
-    /**
-     * @var array
-     */
-    protected $post = array();
-
-    /**
-     * @var array
-     */
-    protected $cookie = array();
-
-    /**
-     * @var array
-     */
     protected $request = array();
 
     /**
@@ -86,9 +71,6 @@ class Request
      * @param string $requestedMethod
      * @param array $request
      * @param array $header
-     * @param array $get
-     * @param array $post
-     * @param array $cookie
      * @param string $bodyText
      */
     public function __construct(
@@ -96,11 +78,7 @@ class Request
         $requestedMethod = self::METHOD_GET,
         array $request = array(),
         array $header = array(),
-        array $get = array(),
-        array $post = array(),
-        array $cookie = array(),
         $bodyText = ''
-
     ) {
 
         // Trim any get variables and the requested format, eg: /requested/uri.format?get=variables
@@ -114,9 +92,6 @@ class Request
         // Pull together all of the variables
         $this->request = $request ? $request : $_REQUEST;
         $this->header  = $header  ? $header  : $this->parseHeader();
-        $this->get     = $get     ? $get     : $_GET;
-        $this->post    = $post    ? $post    : $_POST;
-        $this->cookie  = $cookie  ? $cookie  : $_COOKIE;
         if(!$bodyText) {
             $bodyText = $this->readBody();
         }
@@ -193,8 +168,7 @@ class Request
      * @return mixed
      */
     public function getParameter($key, $default = false) {
-        // Request _should_ contain get, post and cookies however we will
-        // still check for these at the end of the function
+        // Request _should_ contain get, post and cookies
         if(array_key_exists($key, $this->request)) {
             return $this->request[$key];
         }
@@ -203,15 +177,6 @@ class Request
         }
         if(property_exists($this->body, $key)) {
             return $this->body->$key;
-        }
-        if(array_key_exists($key, $this->get)) {
-            return $this->get[$key];
-        }
-        if(array_key_exists($key, $this->post)) {
-            return $this->post[$key];
-        }
-        if(array_key_exists($key, $this->cookie)) {
-            return $this->cookie[$key];
         }
         return $default;
     }
