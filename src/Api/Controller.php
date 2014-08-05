@@ -139,13 +139,48 @@ class Controller {
                 if(!in_array($endPoint, $this->ignoreEndpoints)) {
                     if(!array_key_exists($method, $endPoints))
                         $endPoints[$method] = array();
-                    $endPoints[$method][$endPoint] = Utility::getParametersFromDocumentation(get_class($this), $classMethod);
+                    $endPoints[$method][$endPoint] = $this->getParametersFromDocumentation($classMethod);
                 }
             }
         }
         return $endPoints;
     }
 
+    /**
+     * Looks at the PHPDoc for the given method and returns an array of information about the parameters it takes
+     * @param $method
+     * @return array
+     */
+    public function getParametersFromDocumentation($method) {
+        $parameters = array();
+        $reflectionMethod = new \ReflectionMethod($this, $method);
+        $doc = $reflectionMethod->getDocComment();
+        $nMatches = preg_match_all('/@param (\S+) \$?(\S+) ?([\S ]+)?/', $doc, $results);
+        for($i = 0; $i < $nMatches; $i++) {
+            $parameter = new \stdClass();
+            $parameter->parameter = $results[2][$i];
+            $parameter->type = $results[1][$i];
+            if($results[3][$i])
+                $parameter->description = $results[3][$i];
+            $parameters[] = $parameter;
+        }
+        return $parameters;
+    }
 
+    /**
+     * Look at the request, fill out the parameters we have
+     * @param Request $request
+     * @param $method
+     * @return array
+     */
+    public function responseToParameters(Request $request, $method) {
+        $parameters = array();
+        $reflectionMethod = new \ReflectionMethod($this, $method);
+        $reflectionParameters = $reflectionMethod->getParameters();
+        foreach($reflectionParameters as $reflectionParameter) {
+            $parameters[$reflectionParameter->getName()] = $request->getParameter($reflectionParameter->getName(), null);
+        }
+        return $parameters;
+    }
 
 }
