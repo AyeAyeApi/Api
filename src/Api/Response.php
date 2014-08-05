@@ -5,10 +5,10 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Api;
+namespace Gisleburt\Api;
 
 
-class Response {
+class Response implements \JsonSerializable {
 
     const FORMAT_JSON = 'json';
     const FORMAT_XML = 'xml';
@@ -21,12 +21,12 @@ class Response {
     );
 
     /**
-     * @var int
+     * @var Status
      */
-    protected $statusCode;
+    protected $status;
 
     /**
-     * @var
+     * @var Request
      */
     protected $request;
 
@@ -34,5 +34,37 @@ class Response {
      * @var mixed The data you wish to return in the response
      */
     protected $data;
+
+    /**
+     * @return \Gisleburt\Api\Status
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @return \Gisleburt\Api\Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    public function jsonSerialize() {
+        return [
+            'status' => $this->getStatus(),
+            'request' => $this->getRequest(),
+            'data' => $this->getData(),
+        ];
+    }
 
 } 

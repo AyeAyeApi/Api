@@ -5,9 +5,9 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Api;
+namespace Gisleburt\Api;
 
-class Request
+class Request implements \JsonSerializable
 {
 
     // HTTP verbs as defined in http://www.ietf.org/rfc/rfc2616
@@ -39,6 +39,17 @@ class Request
     );
 
     /**
+     * The method of request
+     * @var string
+     */
+    protected $requestMethod = self::METHOD_GET;
+
+    /**
+     * @var string
+     */
+    protected $requestedUri = '';
+
+    /**
      * The requested uri as an array
      * @var array
      */
@@ -53,7 +64,7 @@ class Request
     /**
      * @var array
      */
-    protected $request = array();
+    protected $parameters = array();
 
     /**
      * @var array
@@ -67,19 +78,22 @@ class Request
 
     /**
      * Create a Request object. You can override any request information
-     * @param string $requestedUri
      * @param string $requestedMethod
+     * @param string $requestedUri
      * @param array $request
      * @param array $header
      * @param string $bodyText
      */
     public function __construct(
-        $requestedUri = '',
         $requestedMethod = self::METHOD_GET,
+        $requestedUri = '',
         array $request = array(),
         array $header = array(),
         $bodyText = ''
     ) {
+
+        $this->requestMethod = $requestedMethod ? $requestedMethod : $_SERVER['REQUEST_METHOD'];
+        $this->requestedUri = $requestedUri ? $requestedUri : $_SERVER['REQUESTED_URI'];
 
         // Trim any get variables and the requested format, eg: /requested/uri.format?get=variables
         $requestedUriAndFormat  = explode('.', array_shift(explode('?', $requestedUri)));
@@ -90,7 +104,7 @@ class Request
         $this->requestChain = explode('/', reset($requestedUriAndFormat));
 
         // Pull together all of the variables
-        $this->request = $request ? $request : $_REQUEST;
+        $this->parameters = $request ? $request : $_REQUEST;
         $this->header  = $header  ? $header  : $this->parseHeader();
         if(!$bodyText) {
             $bodyText = $this->readBody();
@@ -138,7 +152,7 @@ class Request
     /**
      * Tries to turn a string of data into an object. Accepts json, xml or a php serialised object
      * Failing all else it will return a standard class with the string attached to data
-     * eg. $this->stringObject('fail')->data == 'fail'
+     * eg. $this->stringObject('fail')->body == 'fail'
      * @param string $string a string of data
      * @return \stdClass
      */
@@ -157,8 +171,16 @@ class Request
         }
 
         $object = new \stdClass();
-        $object->data = $string;
+        $object->body = $string;
         return $object;
+    }
+
+    /**
+     * The http method being used
+     * @return string
+     */
+    public function getMethod() {
+        return $this->requestMethod;
     }
 
     /**
@@ -169,8 +191,8 @@ class Request
      */
     public function getParameter($key, $default = false) {
         // Request _should_ contain get, post and cookies
-        if(array_key_exists($key, $this->request)) {
-            return $this->request[$key];
+        if(array_key_exists($key, $this->parameters)) {
+            return $this->parameters[$key];
         }
         if(array_key_exists($key, $this->header)) {
             return $this->header[$key];
@@ -179,6 +201,21 @@ class Request
             return $this->body->$key;
         }
         return $default;
+    }
+
+    /**
+     * Returns all parameters. Does not return header or body parameters, maybe it should
+     * @return array
+     */
+    public function getParameters() {
+        return $this->parameters;
+    }
+
+    public function jsonSerialize() {
+        return [
+            'method' => $this->getMethod(),
+            'parameters' => $this->getParameters()
+        ];
     }
 
 } 
