@@ -68,7 +68,7 @@ class Controller {
             $finalLink = array_shift($requestChain);
             $potentialAction = $this->parseActionName($finalLink, $this->request->getMethod());
             if(method_exists($this, $potentialAction)) {
-                return $this->$potentialAction();
+                return call_user_func_array([$this, $potentialAction], $this->getParametersFromRequest($request, $potentialAction));
             }
             throw new ApiException("Could not find action $finalLink", 404);
         }
@@ -173,7 +173,7 @@ class Controller {
      * @param $method
      * @return array
      */
-    public function responseToParameters(Request $request, $method) {
+    public function getParametersFromRequest(Request $request, $method) {
         $parameters = array();
         $reflectionMethod = new \ReflectionMethod($this, $method);
         $reflectionParameters = $reflectionMethod->getParameters();
