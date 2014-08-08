@@ -1,6 +1,9 @@
 {
     "name": "gisleburt/api",
+    "type": "library",
     "description": "A simple but powerful API framework",
+    "homepage": "http://github.com/Gisleburt",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Daniel Mason",
@@ -8,14 +11,14 @@
         }
     ],
     "require": {
-
+        "php": ">=5.4.0"
     },
     "require-dev": {
         "gisleburt/api-test": "dev-master"
     },
     "autoload": {
         "psr-4": {
-            "Gisleburt\\": "src/"
+            "Gisleburt": "src"
         }
     }
 }
