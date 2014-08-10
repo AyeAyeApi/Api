@@ -150,7 +150,16 @@ class Status implements \JsonSerializable {
         ];
     }
 
+    /**
+     * Returns the appropriate message for a given code
+     * @param int $code
+     * @return null
+     */
+    public static function getMessageForCode($code) {
+        if(array_key_exists($code, static::$statusCodes)) {
+            return static::$statusCodes[$code];
+        }
+        return null;
+    }
 
-
-
-} 
+}
