@@ -93,15 +93,7 @@ class Request implements \JsonSerializable
     ) {
 
         $this->requestMethod = $requestedMethod ? $requestedMethod : $_SERVER['REQUEST_METHOD'];
-        $this->requestedUri = $requestedUri ? $requestedUri : $_SERVER['REQUESTED_URI'];
-
-        // Trim any get variables and the requested format, eg: /requested/uri.format?get=variables
-        $requestedUriAndFormat  = explode('.', array_shift(explode('?', $requestedUri)));
-        $requestedFormat = end($requestedUriAndFormat); // Check the last element but don't remove it
-        if(in_array($requestedFormat, Response::$acceptableFormats)) {
-            $this->requestedFormat = $requestedFormat;
-        }
-        $this->requestChain = explode('/', reset($requestedUriAndFormat));
+        $this->requestedUri = $requestedUri ? $requestedUri : $_SERVER['REQUEST_URI'];
 
         // Pull together all of the variables
         $this->parameters = $request ? $request : $_REQUEST;
@@ -211,6 +203,32 @@ class Request implements \JsonSerializable
         return $this->parameters;
     }
 
+    /**
+     * Get the requested route
+     * @return string[]
+     */
+    public function getRequestChain() {
+        if(is_null($this->requestChain)) {
+            $this->parseRequestedUri($this->requestedUri);
+        }
+        return $this->requestChain;
+    }
+
+    /**
+     * Gets the expected response format
+     * @return string
+     */
+    public function getFormat() {
+        if(is_null($this->requestedFormat)) {
+            $this->parseRequestedUri($this->requestedUri);
+        }
+        return $this->requestedFormat;
+    }
+
+    /**
+     * Used by PHP to get json object
+     * @return array|mixed
+     */
     public function jsonSerialize() {
         return [
             'method' => $this->getMethod(),
@@ -218,4 +236,18 @@ class Request implements \JsonSerializable
         ];
     }
 
-} 
+    /**
+     * Breaks a url into useful parts
+     * @param $requestedUri
+     */
+    protected function parseRequestedUri($requestedUri) {
+        // Trim any get variables and the requested format, eg: /requested/uri.format?get=variables
+        $requestedUriAndFormat  = explode('.', reset(explode('?', $requestedUri, 1)));
+        $this->requestedFormat = array_key_exists(1, $requestedUriAndFormat) ? $requestedUriAndFormat : '';
+        $this->requestChain = explode('/', $requestedUriAndFormat[0]);
+        if(!$this->requestChain[0]) {
+            unset($this->requestChain[0]);
+        }
+    }
+
+}
