@@ -21,6 +21,12 @@ class Response implements \JsonSerializable {
     );
 
     /**
+     * Response format. Defaults to json
+     * @var string
+     */
+    protected $format = self::FORMAT_JSON;
+
+    /**
      * @var Status
      */
     protected $status;
@@ -89,6 +95,18 @@ class Response implements \JsonSerializable {
     }
 
     /**
+     * @param $format
+     * @return bool
+     */
+    public function setFormat($format) {
+        if(in_array($format, self::$acceptableFormats)) {
+            $this->format = $format;
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Used by PHP to get json object
      * @return array
      */
@@ -100,4 +118,20 @@ class Response implements \JsonSerializable {
         ];
     }
 
-} 
+    public function __toString() {
+        $toStringMethod = 'to'.ucfirst($this->format);
+        if(method_exists($this, $toStringMethod)) {
+            return $this->$toStringMethod();
+        }
+        return json_encode($this);
+    }
+
+    public function toJson() {
+        return json_encode($this);
+    }
+
+    public function toXml() {
+
+    }
+
+}
