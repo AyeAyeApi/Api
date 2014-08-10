@@ -53,7 +53,7 @@ class Request implements \JsonSerializable
      * The requested uri as an array
      * @var array
      */
-    protected $requestChain = array();
+    protected $requestChain = null;
 
     /**
      * The format for requested data
@@ -232,6 +232,7 @@ class Request implements \JsonSerializable
     public function jsonSerialize() {
         return [
             'method' => $this->getMethod(),
+            'requestUri' => $this->requestedUri,
             'parameters' => $this->getParameters()
         ];
     }
@@ -242,9 +243,12 @@ class Request implements \JsonSerializable
      */
     protected function parseRequestedUri($requestedUri) {
         // Trim any get variables and the requested format, eg: /requested/uri.format?get=variables
-        $requestedUriAndFormat  = explode('.', reset(explode('?', $requestedUri, 1)));
-        $this->requestedFormat = array_key_exists(1, $requestedUriAndFormat) ? $requestedUriAndFormat : '';
-        $this->requestChain = explode('/', $requestedUriAndFormat[0]);
+
+        $requestedUriAndFormat  = explode('.', reset(explode('?', $requestedUri, 2)));
+        if(count($requestedUriAndFormat) == 2) {
+            $this->requestedFormat = end($requestedUriAndFormat);
+        }
+        $this->requestChain = explode('/', reset($requestedUriAndFormat));
         if(!$this->requestChain[0]) {
             unset($this->requestChain[0]);
         }
