@@ -74,6 +74,7 @@ class Response implements \JsonSerializable {
     public function setRequest(Request $request)
     {
         $this->request = $request;
+        $this->setFormat($this->request->getFormat());
         return $this;
     }
 
