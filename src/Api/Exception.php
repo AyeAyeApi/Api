@@ -16,30 +16,30 @@ class Exception extends \Exception implements \JsonSerializable
     const DEFAULT_ERROR_CODE = 500;
     const DEFAULT_MESSAGE = 'Internal Server Error';
 
-    protected $logMessage = '';
+    /**
+     * @var string
+     */
+    public $publicMessage;
 
     /**
-     * @param string $logMessage Message to put into the log
+     * @param string $message Message to put into the log
      * @param int $code HTTP Status code to send to the user
      * @param string $publicMessage Message to show the user if different from the message associated with the status code
      * @param \Exception $previous Any previous Exception
      */
-    public function __construct($logMessage, $code = 500, $publicMessage = '', \Exception $previous = null) {
-        $this->logMessage = $logMessage;
+    public function __construct($message, $code = 500, $publicMessage = '', \Exception $previous = null) {
+        $this->publicMessage = $publicMessage;
         if(!$publicMessage) {
+            $this->publicMessage = static::DEFAULT_MESSAGE;
             if(in_array($code, Status::$statusCodes)) {
-                $publicMessage = Status::$statusCodes[$code];
-            }
-            else {
-                $code = static::DEFAULT_ERROR_CODE;
-                $publicMessage = static::DEFAULT_MESSAGE;
+                $this->publicMessage = Status::$statusCodes[$code];
             }
         }
-        parent::__construct($publicMessage, $code, $previous);
+        parent::__construct($message, $code, $previous);
     }
 
-    public function getLogMessage() {
-        return $this->logMessage;
+    public function getPublicMessage() {
+        return $this->publicMessage;
     }
 
     public function jsonSerialize() {
@@ -50,4 +50,4 @@ class Exception extends \Exception implements \JsonSerializable
         ];
     }
 
-} 
+}
