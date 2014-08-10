@@ -30,9 +30,9 @@ class Exception extends \Exception implements \JsonSerializable
     public function __construct($message, $code = 500, $publicMessage = '', \Exception $previous = null) {
         $this->publicMessage = $publicMessage;
         if(!$publicMessage) {
-            $this->publicMessage = static::DEFAULT_MESSAGE;
-            if(in_array($code, Status::$statusCodes)) {
-                $this->publicMessage = Status::$statusCodes[$code];
+            $this->publicMessage = Status::getMessageForCode($code);
+            if(!$this->publicMessage) {
+                $this->publicMessage = static::DEFAULT_MESSAGE;
             }
         }
         parent::__construct($message, $code, $previous);
@@ -50,4 +50,4 @@ class Exception extends \Exception implements \JsonSerializable
         ];
     }
 
-}
+} 
