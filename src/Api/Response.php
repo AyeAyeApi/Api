@@ -44,11 +44,31 @@ class Response implements \JsonSerializable {
     }
 
     /**
+     * @param Status $status
+     * @return $this
+     */
+    public function setStatus(Status $status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
      * @return \Gisleburt\Api\Request
      */
     public function getRequest()
     {
         return $this->request;
+    }
+
+    /**
+     * @param Request $request
+     * @return $this
+     */
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+        return $this;
     }
 
     /**
@@ -59,6 +79,19 @@ class Response implements \JsonSerializable {
         return $this->data;
     }
 
+    /**
+     * @param $data
+     * @return $this
+     */
+    public function setData($data) {
+        $this->data = $data;
+        return $this;
+    }
+
+    /**
+     * Used by PHP to get json object
+     * @return array
+     */
     public function jsonSerialize() {
         return [
             'status' => $this->getStatus(),
