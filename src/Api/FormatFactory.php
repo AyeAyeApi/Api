@@ -16,6 +16,11 @@ class FormatFactory {
         $this->formats = $formats;
     }
 
+    /**
+     * @param $suffix
+     * @return Format
+     * @throws \Exception
+     */
     public function getFormatFor($suffix) {
         if(array_key_exists($suffix, $this->formats)) {
             if($this->formats[$suffix] instanceof Format) {
