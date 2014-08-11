@@ -105,12 +105,6 @@ class Status implements \JsonSerializable {
      */
     protected $code;
 
-    /**
-     * Message for status
-     * @var string
-     */
-    protected $message;
-
     public function __construct($code = 200) {
         if(array_key_exists($code, static::$statusCodes)) {
             $this->code = $code;
@@ -131,22 +125,13 @@ class Status implements \JsonSerializable {
     }
 
     /**
-     * Message for status
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    /**
      * Returns data that is to be serialised by json
      * @return array
      */
     public function jsonSerialize() {
         return [
             'code' => $this->getCode(),
-            'message' => $this->getMessage(),
+            'message' => $this::getMessageForCode($this->getCode()),
         ];
     }
 
@@ -162,4 +147,16 @@ class Status implements \JsonSerializable {
         return null;
     }
 
-}
+    /**
+     * Send the header
+     * @return $this
+     */
+    public function sendHeader() {
+        header("HTTP/1.1 {$this->getCode()} {$this::getMessageForCode($this->getCode())}");
+        return $this;
+    }
+
+
+
+
+} 
