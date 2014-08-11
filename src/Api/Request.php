@@ -21,6 +21,8 @@ class Request implements \JsonSerializable
     const METHOD_CONNECT = 'CONNECT';
     const METHOD_PATCH = 'PATCH';
 
+    const DEFAULT_FORMAT = 'json';
+
     /**
      * A list of accepted HTTP verbs. By default everything is accepted
      * however, you could extend Request and provide a different list.
@@ -59,7 +61,7 @@ class Request implements \JsonSerializable
      * The format for requested data
      * @var string Defaults to 'json'
      */
-    protected $requestedFormat = Response::FORMAT_JSON;
+    protected $requestedFormat;
 
     /**
      * @var array
@@ -221,6 +223,9 @@ class Request implements \JsonSerializable
     public function getFormat() {
         if(is_null($this->requestedFormat)) {
             $this->parseRequestedUri($this->requestedUri);
+            if(is_null($this->requestedFormat)) {
+                $this->requestedFormat = static::DEFAULT_FORMAT;
+            }
         }
         return $this->requestedFormat;
     }
