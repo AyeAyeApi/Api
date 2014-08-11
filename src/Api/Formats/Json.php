@@ -16,7 +16,7 @@ class Json extends Format {
         header('Content-Type: application/json');
     }
 
-    public function format($data) {
+    public function format($data, $name = null) {
         return json_encode($data);
     }
 
