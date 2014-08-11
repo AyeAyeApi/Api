@@ -10,21 +10,23 @@ namespace Gisleburt\Api;
 
 class Response implements \JsonSerializable {
 
-    const FORMAT_JSON = 'json';
-    const FORMAT_XML = 'xml';
-    const FORMAT_HTML = 'html';
-
-    public static $acceptableFormats = array(
-        self::FORMAT_JSON,
-        self::FORMAT_XML,
-        self::FORMAT_HTML,
-    );
+    /**
+     * Used to name the data object that is returned to the user where applicable
+     * @var string
+     */
+    protected $responseName = 'response';
 
     /**
      * Response format. Defaults to json
-     * @var string
+     * @var FormatFactory
      */
-    protected $format = self::FORMAT_JSON;
+    protected $formatFactory;
+
+    /**
+     * The format object used to format this response
+     * @var
+     */
+    protected $format;
 
     /**
      * @var Status
@@ -96,15 +98,39 @@ class Response implements \JsonSerializable {
     }
 
     /**
-     * @param $format
-     * @return bool
+     * @param FormatFactory $formatFactory
+     * @return $this
      */
-    public function setFormat($format) {
-        if(in_array($format, self::$acceptableFormats)) {
-            $this->format = $format;
-            return true;
+    public function setFormatFactory(FormatFactory $formatFactory) {
+        $this->formatFactory = $formatFactory;
+        return $this;
+    }
+
+    public function setFormat($suffix) {
+        if(!$this->formatFactory instanceof FormatFactory) {
+            throw new \Exception("Format factory not set");
         }
-        return false;
+        $this->format = $this->formatFactory->getFormatFor($suffix);
+        return $this;
+    }
+
+    /**
+     * Format the data and send as a response. Only one response can be sent
+     * @return $this
+     */
+    public function respond() {
+        $format = $this->formatFactory->getFormatFor(
+            $this->request->getFormat()
+        );
+
+        if($this->status instanceof Status) {
+            $this->status->sendHeader();
+        }
+        $format->sendHeaders();
+        echo $format->getHeader();
+        echo $format->format($this->jsonSerialize(), $this->responseName);
+        echo $format->getFooter();
+        return $this;
     }
 
     /**
@@ -117,22 +143,6 @@ class Response implements \JsonSerializable {
             'request' => $this->getRequest(),
             'data' => $this->getData(),
         ];
-    }
-
-    public function __toString() {
-        $toStringMethod = 'to'.ucfirst($this->format);
-        if(method_exists($this, $toStringMethod)) {
-            return $this->$toStringMethod();
-        }
-        return json_encode($this);
-    }
-
-    public function toJson() {
-        return json_encode($this);
-    }
-
-    public function toXml() {
-
     }
 
 }
