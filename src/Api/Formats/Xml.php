@@ -14,6 +14,8 @@ class Xml extends Format {
 
     const DEFAULT_NODE_NAME = 'data';
 
+    protected $numericArrayPrefix = '_';
+
     public function sendHeaders() {
         header('Content-Type: application/xml');
     }
@@ -42,9 +44,9 @@ class Xml extends Format {
             // Clear non-alphanumeric characters
             $property = preg_replace('/\W/', '', $property);
 
-            // If numeric we'll stick an a in front of it, a bit hack but should be valid
+            // If numeric we'll stick a character in front of it, a bit hack but should be valid
             if(is_numeric($property)) {
-                $property = "a$property"; // Hack
+                $property = $this->numericArrayPrefix.$property;
             }
 
             if(!is_scalar($value)) {
