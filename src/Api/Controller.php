@@ -53,38 +53,37 @@ class Controller {
 
         $leftInChain = count($requestChain);
 
-        // If there's more than one link left in the chain we need to go to the next child
-        if($leftInChain > 1) {
-            $nextLink = array_shift($requestChain);
+
+        $nextLink = array_shift($requestChain);
+        if($nextLink) {
             if(array_key_exists($nextLink, $this->children)) {
                 /** @var Controller $child */
                 $child = new $this->children[$nextLink];
                 return $child->processRequest($request, $requestChain);
             }
-            throw new ApiException("Could not find controller $nextLink", 404);
-        }
-        // If there's exactly one link left in the chain we should try to call the named action
-        elseif($leftInChain == 1) {
-            $finalLink = array_shift($requestChain);
-            $potentialAction = $this->parseActionName($finalLink, $this->request->getMethod());
+
+            $potentialAction = $this->parseActionName($nextLink, $this->request->getMethod());
             if(method_exists($this, $potentialAction)) {
                 return call_user_func_array([$this, $potentialAction], $this->getParametersFromRequest($request, $potentialAction));
             }
-            throw new ApiException("Could not find action $finalLink", 404);
-        }
-        // If we ran out of links, but we're in a controller, we'll try to get the index action
-        else {
-            $potentialAction = $this->parseActionName('index', $this->request->getMethod());
-            if(method_exists($this, $potentialAction)) {
-                return $this->$potentialAction();
-            }
-            $potentialAction = $this->parseActionName('index', Request::METHOD_GET);
-            if(method_exists($this, $potentialAction)) {
-                return $this->$potentialAction();
-            }
-            throw new ApiException('Could not find an appropriate action', 404);
+
+            $message = "Could not find controller or action matching '$nextLink'";
+            throw new Exception($message, 404, $message);
+
         }
 
+
+        $potentialAction = $this->parseActionName('index', $this->request->getMethod());
+        if(method_exists($this, $potentialAction)) {
+            return $this->$potentialAction();
+        }
+        $potentialAction = $this->parseActionName('index', Request::METHOD_GET);
+        if(method_exists($this, $potentialAction)) {
+            return $this->$potentialAction();
+        }
+
+        $message = 'Could not find an appropriate action to take';
+        throw new ApiException($message, 404, $message);
     }
 
     /**
