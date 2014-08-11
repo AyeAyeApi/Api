@@ -104,10 +104,10 @@ class Controller {
      * @return \stdClass
      */
     public function getIndexAction() {
-        $response = new \stdClass();
-        $response->children = $this->getChildren();
-        $response->endpoints = $this->getEndpoints();
-        return $response;
+        $data = new \stdClass();
+        $data->children = $this->getChildren();
+        $data->endpoints = $this->getEndpoints();
+        return $data;
     }
 
     /**
