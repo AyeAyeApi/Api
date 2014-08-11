@@ -20,9 +20,10 @@ abstract class Format {
     /**
      * Format the data
      * @param $data
+     * @param $name string|null
      * @return string
      */
-    abstract public function format($data);
+    abstract public function format($data, $name = null);
 
     /**
      * Get anything that must come before any data
