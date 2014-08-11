@@ -12,16 +12,56 @@ use Gisleburt\Api\Format;
 
 class Xml extends Format {
 
-    public function sendHeaders() {
+    const DEFAULT_NODE_NAME = 'data';
 
+    public function sendHeaders() {
+        header('Content-Type: application/xml');
     }
 
     public function getHeader() {
-        return '<xml >';
+        return '<?xml version="1.0" encoding="UTF-8" ?>';
     }
 
-    public function format($data) {
+    public function format($data, $nodeName = null) {
 
+        if(!$nodeName) {
+            if(is_object($data)) {
+                $nodeName = preg_replace('/.*\\\/', '', get_class($data));
+                $nodeName = preg_replace('/\W/', '', $nodeName);
+            }
+            elseif(is_array($data)) {
+                $nodeName = 'array';
+            }
+            else {
+                $nodeName = static::DEFAULT_NODE_NAME;
+            }
+        }
+
+        $xml = "<$nodeName>";
+        foreach($data as $property => $value) {
+            // Clear non-alphanumeric characters
+            $property = preg_replace('/\W/', '', $property);
+
+            // If numeric we'll stick an a in front of it, a bit hack but should be valid
+            if(is_numeric($property)) {
+                $property = "a$property"; // Hack
+            }
+
+            if(!is_scalar($value)) {
+                if($value instanceof \JsonSerializable) {
+                    $xml .= $this->format($value->jsonSerialize(), $property);
+                }
+                else {
+                    $xml .= $this->format($value, $property);
+                }
+            }
+            else {
+                $xml .= "<{$property}>".htmlspecialchars($value)."</{$property}>";
+            }
+        }
+        $xml .= "</$nodeName>";
+
+        return $xml;
     }
 
 } 
