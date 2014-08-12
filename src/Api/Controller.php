@@ -58,7 +58,7 @@ class Controller {
         if($nextLink) {
             if(array_key_exists($nextLink, $this->children)) {
                 /** @var Controller $child */
-                $child = new $this->children[$nextLink];
+                $child = new $this->children[$nextLink]();
                 return $child->processRequest($request, $requestChain);
             }
 
@@ -115,7 +115,7 @@ class Controller {
      */
     public function getChildren() {
         $children = [];
-        foreach($this->children as $child) {
+        foreach($this->children as $child => $class) {
             if(!in_array($child, $this->ignoreChildren)) {
                 $children[] = $child;
             }
