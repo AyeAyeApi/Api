@@ -8,6 +8,8 @@
 namespace Gisleburt\Api;
 
 
+use Gisleburt\Formatter\FormatFactory;
+
 class Response implements \JsonSerializable {
 
     /**

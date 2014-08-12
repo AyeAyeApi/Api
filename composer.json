@@ -14,10 +14,11 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "gisleburt/formatter": "dev-master"
     },
     "require-dev": {
-        "gisleburt/api-test": "dev-master"
+
     },
     "autoload": {
         "psr-4": {
