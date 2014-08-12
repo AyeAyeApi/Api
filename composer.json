@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Gisleburt\\": "src/"
+            "Gisleburt\\Api\\": "src/"
         }
     }
 }
