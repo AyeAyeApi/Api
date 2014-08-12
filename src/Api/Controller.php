@@ -138,7 +138,7 @@ class Controller {
                 if(!in_array($endPoint, $this->ignoreEndpoints)) {
                     if(!array_key_exists($method, $endPoints))
                         $endPoints[$method] = array();
-                    $endPoints[$method][$endPoint] = $this->getParametersFromDocumentation($classMethod);
+                    $endPoints[$method][$endPoint] = $this->getMethodDocumentation($classMethod);
                 }
             }
         }
@@ -146,24 +146,36 @@ class Controller {
     }
 
     /**
-     * Looks at the PHPDoc for the given method and returns an array of information about the parameters it takes
+     * Looks at the PHPDoc for the given method and returns an array of information it
      * @param $method
      * @return array
      */
-    public function getParametersFromDocumentation($method) {
-        $parameters = array();
+    public function getMethodDocumentation($method) {
         $reflectionMethod = new \ReflectionMethod($this, $method);
         $doc = $reflectionMethod->getDocComment();
+
+        // Description
+        $description = '';
+        preg_match_all('/\*\s+(\w[^@^\n^\r]+)/', $doc, $results);
+        if(array_key_exists(1, $results)) {
+            $description = implode(' ', $results[1]);
+        }
+
+        // Parameters
+        $parameters = array();
         $nMatches = preg_match_all('/@param (\S+) \$?(\S+) ?([\S ]+)?/', $doc, $results);
         for($i = 0; $i < $nMatches; $i++) {
             $parameter = new \stdClass();
-            $parameter->parameter = $results[2][$i];
             $parameter->type = $results[1][$i];
             if($results[3][$i])
                 $parameter->description = $results[3][$i];
-            $parameters[] = $parameter;
+            $parameters[$results[2][$i]] = $parameter;
         }
-        return $parameters;
+
+        return [
+            'description' => $description,
+            'parameters' => $parameters,
+        ];
     }
 
     /**
