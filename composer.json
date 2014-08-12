@@ -4,10 +4,13 @@
     "description": "A simple but powerful API framework",
     "homepage": "http://github.com/Gisleburt",
     "minimum-stability": "dev",
+    "license" : "GPL-3.0+",
     "authors": [
         {
             "name": "Daniel Mason",
-            "email": "daniel@danielmason.com"
+            "email": "daniel@danielmason.com",
+            "homepage": "http://danielmason.com",
+            "role": "Lead developer"
         }
     ],
     "require": {
