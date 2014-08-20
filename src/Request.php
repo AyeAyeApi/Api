@@ -87,15 +87,26 @@ class Request implements \JsonSerializable
      * @param string $bodyText
      */
     public function __construct(
-        $requestedMethod = self::METHOD_GET,
+        $requestedMethod = null,
         $requestedUri = '',
         array $request = array(),
         array $header = array(),
         $bodyText = ''
     ) {
 
-        $this->requestMethod = $requestedMethod ? $requestedMethod : $_SERVER['REQUEST_METHOD'];
-        $this->requestedUri = $requestedUri ? $requestedUri : $_SERVER['REQUEST_URI'];
+        if($requestedMethod) {
+            $this->requestMethod = $requestedMethod;
+        }
+        elseif(array_key_exists('REQUEST_METHOD', $_SERVER)) {
+            $this->requestMethod = $_SERVER['REQUEST_METHOD'];
+        }
+
+        if($requestedUri) {
+            $this->requestedUri = $requestedUri;
+        }
+        elseif(array_key_exists('REQUEST_URI', $_SERVER)) {
+            $this->requestedUri = $_SERVER['REQUEST_URI'];
+        }
 
         // Pull together all of the variables
         $this->parameters = $request ? $request : $_REQUEST;
