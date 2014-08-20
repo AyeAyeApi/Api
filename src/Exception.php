@@ -44,7 +44,7 @@ class Exception extends \Exception implements \JsonSerializable
 
     public function jsonSerialize() {
         return [
-            'message' => $this->getMessage(),
+            'message' => $this->getPublicMessage(),
             'code' => $this->getCode(),
             'previous' => $this->getPrevious(),
         ];
