@@ -18,7 +18,7 @@
         "gisleburt/formatter": "dev-master"
     },
     "require-dev": {
-
+        "gisleburt/api-tests": "dev-master"
     },
     "autoload": {
         "psr-4": {
