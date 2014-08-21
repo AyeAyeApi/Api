@@ -9,6 +9,7 @@ namespace Gisleburt\Api;
 
 
 use Gisleburt\Formatter\FormatFactory;
+use Gisleburt\Formatter\Format;
 
 class Response implements \JsonSerializable {
 
@@ -108,12 +109,25 @@ class Response implements \JsonSerializable {
         return $this;
     }
 
+    /**
+     * Set the format using a file suffix
+     * @param $suffix
+     * @return $this
+     * @throws \Exception
+     */
     public function setFormat($suffix) {
         if(!$this->formatFactory instanceof FormatFactory) {
             throw new \Exception("Format factory not set");
         }
         $this->format = $this->formatFactory->getFormatFor($suffix);
         return $this;
+    }
+
+    /**
+     * @return Format
+     */
+    public function getFormat() {
+        return $this->format;
     }
 
     /**
