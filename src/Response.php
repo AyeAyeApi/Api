@@ -65,6 +65,16 @@ class Response implements \JsonSerializable {
     }
 
     /**
+     * @param int $statusCode
+     * @return $this
+     */
+    public function setStatusCode($statusCode)
+    {
+        $status = new Status($statusCode);
+        return $this->setStatus($status);
+    }
+
+    /**
      * @return \Gisleburt\Api\Request
      */
     public function getRequest()
