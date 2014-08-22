@@ -127,7 +127,7 @@ class Response implements \JsonSerializable {
      */
     public function setFormat($suffix) {
         if(!$this->formatFactory instanceof FormatFactory) {
-            throw new \Exception("Format factory not set");
+            throw new Exception("Format factory not set");
         }
         $this->format = $this->formatFactory->getFormatFor($suffix);
         return $this;
