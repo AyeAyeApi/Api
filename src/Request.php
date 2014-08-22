@@ -164,7 +164,7 @@ class Request implements \JsonSerializable
     protected function stringToObject($string) {
         // Json
         if($jsonObject = json_decode($string)) {
-            return (object)$jsonObject;
+            return $jsonObject;
         }
         // Xml
         if($xmlObject = simplexml_load_string($string)) {
