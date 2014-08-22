@@ -184,7 +184,7 @@ class Controller {
      * @param $method
      * @return array
      */
-    public function getParametersFromRequest(Request $request, $method) {
+    protected function getParametersFromRequest(Request $request, $method) {
         $parameters = array();
         $reflectionMethod = new \ReflectionMethod($this, $method);
         $reflectionParameters = $reflectionMethod->getParameters();
