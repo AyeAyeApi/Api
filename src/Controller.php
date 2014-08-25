@@ -41,6 +41,11 @@ class Controller {
     protected $request;
 
     /**
+     * @var Status
+     */
+    protected $status;
+
+    /**
      * @param Request $request
      * @param array $requestChain
      * @return mixed
@@ -51,27 +56,27 @@ class Controller {
         // Set these internally in case we require access to them
         $this->request = $request;
 
-        $leftInChain = count($requestChain);
-
-
         $nextLink = array_shift($requestChain);
         if($nextLink) {
             if(array_key_exists($nextLink, $this->children)) {
                 /** @var Controller $child */
                 $child = new $this->children[$nextLink]();
-                return $child->processRequest($request, $requestChain);
+                $data = $child->processRequest($request, $requestChain);
+                $this->status = $child->getStatus();
+                return $data;
             }
 
             $potentialAction = $this->parseActionName($nextLink, $this->request->getMethod());
             if(method_exists($this, $potentialAction)) {
-                return call_user_func_array([$this, $potentialAction], $this->getParametersFromRequest($request, $potentialAction));
+                return call_user_func_array(
+                    [$this, $potentialAction],
+                    $this->getParametersFromRequest($request, $potentialAction)
+                );
             }
 
             $message = "Could not find controller or action matching '$nextLink'";
             throw new Exception($message, 404, $message);
-
         }
-
 
         $potentialAction = $this->parseActionName('index', $this->request->getMethod());
         if(method_exists($this, $potentialAction)) {
@@ -121,6 +126,31 @@ class Controller {
             }
         }
         return $children;
+    }
+
+    /**
+     * @return Status
+     */
+    public function getStatus() {
+        return $this->status;
+    }
+
+    /**
+     * @param Status $status
+     * @return $this
+     */
+    public function setStatus(Status $status) {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * @param $statusCode
+     * @return $this
+     */
+    public function setStatusCode($statusCode) {
+        $this->setStatus(new Status($statusCode));
+        return $this;
     }
 
     /**
@@ -184,7 +214,7 @@ class Controller {
      * @param $method
      * @return array
      */
-    public function getParametersFromRequest(Request $request, $method) {
+    protected function getParametersFromRequest(Request $request, $method) {
         $parameters = array();
         $reflectionMethod = new \ReflectionMethod($this, $method);
         $reflectionParameters = $reflectionMethod->getParameters();
