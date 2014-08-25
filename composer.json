@@ -18,11 +18,12 @@
         "gisleburt/formatter": "dev-master"
     },
     "require-dev": {
-        "gisleburt/api-tests": "dev-master"
+
     },
     "autoload": {
         "psr-4": {
-            "Gisleburt\\Api\\": "src/"
+            "Gisleburt\\Api\\": "src/",
+            "Gisleburt\\Api\\Tests\\": "tests/"
         }
     }
 }
