@@ -159,9 +159,13 @@ class Request implements \JsonSerializable
      * Failing all else it will return a standard class with the string attached to data
      * eg. $this->stringObject('fail')->body == 'fail'
      * @param string $string a string of data
+     * @throws \Exception
      * @return \stdClass
      */
     protected function stringToObject($string) {
+        if(!is_string($string)) {
+            throw new \Exception('Non-string passed to stringToObject');
+        }
         // Json
         if($jsonObject = json_decode($string)) {
             return $jsonObject;
