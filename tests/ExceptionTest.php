@@ -111,7 +111,7 @@ class ExceptionTest extends TestCase {
 
         $publicMessage = $object['message'];
         $this->assertTrue(
-            $publicMessage === $testMessage,
+            $publicMessage === $testPublicMessage,
             "Exception messsage was not $testMessage: ".PHP_EOL.$publicMessage
         );
 
