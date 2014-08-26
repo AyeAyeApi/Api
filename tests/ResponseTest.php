@@ -11,6 +11,7 @@ namespace Gisleburt\Api\Tests;
 use Gisleburt\Api\Request;
 use Gisleburt\Api\Response;
 use Gisleburt\Api\Status;
+use Gisleburt\Formatter\Formats\Json;
 use Gisleburt\Formatter\Formats\Xml;
 use Gisleburt\Formatter\FormatFactory;
 
@@ -90,10 +91,13 @@ class ResponseTest extends TestCase {
     }
 
     public function testSetRequest() {
-        $respone = new Response();
         $request = new Request();
-        $respone->setRequest($request);
-        $respone->getRequest();
+        $response = new Response();
+        $response->setFormatFactory(new FormatFactory([
+                'json' => new Json()
+            ]));
+        $response->setRequest($request);
+        $response->getRequest();
     }
 
 
