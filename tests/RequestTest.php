@@ -90,5 +90,32 @@ class RequestTest extends TestCase {
         $request->stringToObject(true);
     }
 
+    public function testStringToObjectJson() {
+        $json = '{"testArray" : [1, true], "testObject": {"string": "a string"}}';
+        $request = new Request();
+        $jsonObject = $request->stringToObject($json);
+
+        $testArraySize = count($jsonObject->testArray);
+        $this->assertTrue(
+            $testArraySize === 2,
+            'testArray should contain 2 elements, it contains: '.PHP_EOL.$testArraySize
+        );
+
+        $this->assertTrue(
+            $jsonObject->testArray[0] === 1,
+            'testArrays first element should be 1, is actually'.PHP_EOL.$jsonObject->testArray[0]
+        );
+
+        $this->assertTrue(
+            $jsonObject->testArray[1] === true,
+            'testArrays second element should be true, is actually'.PHP_EOL.$jsonObject->testArray[1]
+        );
+
+        $this->assertTrue(
+            $jsonObject->testObject->string === "a string",
+            'testObject should contain the string "a string", is actually'.PHP_EOL.$jsonObject->testObject->string
+        );
+    }
+
 }
  
