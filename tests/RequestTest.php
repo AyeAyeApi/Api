@@ -117,5 +117,33 @@ class RequestTest extends TestCase {
         );
     }
 
+    public function testStringToObjectPhp() {
+
+        $php = 'O:8:"stdClass":2:{s:9:"testArray";a:2:{i:0;i:1;i:1;b:1;}s:10:"testObject";O:8:"stdClass":1:{s:6:"string";s:8:"a string";}}';
+        $request = new Request();
+        $phpObject = $request->stringToObject($php);
+
+        $testArraySize = count($phpObject->testArray);
+        $this->assertTrue(
+            $testArraySize === 2,
+            'testArray should contain 2 elements, it contains: '.PHP_EOL.$testArraySize
+        );
+
+        $this->assertTrue(
+            $phpObject->testArray[0] === 1,
+            'testArrays first element should be 1, is actually'.PHP_EOL.$phpObject->testArray[0]
+        );
+
+        $this->assertTrue(
+            $phpObject->testArray[1] === true,
+            'testArrays second element should be true, is actually'.PHP_EOL.$phpObject->testArray[1]
+        );
+
+        $this->assertTrue(
+            $phpObject->testObject->string === "a string",
+            'testObject should contain the string "a string", is actually'.PHP_EOL.$phpObject->testObject->string
+        );
+    }
+
 }
  
