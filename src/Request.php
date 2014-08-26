@@ -122,7 +122,7 @@ class Request implements \JsonSerializable
      * Note: Should be ok with Apache and Nginx
      * @return array
      */
-    protected function parseHeader() {
+    public function parseHeader() {
         if(function_exists('apache_request_headers')) {
             return apache_request_headers();
         }
@@ -131,7 +131,7 @@ class Request implements \JsonSerializable
         foreach($_SERVER as $key => $value) {
             if (substr($key, 0, 5) == 'HTTP_') {
                 $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
-                $this->header[$name] = $value;
+                $headers[$name] = $value;
             }
             elseif ($key == 'CONTENT_TYPE') {
                 $headers['Content-Type'] = $value;
@@ -226,7 +226,7 @@ class Request implements \JsonSerializable
      */
     public function getRequestChain() {
         if(is_null($this->requestChain)) {
-            $this->parseRequestedUri($this->requestedUri);
+            $this->getRequestChainFromUri($this->requestedUri);
         }
         return $this->requestChain;
     }
@@ -237,7 +237,7 @@ class Request implements \JsonSerializable
      */
     public function getFormat() {
         if(is_null($this->requestedFormat)) {
-            $this->parseRequestedUri($this->requestedUri);
+            $this->requestedFormat = $this->getFormatFromUri($this->requestedUri);
             if(is_null($this->requestedFormat)) {
                 $this->requestedFormat = static::DEFAULT_FORMAT;
             }
