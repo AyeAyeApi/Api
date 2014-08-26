@@ -258,20 +258,33 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Breaks a url into useful parts
+     * Get the format from the url
      * @param $requestedUri
+     * @return string|null
      */
-    protected function parseRequestedUri($requestedUri) {
-        // Trim any get variables and the requested format, eg: /requested/uri.format?get=variables
+    public function getFormatFromUri($requestedUri) {
+        $uriParts = explode('?', $requestedUri, 2);
+        $uriWithoutGet = reset($uriParts);
+        $uriAndFormat  = explode('.', $uriWithoutGet);
+        if(count($uriAndFormat) >= 2) {
+            return end($uriAndFormat);
+        }
+        return null;
+    }
 
-        $requestedUriAndFormat  = explode('.', reset(explode('?', $requestedUri, 2)));
-        if(count($requestedUriAndFormat) == 2) {
-            $this->requestedFormat = end($requestedUriAndFormat);
+    /**
+     * Breaks a url into useful parts
+     * @param string $requestedUri
+     * @return string[]
+     */
+    protected function getRequestChainFromUri($requestedUri) {
+        // Trim any get variables and the requested format, eg: /requested/uri.format?get=variables
+        $routingInformation = preg_replace('/[\?\.].*$/', '', $requestedUri);
+        $requestChain = explode('/', $routingInformation);
+        if(!$requestChain[0]) {
+            unset($requestChain[0]);
         }
-        $this->requestChain = explode('/', reset($requestedUriAndFormat));
-        if(!$this->requestChain[0]) {
-            unset($this->requestChain[0]);
-        }
+        return $requestChain;
     }
 
 }
