@@ -162,7 +162,7 @@ class Request implements \JsonSerializable
      * @throws \Exception
      * @return \stdClass
      */
-    protected function stringToObject($string) {
+    public function stringToObject($string) {
         if(!is_string($string)) {
             throw new \Exception('Non-string passed to stringToObject');
         }
@@ -171,11 +171,11 @@ class Request implements \JsonSerializable
             return $jsonObject;
         }
         // Xml
-        if($xmlObject = simplexml_load_string($string)) {
+        if($xmlObject = @simplexml_load_string($string)) {
             return $xmlObject;
         }
         // Php
-        if($phpObject = unserialize($string)) {
+        if($phpObject = @unserialize($string)) {
             return $phpObject;
         }
 
