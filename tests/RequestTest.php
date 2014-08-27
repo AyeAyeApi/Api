@@ -244,7 +244,45 @@ class RequestTest extends TestCase {
             'Second parameter should be 2, is actually: '.PHP_EOL.print_r($jsonObject->parameters->secondParameter, true)
         );
 
+    }
 
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Add parameter: parameter name must be scalar
+     * @expectedExceptionCode    0
+     */
+    public function testAddParameterException() {
+        $request = new Request();
+        $request->addParameter([],[]);
+    }
+
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Add parameters parameter newParameters can not be scalar
+     * @expectedExceptionCode    0
+     */
+    public function testAddParametersException() {
+        $request = new Request();
+        $request->addParameters(true);
+    }
+
+    public function testAddParameterFail() {
+        $request = new Request();
+        $this->assertTrue(
+            $request->addParameter('name', 'value', false),
+            "Add parameter should have returned true, it didn't"
+        );
+
+        $parameter = $request->getParameter('name');
+        $this->assertTrue(
+            $parameter === 'value',
+            "Parameter should have been 'value', is actually: ".PHP_EOL.print_r($parameter, true)
+        );
+
+        $this->assertFalse(
+            $request->addParameter('name', 'new value', false),
+            "Add parameter should have returned false, it didn't"
+        );
     }
 
 }
