@@ -106,13 +106,11 @@ class Status implements \JsonSerializable {
     protected $code;
 
     public function __construct($code = 200) {
-        if(array_key_exists($code, static::$statusCodes)) {
-            $this->code = $code;
-            $this->message = static::$statusCodes[$code];
+        if(!array_key_exists($code, static::$statusCodes)) {
+            throw new Exception("Status '$code' does not exist", 500);
         }
-        else {
-            throw new Exception(500);
-        }
+        $this->code = $code;
+        $this->message = static::$statusCodes[$code];
     }
 
     /**
