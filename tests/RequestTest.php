@@ -109,6 +109,22 @@ class RequestTest extends TestCase {
         );
     }
 
+    public function testStringToObjectXml() {
+        $xml = '<data><testObject><string>a string</string></testObject></data>';
+        $request = new Request();
+        $xmlObject = $request->stringToObject($xml);
+
+        $this->assertTrue(
+            is_object($xmlObject),
+            'testObject should be an object'
+        );
+
+        $this->assertTrue(
+            $xmlObject->testObject->string == "a string",
+            'testObject should contain the string "a string", is actually'.PHP_EOL.$xmlObject->testObject->string
+        );
+    }
+
     public function testStringToObjectPhp() {
 
         $php = 'O:8:"stdClass":2:{s:9:"testArray";a:2:{i:0;i:1;i:1;b:1;}s:10:"testObject";O:8:"stdClass":1:{s:6:"string";s:8:"a string";}}';
