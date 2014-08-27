@@ -198,7 +198,7 @@ class Request implements \JsonSerializable
      * @param bool $default
      * @return mixed
      */
-    public function getParameter($key, $default = false) {
+    public function getParameter($key, $default = null) {
         // Request _should_ contain get, post and cookies
         if(array_key_exists($key, $this->parameters)) {
             return $this->parameters[$key];
