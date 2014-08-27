@@ -319,5 +319,30 @@ class RequestTest extends TestCase {
         );
     }
 
+    public function testGetFormatFromUri() {
+        $request = new Request();
+
+        $uri = '/test/file.php';
+        $format = $request->getFormatFromUri($uri);
+        $this->assertTrue(
+            $format === 'php',
+            'Format should be php, is actually: '.PHP_EOL.$format
+        );
+
+        $uri = '/test/file.json';
+        $format = $request->getFormatFromUri($uri);
+        $this->assertTrue(
+            $format === 'json',
+            'Format should be json, is actually: '.PHP_EOL.$format
+        );
+
+        $uri = '/test/file.json?parameters=true';
+        $format = $request->getFormatFromUri($uri);
+        $this->assertTrue(
+            $format === 'json',
+            'Format should be json, is actually: '.PHP_EOL.$format
+        );
+    }
+
 }
  
