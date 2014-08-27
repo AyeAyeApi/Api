@@ -178,8 +178,8 @@ class Request implements \JsonSerializable
      * @return \stdClass
      */
     public function stringToObject($string) {
-        if(!is_string($string)) {
-            throw new \Exception('Non-string passed to stringToObject');
+        if(!$string) {
+            return new \stdClass();
         }
         // Json
         if($jsonObject = json_decode($string)) {
@@ -195,7 +195,7 @@ class Request implements \JsonSerializable
         }
 
         $object = new \stdClass();
-        $object->body = $string;
+        $object->text = $string;
         return $object;
     }
 
