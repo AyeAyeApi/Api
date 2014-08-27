@@ -1,3 +1,7 @@
+setup:
+  composer:
+    action: "install"
+
 test:
   php_unit:
     coverage: "reports/html"
