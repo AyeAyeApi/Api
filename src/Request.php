@@ -218,12 +218,6 @@ class Request implements \JsonSerializable
         if(array_key_exists($key, $this->parameters)) {
             return $this->parameters[$key];
         }
-        if(array_key_exists($key, $this->header)) {
-            return $this->header[$key];
-        }
-        if(property_exists($this->body, $key)) {
-            return $this->body->$key;
-        }
         return $default;
     }
 
