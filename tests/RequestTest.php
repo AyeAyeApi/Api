@@ -80,15 +80,7 @@ class RequestTest extends TestCase {
             'Content-Length should have been set to application/json, it was: '.PHP_EOL.$headers['Content-Length']
         );
     }
-    /**
-     * @expectedException        \Exception
-     * @expectedExceptionMessage Non-string passed to stringToObject
-     * @expectedExceptionCode    0
-     */
-    public function testStringToObjectNonString() {
-        $request = new Request();
-        $request->stringToObject(true);
-    }
+
 
     public function testStringToObjectJson() {
         $json = '{"testArray" : [1, true], "testObject": {"string": "a string"}}';
