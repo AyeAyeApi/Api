@@ -100,6 +100,43 @@ class ResponseTest extends TestCase {
         $response->getRequest();
     }
 
+    public function testJsonSerializable() {
+        $testData = new \stdClass();
+        $testData->string = 'string';
+        $testStatusCode = '418';
+        $testRequest = new Request(
+            Request::METHOD_POST,
+            '/test/path',
+            ['testParameter' => 'value']
+        );
+
+        $response = new Response();
+        $response->setFormatFactory(new FormatFactory([
+                'json' => new Json()
+            ]));
+        $response->setData($testData);
+        $response->setStatusCode($testStatusCode);
+        $response->setRequest($testRequest);
+
+        $responseObject = json_decode(json_encode($response));
+
+        $this->assertTrue(
+            $responseObject->status->code === '418',
+            'The response object should contain status code 418, is actually: '.PHP_EOL.$responseObject->status->code
+        );
+
+        $this->assertTrue(
+            $responseObject->data->string === 'string',
+            'The response object should contain the string "string", is actually: '.PHP_EOL.$responseObject->data->string
+        );
+
+        $this->assertTrue(
+            $responseObject->request->requestedUri === '/test/path',
+            'The response object should contain the string "/test/path", is actually: '.PHP_EOL.$responseObject->request->requestedUri
+        );
+
+    }
+
 
 }
  
