@@ -137,6 +137,18 @@ class RequestTest extends TestCase {
         );
     }
 
+    public function testStringToStringObject() {
+        $string = 'string';
+
+        $request = new Request();
+        $stringObejct = $request->stringToObject($string);
+
+        $this->assertTrue(
+            $stringObejct->text === $string,
+            "String should have been 'string', is acturally: ".PHP_EOL.$stringObejct->text
+        );
+    }
+
     public function testGetMethod() {
         $request = new Request();
         $method = $request->getMethod();
