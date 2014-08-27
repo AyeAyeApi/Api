@@ -145,5 +145,76 @@ class RequestTest extends TestCase {
         );
     }
 
+    public function testGetMethod() {
+        $request = new Request();
+        $method = $request->getMethod();
+        $this->assertTrue(
+            $method === Request::METHOD_GET,
+            'Default method should be GET, is actually: '.PHP_EOL.$method
+        );
+
+        $_SERVER['REQUEST_METHOD'] = Request::METHOD_DELETE; // Tested later
+        $request = new Request(Request::METHOD_POST);
+        $method = $request->getMethod();
+        $this->assertTrue(
+            $method === Request::METHOD_POST,
+            'Method should be set to POST by constructor, is actually: '.PHP_EOL.$method
+        );
+
+        $request = new Request();
+        $method = $request->getMethod();
+        $this->assertTrue(
+            $method === Request::METHOD_DELETE,
+            'Method should be set to DELETE by $_SERVER, is actually: '.PHP_EOL.$method
+        );
+    }
+
+    public function testGetParameter() {
+        $request = new Request(
+            null,
+            '',
+            ['true' => true, 'false' => false],
+            ['HTTP_HEADER_STRING' => 'a string'],
+            '{"bodyString": "a string", "object": {"integer": 3}}'
+        );
+
+        $result = $request->getParameter('this-parameter-not-set');
+        $this->assertTrue(
+            $result === null,
+            'The default value for an unknown value, is actually: '.PHP_EOL.print_r($result, true)
+        );
+
+        $result = $request->getParameter('true');
+        $this->assertTrue(
+            $result === true,
+            'Test parameter "true" should be true, is actually: '.PHP_EOL.print_r($result, true)
+        );
+
+        $result = $request->getParameter('false');
+        $this->assertTrue(
+            $result === false,
+            'Test parameter "false" should be false, is actually: '.PHP_EOL.print_r($result, true)
+        );
+
+        $result = $request->getParameter('Header-String');
+        $this->assertTrue(
+            $result === 'a string',
+            'Header-String should be "a string", is actually: '.PHP_EOL.print_r($result, true)
+        );
+
+        $result = $request->getParameter('bodyString');
+        $this->assertTrue(
+            $result === 'a string',
+            'bodyString should be "a string", is actually: '.PHP_EOL.print_r($result, true)
+        );
+
+        $result = $request->getParameter('this-parameter-not-set');
+        $this->assertTrue(
+            $result === null,
+            'The default value for an unknown value, is actually: '.PHP_EOL.print_r($result, true)
+        );
+
+    }
+
 }
  
