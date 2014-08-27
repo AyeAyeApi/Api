@@ -10,8 +10,9 @@ test:
   php_mess_detector:
       rules:
           - "codesize"
-          - "unusedcode"
+          - "design"
+          - "cleancode"
           - "naming"
-          - "somedir/customruleset.xml"
+          - "unusedcode"
       allow_failures: true
       zero_config: true
