@@ -256,6 +256,16 @@ class RequestTest extends TestCase {
             'Second parameter should be 2, is actually: '.PHP_EOL.print_r($jsonObject->parameters->secondParameter, true)
         );
 
+        // Lets check the server variable is read too
+        $_SERVER['REQUEST_URI'] = '/test/path.xml?parameter=value';
+
+        $request = new Request();
+        $jsonObject = json_decode(json_encode($request));
+        $this->assertTrue(
+            $jsonObject->requestUri === $_SERVER['REQUEST_URI'],
+            "Request URI should be {$_SERVER['REQUEST_URI']}, is actually: ".PHP_EOL.$jsonObject->requestUri
+        );
+
     }
 
     /**
