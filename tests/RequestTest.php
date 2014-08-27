@@ -211,10 +211,10 @@ class RequestTest extends TestCase {
     public function testJsonSerializable() {
         $request = new Request(
             Request::METHOD_POST,
-            '/test/path.xml?parameter=1',
-            ['secondParameter' => '2'],
+            '/test/path.xml',
+            ['firstParameter' => '1'],
             ['HTTP_CONTENT_TYPE' => 'application/json'],
-            '{"thirdParameter":3}'
+            '{"secondParameter":2}'
         );
 
         $jsonObject = json_decode(json_encode($request));
@@ -225,13 +225,23 @@ class RequestTest extends TestCase {
         );
 
         $this->assertTrue(
-            $jsonObject->requestUri === '/test/path.xml?parameter=1',
-            'Request URI should be /test/path.xml?parameter=1, is actually: '.PHP_EOL.$jsonObject->requestUri
+            $jsonObject->requestUri === '/test/path.xml',
+            'Request URI should be /test/path.xml, is actually: '.PHP_EOL.$jsonObject->requestUri
         );
 
         $this->assertTrue(
             $jsonObject->method === Request::METHOD_POST,
             'Request method should be POST, is actually: '.PHP_EOL.$jsonObject->method
+        );
+
+        $this->assertTrue(
+            $jsonObject->parameters->firstParameter === '1',
+            'First parameter should be 1, is actually: '.PHP_EOL.print_r($jsonObject->parameters->firstParameter, true)
+        );
+
+        $this->assertTrue(
+            $jsonObject->parameters->secondParameter === 2,
+            'Second parameter should be 2, is actually: '.PHP_EOL.print_r($jsonObject->parameters->secondParameter, true)
         );
 
 
