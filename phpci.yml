@@ -8,11 +8,12 @@ test:
   php_loc:
     directory: "src"
   php_mess_detector:
-      rules:
-          - "codesize"
-          - "design"
-          - "cleancode"
-          - "naming"
-          - "unusedcode"
-      allow_failures: true
-      zero_config: true
+    path: "src"
+    rules:
+      - "codesize"
+      - "design"
+      - "cleancode"
+      - "naming"
+      - "unusedcode"
+    allow_failures: true
+    zero_config: true
