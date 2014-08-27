@@ -58,7 +58,7 @@ class RequestTest extends TestCase {
         $_SERVER['NOT_A_HEADER'] = 'Not a header';
 
         $request = new Request();
-        $headers = $request->parseHeader();
+        $headers = $request->parseHeader($_SERVER);
         $headersSize = count($headers);
         $this->assertTrue(
             $headersSize == 3,

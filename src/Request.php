@@ -110,7 +110,7 @@ class Request implements \JsonSerializable
 
         // Pull together all of the variables
         $this->parameters = $request ? $request : $_REQUEST;
-        $this->header  = $header  ? $header  : $this->parseHeader();
+        $this->header  = $header  ? $this->parseHeader($header) : $this->parseHeader($_SERVER);
         if(!$bodyText) {
             $bodyText = $this->readBody();
         }
@@ -118,29 +118,25 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Get the request headers
-     * Note: Should be ok with Apache and Nginx
-     * @return array
+     * Parse headers
+     * @param string[] $headers
+     * @return string
      */
-    public function parseHeader() {
-        if(function_exists('apache_request_headers')) {
-            return apache_request_headers();
-        }
-
-        $headers = array();
-        foreach($_SERVER as $key => $value) {
+    public function parseHeader(array $headers = array()) {
+        $processedHeaders = array();
+        foreach($headers as $key => $value) {
             if (substr($key, 0, 5) == 'HTTP_') {
                 $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
-                $headers[$name] = $value;
+                $processedHeaders[$name] = $value;
             }
             elseif ($key == 'CONTENT_TYPE') {
-                $headers['Content-Type'] = $value;
+                $processedHeaders['Content-Type'] = $value;
             }
             elseif ($key == 'CONTENT_LENGTH') {
-                $headers['Content-Length'] = $value;
+                $processedHeaders['Content-Length'] = $value;
             }
         }
-        return $headers;
+        return $processedHeaders;
     }
 
     /**
