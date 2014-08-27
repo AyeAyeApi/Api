@@ -71,6 +71,11 @@ class Request implements \JsonSerializable
     /**
      * @var array
      */
+    protected $request = array();
+
+    /**
+     * @var array
+     */
     protected $header = array();
 
     /**
@@ -89,9 +94,9 @@ class Request implements \JsonSerializable
     public function __construct(
         $requestedMethod = null,
         $requestedUri = '',
-        array $request = array(),
-        array $header = array(),
-        $bodyText = ''
+        array $request = null,
+        array $header = null,
+        $bodyText = null
     ) {
 
         if($requestedMethod) {
@@ -108,13 +113,27 @@ class Request implements \JsonSerializable
             $this->requestedUri = $_SERVER['REQUEST_URI'];
         }
 
-        // Pull together all of the variables
-        $this->parameters = $request ? $request : $_REQUEST;
-        $this->header  = $header  ? $this->parseHeader($header) : $this->parseHeader($_SERVER);
-        if(!$bodyText) {
+
+        // Set parameters
+        if(is_null($request)) {
+            $request = $_REQUEST;
+        }
+        $this->request = $request;
+
+        if(is_null($header)) {
+            $header = $_SERVER;
+        }
+        $this->header  = $this->parseHeader($header);
+
+        if(is_null($bodyText)) {
             $bodyText = $this->readBody();
         }
         $this->body = $this->stringToObject($bodyText);
+
+        $this->addParameters($this->request);
+        $this->addParameters($this->header);
+        $this->addParameters($this->body);
+
     }
 
     /**
@@ -282,5 +301,43 @@ class Request implements \JsonSerializable
         }
         return $requestChain;
     }
+
+
+    /**
+     * Add a set of parameters to the Request
+     * @param array|object $newParameters
+     * @param bool $overwrite
+     * @throws \Exception
+     * @returns $this
+     */
+    public function addParameters($newParameters, $overwrite = true) {
+        if(is_scalar($newParameters)) {
+            throw new \Exception('Add parameters parameter newParameters can not be scalar');
+        }
+        foreach($newParameters as $field => $value) {
+            $this->addParameter($field, $value, $overwrite);
+        }
+        return $this;
+    }
+
+    /**
+     * Add a parameter
+     * @param $name
+     * @param $value
+     * @param bool $overwrite Overwrite existing parameters
+     * @return bool Returns true of value was set
+     * @throws \Exception
+     */
+    public function addParameter($name, $value, $overwrite = true) {
+        if(!is_scalar($name)) {
+            throw new \Exception('Add parameter: parameter name must be scalar');
+        }
+        if(!$overwrite && array_key_exists($name, $this->parameters)) {
+            return false;
+        }
+        $this->parameters[$name] = $value;
+        return true;
+    }
+
 
 }
