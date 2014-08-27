@@ -285,5 +285,17 @@ class RequestTest extends TestCase {
         );
     }
 
+    public function testReadBodyDodgily() {
+
+        require_once 'TestData/http_get_request_body.php';
+
+        $request = new Request();
+        $hackedJson = $request->getParameter('hackedJson');
+        $this->assertTrue(
+            $hackedJson === true,
+            'Failed to utilise hacked http_get_request_body... I\'m not sure how I feel about that'
+        );
+    }
+
 }
  
