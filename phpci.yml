@@ -7,3 +7,11 @@ test:
     coverage: "reports/html"
   php_loc:
     directory: "src"
+  php_mess_detector:
+      rules:
+          - "codesize"
+          - "unusedcode"
+          - "naming"
+          - "somedir/customruleset.xml"
+      allow_failures: true
+      zero_config: true
