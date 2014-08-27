@@ -208,5 +208,34 @@ class RequestTest extends TestCase {
 
     }
 
+    public function testJsonSerializable() {
+        $request = new Request(
+            Request::METHOD_POST,
+            '/test/path.xml?parameter=1',
+            ['secondParameter' => '2'],
+            ['HTTP_CONTENT_TYPE' => 'application/json'],
+            '{"thirdParameter":3}'
+        );
+
+        $jsonObject = json_decode(json_encode($request));
+
+        $this->assertTrue(
+            $jsonObject->method === Request::METHOD_POST,
+            'Request method should be POST, is actually: '.PHP_EOL.$jsonObject->method
+        );
+
+        $this->assertTrue(
+            $jsonObject->requestUri === '/test/path.xml?parameter=1',
+            'Request URI should be /test/path.xml?parameter=1, is actually: '.PHP_EOL.$jsonObject->requestUri
+        );
+
+        $this->assertTrue(
+            $jsonObject->method === Request::METHOD_POST,
+            'Request method should be POST, is actually: '.PHP_EOL.$jsonObject->method
+        );
+
+
+    }
+
 }
  
