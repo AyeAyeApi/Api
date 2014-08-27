@@ -105,6 +105,16 @@ class Status implements \JsonSerializable {
      */
     protected $code;
 
+    /**
+     * The message associated with the code
+     * @var string
+     */
+    protected $message;
+
+    /**
+     * @param int $code
+     * @throws Exception If invalid code
+     */
     public function __construct($code = 200) {
         if(!array_key_exists($code, static::$statusCodes)) {
             throw new Exception("Status '$code' does not exist", 500);
