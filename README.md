@@ -1,4 +1,4 @@
-# Gisleburt Formatters
+# Gisleburt API
 
 Development Build Status:
 
