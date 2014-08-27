@@ -93,7 +93,7 @@ class Request implements \JsonSerializable
      */
     public function __construct(
         $requestedMethod = null,
-        $requestedUri = '',
+        $requestedUri = null,
         array $request = null,
         array $header = null,
         $bodyText = null
