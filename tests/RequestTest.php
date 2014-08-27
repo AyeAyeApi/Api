@@ -253,8 +253,8 @@ class RequestTest extends TestCase {
         );
 
         $this->assertTrue(
-            $jsonObject->requestUri === '/test/path.xml',
-            'Request URI should be /test/path.xml, is actually: '.PHP_EOL.$jsonObject->requestUri
+            $jsonObject->requestedUri === '/test/path.xml',
+            'Requested URI should be /test/path.xml, is actually: '.PHP_EOL.$jsonObject->requestedUri
         );
 
         $this->assertTrue(
@@ -278,8 +278,8 @@ class RequestTest extends TestCase {
         $request = new Request();
         $jsonObject = json_decode(json_encode($request));
         $this->assertTrue(
-            $jsonObject->requestUri === $_SERVER['REQUEST_URI'],
-            "Request URI should be {$_SERVER['REQUEST_URI']}, is actually: ".PHP_EOL.$jsonObject->requestUri
+            $jsonObject->requestedUri === $_SERVER['REQUEST_URI'],
+            "Request URI should be {$_SERVER['REQUEST_URI']}, is actually: ".PHP_EOL.$jsonObject->requestedUri
         );
 
     }

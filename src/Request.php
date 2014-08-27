@@ -261,7 +261,7 @@ class Request implements \JsonSerializable
     public function jsonSerialize() {
         return [
             'method' => $this->getMethod(),
-            'requestUri' => $this->requestedUri,
+            'requestedUri' => $this->requestedUri,
             'parameters' => $this->getParameters()
         ];
     }
