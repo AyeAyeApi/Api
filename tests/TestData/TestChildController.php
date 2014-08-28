@@ -10,6 +10,6 @@ namespace Gisleburt\Api\Tests\TestData;
 
 use Gisleburt\Api\Controller;
 
-class TestController extends Controller {
+class TestChildController extends Controller {
 
 } 
