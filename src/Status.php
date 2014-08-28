@@ -133,13 +133,22 @@ class Status implements \JsonSerializable {
     }
 
     /**
+     * HTTP code for status
+     * @return int
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
      * Returns data that is to be serialised by json
      * @return array
      */
     public function jsonSerialize() {
         return [
             'code' => $this->getCode(),
-            'message' => $this::getMessageForCode($this->getCode()),
+            'message' => $this->getMessage(),
         ];
     }
 
