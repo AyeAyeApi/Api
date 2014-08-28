@@ -108,7 +108,87 @@ class ControllerTest extends TestCase {
 
     public function testIndexAction() {
         $controller = new TestController();
-        $controller->getIndexAction();
+        $result = $controller->getIndexAction();
+
+        // Children
+
+        $this->assertTrue(
+            in_array('me', $result->children),
+            "Children should have contained 'me'"
+        );
+
+        $this->assertTrue(
+            in_array('child', $result->children),
+            "Children should have contained 'me'"
+        );
+
+        $this->assertFalse(
+            in_array('hiddenChild', $result->children),
+            "Children should have contained 'me'"
+        );
+
+        $this->assertTrue(
+            count($result->children) == 2,
+            "Children should have has 2 elements, it had: ".PHP_EOL.count($result->children)
+        );
+
+        // Endpoints
+
+        $this->assertTrue(
+            count($result->endpoints['get']) == 2,
+            "There should have been 2 get endpoints, there were: ".PHP_EOL.count($result->endpoints['get'])
+        );
+
+        $this->assertTrue(
+            array_key_exists('information', $result->endpoints['get']),
+            "Get endpoints should have included 'information' it didn't"
+        );
+
+        $this->assertTrue(
+            $result->endpoints['get']['information']['description'] === 'Gets some information',
+            "Get Information description was wrong"
+        );
+
+        $this->assertTrue(
+            count($result->endpoints['get']['information']['parameters']) === 0,
+            "Get Information description should not contain any parameters"
+        );
+
+        $this->assertTrue(
+            array_key_exists('more-information', $result->endpoints['get']),
+            "Get endpoints should have included 'more-information' it didn't"
+        );
+
+        $this->assertTrue(
+            $result->endpoints['get']['more-information']['description'] === 'Get some conditional information',
+            "Get More Information description was wrong"
+        );
+
+        $this->assertTrue(
+            count($result->endpoints['get']['more-information']['parameters']) === 1,
+            "Get More Information description should not contain any parameters"
+        );
+
+        $this->assertTrue(
+            $result->endpoints['get']['more-information']['parameters']['condition']->type === 'string',
+            "Get More Information should take a string called condition"
+        );
+
+        $this->assertTrue(
+            $result->endpoints['get']['more-information']['parameters']['condition']->description === 'The condition for the information',
+            "Get More Information parameter should be described as 'The condition for the information'"
+        );
+
+        $this->assertTrue(
+            count($result->endpoints['put']) === 1,
+            "There should have been 1 get endpoints, there were: ".PHP_EOL.count($result->endpoints['put'])
+        );
+
+        $this->assertTrue(
+            array_key_exists('information', $result->endpoints['put']),
+            "Put endpoints should have included 'information' it didn't"
+        );
+
     }
 
 }
