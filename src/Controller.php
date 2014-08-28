@@ -97,7 +97,7 @@ class Controller {
      * @param string $method
      * @return string
      */
-    protected function parseActionName($action, $method = Request::METHOD_GET) {
+    public function parseActionName($action, $method = Request::METHOD_GET) {
         $action = str_replace(' ', '', ucwords(str_replace('-', ' ', $action)));
         $method = strtolower($method);
         return $method.$action.'Action';
@@ -132,6 +132,9 @@ class Controller {
      * @return Status
      */
     public function getStatus() {
+        if(!$this->status) {
+            $this->status = new Status();
+        }
         return $this->status;
     }
 
