@@ -31,17 +31,19 @@ class TestController extends Controller {
     }
 
     /**
-     * @param $condition string
+     * Get some conditional information
+     * @param string $condition The condition for the information
      * @return \stdClass
      */
-    public function getMoreInformationActon($condition) {
+    public function getMoreInformationAction($condition) {
         $object = new \stdClass();
         $object->condition = $condition;
         return $object;
     }
 
     /**
-     * @param $information string
+     * Put some information into the system
+     * @param $information string The information to put
      * @return bool
      */
     public function putInformationAction($information) {
