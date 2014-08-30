@@ -86,13 +86,9 @@ class Controller {
         if(method_exists($this, $potentialAction)) {
             return $this->$potentialAction();
         }
-        $potentialAction = $this->parseActionName('index', Request::METHOD_GET);
-        if(method_exists($this, $potentialAction)) {
-            return $this->$potentialAction();
-        }
 
-        $message = 'Could not find an appropriate action to take';
-        throw new ApiException($message, 404, $message);
+        return $this->getIndexAction();
+
     }
 
     /**
