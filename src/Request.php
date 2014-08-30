@@ -235,7 +235,7 @@ class Request implements \JsonSerializable
      */
     public function getRequestChain() {
         if(is_null($this->requestChain)) {
-            $this->getRequestChainFromUri($this->requestedUri);
+            $this->requestChain = $this->getRequestChainFromUri($this->requestedUri);
         }
         return $this->requestChain;
     }
