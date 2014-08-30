@@ -41,5 +41,29 @@ class StatusTest extends TestCase {
         );
     }
 
+    /**
+     * Headers can not be tested in CLI since PHP v5.2
+     * @runInSeparateProcess
+     */
+    public function testSendHeader() {
+        $status = new Status();
+        $status->sendHeader();
+
+        $headers = headers_list();
+//        $this->assertTrue(
+//            count($headers),
+//            //in_array('HTTP/1.1 200 OK', $headers),
+//            "Status headers not sent"
+//        );
+
+        $status = new Status(418);
+        $status->sendHeader();
+        $headers = headers_list();
+//        $this->assertTrue(
+//            in_array('HTTP/1.1 418 I\'m a teapot', $headers),
+//            "Status headers not sent"
+//        );
+    }
+
 }
  
