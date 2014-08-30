@@ -137,6 +137,97 @@ class ResponseTest extends TestCase {
 
     }
 
+    /**
+     * @runInSeparateProcess
+     */
+    public function testJsonRespond() {
+        $complexObject = (object)[
+            'childObject' => (object)[
+                    'property' => 'value'
+                ],
+            'childArray' => [
+                'element1',
+                'element2'
+            ]
+        ];
+        $expectedXml =
+            '{'
+            .'"status":{"code":200,"message":"OK"},'
+            .'"request":{"method":"GET","requestedUri":"test.json","parameters":{"hackedJson":true}},'
+            .'"data":{"childObject":{"property":"value"},"childArray":["element1","element2"]}'
+            .'}';
+
+        $request = new Request(
+            Request::METHOD_GET,
+            'test.json'
+        );
+        $response = new Response();
+        $response->setFormatFactory(
+            new FormatFactory([
+                'json' => new Json()
+            ])
+        );
+        $response->setRequest($request);
+        $response->setStatus(new Status());
+        $response->setData($complexObject);
+
+        ob_start();
+        $response->respond();
+        $responseData = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertTrue(
+            $responseData === $expectedXml,
+            "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
+        );
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testXmlRespond() {
+        $complexObject = (object)[
+            'childObject' => (object)[
+                    'property' => 'value'
+                ],
+            'childArray' => [
+                'element1',
+                'element2'
+            ]
+        ];
+        $expectedXml =
+            '<?xml version="1.0" encoding="UTF-8" ?>'
+            .'<response>'
+            .'<status><array><code>200</code><message>OK</message></array></status>'
+            .'<request><array><method>GET</method><requestedUri>test.xml</requestedUri><parameters><hackedJson>true</hackedJson></parameters></array></request>'
+            .'<data><childObject><property>value</property></childObject><childArray><_0>element1</_0><_1>element2</_1></childArray></data>'.
+            '</response>';
+
+        $request = new Request(
+            Request::METHOD_GET,
+            'test.xml'
+        );
+        $response = new Response();
+        $response->setFormatFactory(
+            new FormatFactory([
+                'xml' => new Xml()
+            ])
+        );
+        $response->setRequest($request);
+        $response->setStatus(new Status());
+        $response->setData($complexObject);
+
+        ob_start();
+        $response->respond();
+        $responseData = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertTrue(
+            $responseData === $expectedXml,
+            "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
+        );
+    }
+
 
 }
  
