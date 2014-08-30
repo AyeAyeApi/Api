@@ -150,9 +150,10 @@ class Response implements \JsonSerializable {
         );
 
         if($this->status instanceof Status) {
-            $this->status->sendHeader();
+            header($this->status->getHttpHeader());
         }
-        $format->sendHeaders();
+
+        header("Content-Type: {$format->getContentType()}");
         echo $format->getHeader();
         echo $format->format($this->jsonSerialize(), $this->responseName);
         echo $format->getFooter();

@@ -168,9 +168,8 @@ class Status implements \JsonSerializable {
      * Send the header
      * @return $this
      */
-    public function sendHeader() {
-        header("HTTP/1.1 {$this->getCode()} {$this::getMessageForCode($this->getCode())}");
-        return $this;
+    public function getHttpHeader() {
+        return "HTTP/1.1 {$this->getCode()} {$this::getMessageForCode($this->getCode())}";
     }
 
 
