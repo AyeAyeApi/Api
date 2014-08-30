@@ -191,5 +191,95 @@ class ControllerTest extends TestCase {
 
     }
 
+    public function testDefaultIndexRoute() {
+        $request = new Request();
+        $controller = new TestController();
+        $result = $controller->processRequest($request, []);
+
+        $this->assertTrue(
+            property_exists($result, 'endpoints'),
+            "Default index action not hit"
+        );
+    }
+
+    public function testAlternativeIndexRoute() {
+        $request = new Request(Request::METHOD_PUT);
+        $controller = new TestController();
+        $result = $controller->processRequest($request);
+
+        $this->assertTrue(
+            property_exists($result, 'endpoints'),
+            "Alternative index action not hit"
+        );
+    }
+
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Could not find controller or action matching
+     * @expectedExceptionCode    404
+     */
+    public function testActionNotFound() {
+        $request = new Request(
+            Request::METHOD_GET,
+            'not-a-real-action.json'
+        );
+        $controller = new TestController();
+        $controller->processRequest(
+            $request,
+            $request->getRequestChain()
+        );
+    }
+
+    public function testKnownRoute() {
+        $request = new Request(
+            Request::METHOD_GET,
+            'information'
+        );
+        $controller = new TestController();
+        $result = $controller->processRequest($request);
+
+        $this->assertEquals(
+            $result,
+            'information',
+            "Correct action not hit"
+        );
+    }
+
+    public function testParametersFromRequest() {
+        $request = new Request(
+            Request::METHOD_POST,
+            'child/complex-data',
+            [
+                'param1' => 'string',
+                'param2' => 9001,
+                'param3' => true,
+                'param4' => false,
+            ]
+        );
+        $controller = new TestController();
+        $result = $controller->processRequest($request);
+
+        $this->assertEquals(
+            $result->param1,
+            'string',
+            "Data not parsed correctly"
+        );
+        $this->assertEquals(
+            $result->param2,
+            9001,
+            "Data not parsed correctly"
+        );
+        $this->assertEquals(
+            $result->param3,
+            true,
+            "Data not parsed correctly"
+        );
+        $this->assertEquals(
+            $result->param4,
+            false,
+            "Data not parsed correctly"
+        );
+    }
+
 }
  
