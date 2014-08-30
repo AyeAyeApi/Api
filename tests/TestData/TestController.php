@@ -18,7 +18,7 @@ class TestController extends Controller {
 
     protected  $children = [
         'me' => '\Gisleburt\Api\Tests\TestData\TestController',
-        'child' => '\Gisleburt\Api\Tests\TestData\TestControllerChild',
+        'child' => '\Gisleburt\Api\Tests\TestData\TestChildController',
         'hiddenChild' => '\stdClass',
     ];
 
