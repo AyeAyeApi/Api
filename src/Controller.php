@@ -51,10 +51,14 @@ class Controller {
      * @return mixed
      * @throws Exception
      */
-    public function processRequest(Request $request, array $requestChain = []) {
+    public function processRequest(Request $request, array $requestChain = null) {
 
         // Set these internally in case we require access to them
         $this->request = $request;
+
+        if(is_null($requestChain)) {
+            $requestChain = $request->getRequestChain();
+        }
 
         $nextLink = array_shift($requestChain);
         if($nextLink) {
