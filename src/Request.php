@@ -99,33 +99,31 @@ class Request implements \JsonSerializable
         $bodyText = null
     ) {
 
-        if($requestedMethod) {
+        if ($requestedMethod) {
             $this->requestMethod = $requestedMethod;
-        }
-        elseif(array_key_exists('REQUEST_METHOD', $_SERVER)) {
+        } elseif (array_key_exists('REQUEST_METHOD', $_SERVER)) {
             $this->requestMethod = $_SERVER['REQUEST_METHOD'];
         }
 
-        if($requestedUri) {
+        if ($requestedUri) {
             $this->requestedUri = $requestedUri;
-        }
-        elseif(array_key_exists('REQUEST_URI', $_SERVER)) {
+        } elseif (array_key_exists('REQUEST_URI', $_SERVER)) {
             $this->requestedUri = $_SERVER['REQUEST_URI'];
         }
 
 
         // Set parameters
-        if(is_null($request)) {
+        if (is_null($request)) {
             $request = $_REQUEST;
         }
         $this->request = $request;
 
-        if(is_null($header)) {
+        if (is_null($header)) {
             $header = $_SERVER;
         }
-        $this->header  = $this->parseHeader($header);
+        $this->header = $this->parseHeader($header);
 
-        if(is_null($bodyText)) {
+        if (is_null($bodyText)) {
             $bodyText = $this->readBody();
         }
         $this->body = $this->stringToObject($bodyText);
@@ -141,17 +139,16 @@ class Request implements \JsonSerializable
      * @param string[] $headers
      * @return string
      */
-    public function parseHeader(array $headers = array()) {
+    public function parseHeader(array $headers = array())
+    {
         $processedHeaders = array();
-        foreach($headers as $key => $value) {
+        foreach ($headers as $key => $value) {
             if (substr($key, 0, 5) == 'HTTP_') {
                 $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
                 $processedHeaders[$name] = $value;
-            }
-            elseif ($key == 'CONTENT_TYPE') {
+            } elseif ($key == 'CONTENT_TYPE') {
                 $processedHeaders['Content-Type'] = $value;
-            }
-            elseif ($key == 'CONTENT_LENGTH') {
+            } elseif ($key == 'CONTENT_LENGTH') {
                 $processedHeaders['Content-Length'] = $value;
             }
         }
@@ -162,8 +159,9 @@ class Request implements \JsonSerializable
      * Reads in the body of the request
      * @return string
      */
-    protected function readBody() {
-        if(function_exists('http_get_request_body')) {
+    protected function readBody()
+    {
+        if (function_exists('http_get_request_body')) {
             return http_get_request_body();
         }
         return @file_get_contents('php://input');
@@ -177,20 +175,21 @@ class Request implements \JsonSerializable
      * @throws \Exception
      * @return \stdClass
      */
-    public function stringToObject($string) {
-        if(!$string) {
+    public function stringToObject($string)
+    {
+        if (!$string) {
             return new \stdClass();
         }
         // Json
-        if($jsonObject = json_decode($string)) {
+        if ($jsonObject = json_decode($string)) {
             return $jsonObject;
         }
         // Xml
-        if($xmlObject = @simplexml_load_string($string)) {
+        if ($xmlObject = @simplexml_load_string($string)) {
             return $xmlObject;
         }
         // Php
-        if($phpObject = @unserialize($string)) {
+        if ($phpObject = @unserialize($string)) {
             return $phpObject;
         }
 
@@ -203,7 +202,8 @@ class Request implements \JsonSerializable
      * The http method being used
      * @return string
      */
-    public function getMethod() {
+    public function getMethod()
+    {
         return $this->requestMethod;
     }
 
@@ -213,9 +213,10 @@ class Request implements \JsonSerializable
      * @param bool $default
      * @return mixed
      */
-    public function getParameter($key, $default = null) {
+    public function getParameter($key, $default = null)
+    {
         // Request _should_ contain get, post and cookies
-        if(array_key_exists($key, $this->parameters)) {
+        if (array_key_exists($key, $this->parameters)) {
             return $this->parameters[$key];
         }
         return $default;
@@ -225,7 +226,8 @@ class Request implements \JsonSerializable
      * Returns all parameters. Does not return header or body parameters, maybe it should
      * @return array
      */
-    public function getParameters() {
+    public function getParameters()
+    {
         return $this->parameters;
     }
 
@@ -233,8 +235,9 @@ class Request implements \JsonSerializable
      * Get the requested route
      * @return string[]
      */
-    public function getRequestChain() {
-        if(is_null($this->requestChain)) {
+    public function getRequestChain()
+    {
+        if (is_null($this->requestChain)) {
             $this->requestChain = $this->getRequestChainFromUri($this->requestedUri);
         }
         return $this->requestChain;
@@ -244,10 +247,11 @@ class Request implements \JsonSerializable
      * Gets the expected response format
      * @return string
      */
-    public function getFormat() {
-        if(is_null($this->requestedFormat)) {
+    public function getFormat()
+    {
+        if (is_null($this->requestedFormat)) {
             $this->requestedFormat = $this->getFormatFromUri($this->requestedUri);
-            if(is_null($this->requestedFormat)) {
+            if (is_null($this->requestedFormat)) {
                 $this->requestedFormat = static::DEFAULT_FORMAT;
             }
         }
@@ -258,7 +262,8 @@ class Request implements \JsonSerializable
      * Used by PHP to get json object
      * @return array|mixed
      */
-    public function jsonSerialize() {
+    public function jsonSerialize()
+    {
         return [
             'method' => $this->getMethod(),
             'requestedUri' => $this->requestedUri,
@@ -271,11 +276,12 @@ class Request implements \JsonSerializable
      * @param $requestedUri
      * @return string|null
      */
-    public function getFormatFromUri($requestedUri) {
+    public function getFormatFromUri($requestedUri)
+    {
         $uriParts = explode('?', $requestedUri, 2);
         $uriWithoutGet = reset($uriParts);
-        $uriAndFormat  = explode('.', $uriWithoutGet);
-        if(count($uriAndFormat) >= 2) {
+        $uriAndFormat = explode('.', $uriWithoutGet);
+        if (count($uriAndFormat) >= 2) {
             return end($uriAndFormat);
         }
         return null;
@@ -286,11 +292,12 @@ class Request implements \JsonSerializable
      * @param string $requestedUri
      * @return string[]
      */
-    protected function getRequestChainFromUri($requestedUri) {
+    protected function getRequestChainFromUri($requestedUri)
+    {
         // Trim any get variables and the requested format, eg: /requested/uri.format?get=variables
         $routingInformation = preg_replace('/[\?\.].*$/', '', $requestedUri);
         $requestChain = explode('/', $routingInformation);
-        if(!$requestChain[0]) {
+        if (!$requestChain[0]) {
             unset($requestChain[0]);
         }
         return $requestChain;
@@ -304,11 +311,12 @@ class Request implements \JsonSerializable
      * @throws \Exception
      * @returns $this
      */
-    public function addParameters($newParameters, $overwrite = true) {
-        if(is_scalar($newParameters)) {
+    public function addParameters($newParameters, $overwrite = true)
+    {
+        if (is_scalar($newParameters)) {
             throw new \Exception('Add parameters parameter newParameters can not be scalar');
         }
-        foreach($newParameters as $field => $value) {
+        foreach ($newParameters as $field => $value) {
             $this->addParameter($field, $value, $overwrite);
         }
         return $this;
@@ -322,11 +330,12 @@ class Request implements \JsonSerializable
      * @return bool Returns true of value was set
      * @throws \Exception
      */
-    public function addParameter($name, $value, $overwrite = true) {
-        if(!is_scalar($name)) {
+    public function addParameter($name, $value, $overwrite = true)
+    {
+        if (!is_scalar($name)) {
             throw new \Exception('Add parameter: parameter name must be scalar');
         }
-        if(!$overwrite && array_key_exists($name, $this->parameters)) {
+        if (!$overwrite && array_key_exists($name, $this->parameters)) {
             return false;
         }
         $this->parameters[$name] = $value;

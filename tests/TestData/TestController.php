@@ -10,13 +10,14 @@ namespace Gisleburt\Api\Tests\TestData;
 
 use Gisleburt\Api\Controller;
 
-class TestController extends Controller {
+class TestController extends Controller
+{
 
     protected $ignoreChildren = [
         'hiddenChild'
     ];
 
-    protected  $children = [
+    protected $children = [
         'me' => '\Gisleburt\Api\Tests\TestData\TestController',
         'child' => '\Gisleburt\Api\Tests\TestData\TestChildController',
         'hiddenChild' => '\stdClass',
@@ -26,7 +27,8 @@ class TestController extends Controller {
      * Gets some information
      * @return string
      */
-    public function getInformationAction() {
+    public function getInformationAction()
+    {
         return 'information';
     }
 
@@ -35,7 +37,8 @@ class TestController extends Controller {
      * @param string $condition The condition for the information
      * @return \stdClass
      */
-    public function getMoreInformationAction($condition) {
+    public function getMoreInformationAction($condition)
+    {
         $object = new \stdClass();
         $object->condition = $condition;
         return $object;
@@ -46,7 +49,8 @@ class TestController extends Controller {
      * @param $information string The information to put
      * @return bool
      */
-    public function putInformationAction($information) {
+    public function putInformationAction($information)
+    {
         return true;
     }
 

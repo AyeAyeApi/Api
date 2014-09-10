@@ -5,6 +5,7 @@
  * @copyright Daniel Mason, 2014
  */
 
-function http_get_request_body() {
+function http_get_request_body()
+{
     return '{"hackedJson": true}';
 }

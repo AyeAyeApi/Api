@@ -10,7 +10,8 @@ namespace Gisleburt\Api\Tests;
 
 use Gisleburt\Api\Exception;
 
-class ExceptionTest extends TestCase {
+class ExceptionTest extends TestCase
+{
 
     /**
      * Test that general Exception behavior is maintained
@@ -20,11 +21,13 @@ class ExceptionTest extends TestCase {
      * @expectedExceptionMessage Basic Exception Message
      * @expectedExceptionCode    500
      */
-    public function testThrowException() {
+    public function testThrowException()
+    {
         throw new Exception('Basic Exception Message', 500);
     }
 
-    public function testPublicMessage() {
+    public function testPublicMessage()
+    {
 
         $testMessage = 'Message';
         $testCode = 101;
@@ -32,66 +35,66 @@ class ExceptionTest extends TestCase {
 
         try {
             throw new Exception($testMessage, $testCode, $testPublicMessage);
-        }
-        catch(Exception $e) {
+        } catch (Exception $e) {
 
             $message = $e->getMessage();
             $this->assertTrue(
                 $message === $testMessage,
-                "Exception messsage was not $testMessage: ".PHP_EOL.$message
+                "Exception messsage was not $testMessage: " . PHP_EOL . $message
             );
 
             $code = $e->getCode();
             $this->assertTrue(
                 $code === $testCode,
-                "Exception code was not $testCode: ".PHP_EOL.$message
+                "Exception code was not $testCode: " . PHP_EOL . $message
             );
 
             $publicMessage = $e->getPublicMessage();
             $this->assertTrue(
                 $publicMessage == $testPublicMessage,
-                "Exception public message was not $testPublicMessage: ".PHP_EOL.$publicMessage
+                "Exception public message was not $testPublicMessage: " . PHP_EOL . $publicMessage
             );
         }
     }
 
-    public function testDefaultPublicMessage() {
+    public function testDefaultPublicMessage()
+    {
         $testCode = 9001;
         $testPublicMessage = 'Internal Server Error';
 
         try {
             throw new Exception('Test', $testCode);
-        }
-        catch(Exception $e) {
+        } catch (Exception $e) {
 
             $publicMessage = $e->getPublicMessage();
             $this->assertTrue(
                 $publicMessage == $testPublicMessage,
-                "Exception public message was not $testPublicMessage: ".PHP_EOL.$publicMessage
+                "Exception public message was not $testPublicMessage: " . PHP_EOL . $publicMessage
             );
         }
     }
 
-    public function testCodeStatusMessage() {
+    public function testCodeStatusMessage()
+    {
 
         $testPublicMessage = "I'm a teapot";
 
         try {
             throw new Exception('Test', 418);
-        }
-        catch(Exception $e) {
+        } catch (Exception $e) {
 
             $publicMessage = $e->getPublicMessage();
             $this->assertTrue(
                 $publicMessage == $testPublicMessage,
-                "Exception public message was not $testPublicMessage: ".PHP_EOL.$publicMessage
+                "Exception public message was not $testPublicMessage: " . PHP_EOL . $publicMessage
             );
 
         }
 
     }
 
-    public function testJsonSerialization() {
+    public function testJsonSerialization()
+    {
 
         $testMessage = 'Message';
         $testCode = 101;
@@ -106,19 +109,19 @@ class ExceptionTest extends TestCase {
         $count = count($object);
         $this->assertTrue(
             $count === 3,
-            'There should only be 3 items in the array, there were: '.PHP_EOL.$count
+            'There should only be 3 items in the array, there were: ' . PHP_EOL . $count
         );
 
         $publicMessage = $object['message'];
         $this->assertTrue(
             $publicMessage === $testPublicMessage,
-            "Exception messsage was not $testMessage: ".PHP_EOL.$publicMessage
+            "Exception messsage was not $testMessage: " . PHP_EOL . $publicMessage
         );
 
         $code = $object['code'];
         $this->assertTrue(
             $code === $testCode,
-            "Exception code was not $testCode: ".PHP_EOL.$code
+            "Exception code was not $testCode: " . PHP_EOL . $code
         );
 
     }

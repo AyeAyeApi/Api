@@ -13,9 +13,11 @@ use Gisleburt\Api\Request;
 use Gisleburt\Api\Status;
 use Gisleburt\Api\Tests\TestData\TestController;
 
-class ControllerTest extends TestCase {
+class ControllerTest extends TestCase
+{
 
-    public function testParseActionName() {
+    public function testParseActionName()
+    {
         $controller = new Controller();
 
         $action = 'index';
@@ -25,7 +27,7 @@ class ControllerTest extends TestCase {
 
         $this->assertTrue(
             $actualEndpoint === $expectedEndpoint,
-            "Expected $expectedEndpoint, is actually: ".PHP_EOL.$actualEndpoint
+            "Expected $expectedEndpoint, is actually: " . PHP_EOL . $actualEndpoint
         );
 
         $action = 'a-longer-name';
@@ -35,11 +37,12 @@ class ControllerTest extends TestCase {
 
         $this->assertTrue(
             $actualEndpoint === $expectedEndpoint,
-            "Expected $expectedEndpoint, is actually: ".PHP_EOL.$actualEndpoint
+            "Expected $expectedEndpoint, is actually: " . PHP_EOL . $actualEndpoint
         );
     }
 
-    public function testStatus() {
+    public function testStatus()
+    {
 
         // Default behaviour is OK
 
@@ -48,17 +51,17 @@ class ControllerTest extends TestCase {
 
         $this->assertTrue(
             $status instanceof Status,
-            "status was expected to be type Status, is actually: ".PHP_EOL.get_class($status)
+            "status was expected to be type Status, is actually: " . PHP_EOL . get_class($status)
         );
 
         $this->assertTrue(
             $status->getCode() === 200,
-            "status was expected to be code 200, is actually: ".PHP_EOL.$status->getCode()
+            "status was expected to be code 200, is actually: " . PHP_EOL . $status->getCode()
         );
 
         $this->assertTrue(
             $status->getMessage() === 'OK',
-            "status was expected to be 'OK', is actually: ".PHP_EOL.$status->getMessage()
+            "status was expected to be 'OK', is actually: " . PHP_EOL . $status->getMessage()
         );
 
         $controller = new Controller();
@@ -67,22 +70,23 @@ class ControllerTest extends TestCase {
 
         $this->assertTrue(
             $status instanceof Status,
-            "status was expected to be type Status, is actually: ".PHP_EOL.get_class($status)
+            "status was expected to be type Status, is actually: " . PHP_EOL . get_class($status)
         );
 
         $this->assertTrue(
             $status->getCode() === 418,
-            "status was expected to be code 418, is actually: ".PHP_EOL.$status->getCode()
+            "status was expected to be code 418, is actually: " . PHP_EOL . $status->getCode()
         );
 
         $this->assertTrue(
             $status->getMessage() === "I'm a teapot",
-            "status was expected to be 'I'm a teapot', is actually: ".PHP_EOL.$status->getMessage()
+            "status was expected to be 'I'm a teapot', is actually: " . PHP_EOL . $status->getMessage()
         );
 
     }
 
-    public function testGetChildren() {
+    public function testGetChildren()
+    {
         $controller = new TestController();
         $children = $controller->getChildren();
 
@@ -106,7 +110,8 @@ class ControllerTest extends TestCase {
         );
     }
 
-    public function testIndexAction() {
+    public function testIndexAction()
+    {
         $controller = new TestController();
         $result = $controller->getIndexAction();
 
@@ -129,14 +134,14 @@ class ControllerTest extends TestCase {
 
         $this->assertTrue(
             count($result->children) == 2,
-            "Children should have has 2 elements, it had: ".PHP_EOL.count($result->children)
+            "Children should have has 2 elements, it had: " . PHP_EOL . count($result->children)
         );
 
         // Endpoints
 
         $this->assertTrue(
             count($result->endpoints['get']) == 2,
-            "There should have been 2 get endpoints, there were: ".PHP_EOL.count($result->endpoints['get'])
+            "There should have been 2 get endpoints, there were: " . PHP_EOL . count($result->endpoints['get'])
         );
 
         $this->assertTrue(
@@ -181,7 +186,7 @@ class ControllerTest extends TestCase {
 
         $this->assertTrue(
             count($result->endpoints['put']) === 1,
-            "There should have been 1 get endpoints, there were: ".PHP_EOL.count($result->endpoints['put'])
+            "There should have been 1 get endpoints, there were: " . PHP_EOL . count($result->endpoints['put'])
         );
 
         $this->assertTrue(
@@ -191,7 +196,8 @@ class ControllerTest extends TestCase {
 
     }
 
-    public function testDefaultIndexRoute() {
+    public function testDefaultIndexRoute()
+    {
         $request = new Request();
         $controller = new TestController();
         $result = $controller->processRequest($request, []);
@@ -202,7 +208,8 @@ class ControllerTest extends TestCase {
         );
     }
 
-    public function testAlternativeIndexRoute() {
+    public function testAlternativeIndexRoute()
+    {
         $request = new Request(Request::METHOD_PUT);
         $controller = new TestController();
         $result = $controller->processRequest($request);
@@ -218,7 +225,8 @@ class ControllerTest extends TestCase {
      * @expectedExceptionMessage Could not find controller or action matching
      * @expectedExceptionCode    404
      */
-    public function testActionNotFound() {
+    public function testActionNotFound()
+    {
         $request = new Request(
             Request::METHOD_GET,
             'not-a-real-action.json'
@@ -230,7 +238,8 @@ class ControllerTest extends TestCase {
         );
     }
 
-    public function testKnownRoute() {
+    public function testKnownRoute()
+    {
         $request = new Request(
             Request::METHOD_GET,
             'information'
@@ -245,7 +254,8 @@ class ControllerTest extends TestCase {
         );
     }
 
-    public function testParametersFromRequest() {
+    public function testParametersFromRequest()
+    {
         $request = new Request(
             Request::METHOD_POST,
             'child/complex-data',

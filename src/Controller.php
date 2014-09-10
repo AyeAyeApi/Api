@@ -10,7 +10,8 @@ namespace Gisleburt\Api;
 
 use Gisleburt\Api\Exception as ApiException;
 
-class Controller {
+class Controller
+{
 
     /**
      * Controllers that this API links to
@@ -51,18 +52,19 @@ class Controller {
      * @return mixed
      * @throws Exception
      */
-    public function processRequest(Request $request, array $requestChain = null) {
+    public function processRequest(Request $request, array $requestChain = null)
+    {
 
         // Set these internally in case we require access to them
         $this->request = $request;
 
-        if(is_null($requestChain)) {
+        if (is_null($requestChain)) {
             $requestChain = $request->getRequestChain();
         }
 
         $nextLink = array_shift($requestChain);
-        if($nextLink) {
-            if(array_key_exists($nextLink, $this->children)) {
+        if ($nextLink) {
+            if (array_key_exists($nextLink, $this->children)) {
                 /** @var Controller $child */
                 $child = new $this->children[$nextLink]();
                 $data = $child->processRequest($request, $requestChain);
@@ -71,7 +73,7 @@ class Controller {
             }
 
             $potentialAction = $this->parseActionName($nextLink, $this->request->getMethod());
-            if(method_exists($this, $potentialAction)) {
+            if (method_exists($this, $potentialAction)) {
                 return call_user_func_array(
                     [$this, $potentialAction],
                     $this->getParametersFromRequest($request, $potentialAction)
@@ -83,7 +85,7 @@ class Controller {
         }
 
         $potentialAction = $this->parseActionName('index', $this->request->getMethod());
-        if(method_exists($this, $potentialAction)) {
+        if (method_exists($this, $potentialAction)) {
             return $this->$potentialAction();
         }
 
@@ -97,17 +99,19 @@ class Controller {
      * @param string $method
      * @return string
      */
-    public function parseActionName($action, $method = Request::METHOD_GET) {
+    public function parseActionName($action, $method = Request::METHOD_GET)
+    {
         $action = str_replace(' ', '', ucwords(str_replace('-', ' ', $action)));
         $method = strtolower($method);
-        return $method.$action.'Action';
+        return $method . $action . 'Action';
     }
 
     /**
      * Returns a list of possible actions and child controllers
      * @return \stdClass
      */
-    public function getIndexAction() {
+    public function getIndexAction()
+    {
         $data = new \stdClass();
         $data->children = $this->getChildren();
         $data->endpoints = $this->getEndpoints();
@@ -118,10 +122,11 @@ class Controller {
      * Get a list of child controllers to this one
      * @return array
      */
-    public function getChildren() {
+    public function getChildren()
+    {
         $children = [];
-        foreach($this->children as $child => $class) {
-            if(!in_array($child, $this->ignoreChildren)) {
+        foreach ($this->children as $child => $class) {
+            if (!in_array($child, $this->ignoreChildren)) {
                 $children[] = $child;
             }
         }
@@ -131,8 +136,9 @@ class Controller {
     /**
      * @return Status
      */
-    public function getStatus() {
-        if(!$this->status) {
+    public function getStatus()
+    {
+        if (!$this->status) {
             $this->status = new Status();
         }
         return $this->status;
@@ -142,7 +148,8 @@ class Controller {
      * @param Status $status
      * @return $this
      */
-    public function setStatus(Status $status) {
+    public function setStatus(Status $status)
+    {
         $this->status = $status;
         return $this;
     }
@@ -151,7 +158,8 @@ class Controller {
      * @param $statusCode
      * @return $this
      */
-    public function setStatusCode($statusCode) {
+    public function setStatusCode($statusCode)
+    {
         $this->setStatus(new Status($statusCode));
         return $this;
     }
@@ -160,17 +168,19 @@ class Controller {
      * Returns a list of actions attached to this class
      * @return array
      */
-    public function getEndpoints() {
+    public function getEndpoints()
+    {
         $endPoints = [];
         $parts = [];
         $methods = get_class_methods($this);
-        foreach($methods as $classMethod) {
-            if(preg_match('/([a-z]+)([A-Z]\w+)Action$/', $classMethod, $parts)) {
+        foreach ($methods as $classMethod) {
+            if (preg_match('/([a-z]+)([A-Z]\w+)Action$/', $classMethod, $parts)) {
                 $method = strtolower($parts[1]);
-                $endPoint = strtolower(preg_replace('/([a-z])([A-Z])/s','$1-$2', $parts[2]));
-                if(!in_array($endPoint, $this->ignoreEndpoints)) {
-                    if(!array_key_exists($method, $endPoints))
+                $endPoint = strtolower(preg_replace('/([a-z])([A-Z])/s', '$1-$2', $parts[2]));
+                if (!in_array($endPoint, $this->ignoreEndpoints)) {
+                    if (!array_key_exists($method, $endPoints)) {
                         $endPoints[$method] = array();
+                    }
                     $endPoints[$method][$endPoint] = $this->getMethodDocumentation($classMethod);
                 }
             }
@@ -183,25 +193,27 @@ class Controller {
      * @param $method
      * @return array
      */
-    public function getMethodDocumentation($method) {
+    public function getMethodDocumentation($method)
+    {
         $reflectionMethod = new \ReflectionMethod($this, $method);
         $doc = $reflectionMethod->getDocComment();
 
         // Description
         $description = '';
         preg_match_all('/\*\s+(\w[^@^\n^\r]+)/', $doc, $results);
-        if(array_key_exists(1, $results)) {
+        if (array_key_exists(1, $results)) {
             $description = implode(' ', $results[1]);
         }
 
         // Parameters
         $parameters = array();
         $nMatches = preg_match_all('/@param (\S+) \$?(\S+) ?([\S ]+)?/', $doc, $results);
-        for($i = 0; $i < $nMatches; $i++) {
+        for ($i = 0; $i < $nMatches; $i++) {
             $parameter = new \stdClass();
             $parameter->type = $results[1][$i];
-            if($results[3][$i])
+            if ($results[3][$i]) {
                 $parameter->description = $results[3][$i];
+            }
             $parameters[$results[2][$i]] = $parameter;
         }
 
@@ -217,12 +229,16 @@ class Controller {
      * @param $method
      * @return array
      */
-    protected function getParametersFromRequest(Request $request, $method) {
+    protected function getParametersFromRequest(Request $request, $method)
+    {
         $parameters = array();
         $reflectionMethod = new \ReflectionMethod($this, $method);
         $reflectionParameters = $reflectionMethod->getParameters();
-        foreach($reflectionParameters as $reflectionParameter) {
-            $parameters[$reflectionParameter->getName()] = $request->getParameter($reflectionParameter->getName(), null);
+        foreach ($reflectionParameters as $reflectionParameter) {
+            $parameters[$reflectionParameter->getName()] = $request->getParameter(
+                $reflectionParameter->getName(),
+                null
+            );
         }
         return $parameters;
     }

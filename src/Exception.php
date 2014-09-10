@@ -27,22 +27,25 @@ class Exception extends \Exception implements \JsonSerializable
      * @param string $publicMessage Message to show the user if different from the message associated with the status code
      * @param \Exception $previous Any previous Exception
      */
-    public function __construct($message, $code = 500, $publicMessage = '', \Exception $previous = null) {
+    public function __construct($message, $code = 500, $publicMessage = '', \Exception $previous = null)
+    {
         $this->publicMessage = $publicMessage;
-        if(!$publicMessage) {
+        if (!$publicMessage) {
             $this->publicMessage = Status::getMessageForCode($code);
-            if(!$this->publicMessage) {
+            if (!$this->publicMessage) {
                 $this->publicMessage = static::DEFAULT_MESSAGE;
             }
         }
         parent::__construct($message, $code, $previous);
     }
 
-    public function getPublicMessage() {
+    public function getPublicMessage()
+    {
         return $this->publicMessage;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize()
+    {
         return [
             'message' => $this->getPublicMessage(),
             'code' => $this->getCode(),

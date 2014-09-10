@@ -10,46 +10,49 @@ namespace Gisleburt\Api\Tests;
 
 use Gisleburt\Api\Request;
 
-class RequestTest extends TestCase {
+class RequestTest extends TestCase
+{
 
-    public function testDefaultRequest() {
+    public function testDefaultRequest()
+    {
         $request = new Request();
 
         $format = $request->getFormat();
         $this->assertTrue(
             $format === 'json',
-            'Format is not json: '.PHP_EOL.$format
+            'Format is not json: ' . PHP_EOL . $format
         );
 
         $method = $request->getMethod();
         $this->assertTrue(
             $method === 'GET',
-            'Method is not GET: '.PHP_EOL.$method
+            'Method is not GET: ' . PHP_EOL . $method
         );
 
         $numParameters = count($request->getParameters());
         $this->assertTrue(
             $numParameters === 0,
-            'No Parameters should have been defined, there are: '.PHP_EOL.$numParameters
+            'No Parameters should have been defined, there are: ' . PHP_EOL . $numParameters
         );
 
         $requestChainSize = count($request->getRequestChain());
         $this->assertTrue(
             $requestChainSize === 0,
-            'There shouldn\'t be any elements in the request chain, there are: '.PHP_EOL.$requestChainSize
+            'There shouldn\'t be any elements in the request chain, there are: ' . PHP_EOL . $requestChainSize
         );
     }
 
     /**
      * Test the Request classes ability to read headers
      */
-    public function testParseHeader() {
+    public function testParseHeader()
+    {
         /** @var Request $request */
         $request = new Request();
         $headersSize = count($request->parseHeader());
         $this->assertTrue(
             $headersSize == 0,
-            'There shouldn\'t be any headers, there are: '.PHP_EOL.$headersSize
+            'There shouldn\'t be any headers, there are: ' . PHP_EOL . $headersSize
         );
 
         $_SERVER['CONTENT_TYPE'] = 'application/json';
@@ -62,27 +65,28 @@ class RequestTest extends TestCase {
         $headersSize = count($headers);
         $this->assertTrue(
             $headersSize == 3,
-            'There should be 3 headers, there are: '.PHP_EOL.$headersSize
+            'There should be 3 headers, there are: ' . PHP_EOL . $headersSize
         );
 
         $this->assertTrue(
             $headers['Content-Type'] === $_SERVER['CONTENT_TYPE'],
-            'Content-Type should have been set to application/json, it was: '.PHP_EOL.$headers['Content-Type']
+            'Content-Type should have been set to application/json, it was: ' . PHP_EOL . $headers['Content-Type']
         );
 
         $this->assertTrue(
             $headers['Content-Length'] === $_SERVER['CONTENT_LENGTH'],
-            'Content-Length should have been set to application/json, it was: '.PHP_EOL.$headers['Content-Length']
+            'Content-Length should have been set to application/json, it was: ' . PHP_EOL . $headers['Content-Length']
         );
 
         $this->assertTrue(
             $headers['Not-A-Real-Header'] === $_SERVER['HTTP_NOT_A_REAL_HEADER'],
-            'Content-Length should have been set to application/json, it was: '.PHP_EOL.$headers['Content-Length']
+            'Content-Length should have been set to application/json, it was: ' . PHP_EOL . $headers['Content-Length']
         );
     }
 
 
-    public function testStringToObjectJson() {
+    public function testStringToObjectJson()
+    {
         $json = '{"testArray" : [1, true], "testObject": {"string": "a string"}}';
         $request = new Request();
         $jsonObject = $request->stringToObject($json);
@@ -90,26 +94,27 @@ class RequestTest extends TestCase {
         $testArraySize = count($jsonObject->testArray);
         $this->assertTrue(
             $testArraySize === 2,
-            'testArray should contain 2 elements, it contains: '.PHP_EOL.$testArraySize
+            'testArray should contain 2 elements, it contains: ' . PHP_EOL . $testArraySize
         );
 
         $this->assertTrue(
             $jsonObject->testArray[0] === 1,
-            'testArrays first element should be 1, is actually'.PHP_EOL.$jsonObject->testArray[0]
+            'testArrays first element should be 1, is actually' . PHP_EOL . $jsonObject->testArray[0]
         );
 
         $this->assertTrue(
             $jsonObject->testArray[1] === true,
-            'testArrays second element should be true, is actually'.PHP_EOL.$jsonObject->testArray[1]
+            'testArrays second element should be true, is actually' . PHP_EOL . $jsonObject->testArray[1]
         );
 
         $this->assertTrue(
             $jsonObject->testObject->string === "a string",
-            'testObject should contain the string "a string", is actually'.PHP_EOL.$jsonObject->testObject->string
+            'testObject should contain the string "a string", is actually' . PHP_EOL . $jsonObject->testObject->string
         );
     }
 
-    public function testStringToObjectXml() {
+    public function testStringToObjectXml()
+    {
         $xml = '<data><testObject><string>a string</string></testObject></data>';
         $request = new Request();
         $xmlObject = $request->stringToObject($xml);
@@ -121,11 +126,12 @@ class RequestTest extends TestCase {
 
         $this->assertTrue(
             $xmlObject->testObject->string == "a string",
-            'testObject should contain the string "a string", is actually'.PHP_EOL.$xmlObject->testObject->string
+            'testObject should contain the string "a string", is actually' . PHP_EOL . $xmlObject->testObject->string
         );
     }
 
-    public function testStringToObjectPhp() {
+    public function testStringToObjectPhp()
+    {
 
         $php = 'O:8:"stdClass":2:{s:9:"testArray";a:2:{i:0;i:1;i:1;b:1;}s:10:"testObject";O:8:"stdClass":1:{s:6:"string";s:8:"a string";}}';
         $request = new Request();
@@ -134,26 +140,27 @@ class RequestTest extends TestCase {
         $testArraySize = count($phpObject->testArray);
         $this->assertTrue(
             $testArraySize === 2,
-            'testArray should contain 2 elements, it contains: '.PHP_EOL.$testArraySize
+            'testArray should contain 2 elements, it contains: ' . PHP_EOL . $testArraySize
         );
 
         $this->assertTrue(
             $phpObject->testArray[0] === 1,
-            'testArrays first element should be 1, is actually'.PHP_EOL.$phpObject->testArray[0]
+            'testArrays first element should be 1, is actually' . PHP_EOL . $phpObject->testArray[0]
         );
 
         $this->assertTrue(
             $phpObject->testArray[1] === true,
-            'testArrays second element should be true, is actually'.PHP_EOL.$phpObject->testArray[1]
+            'testArrays second element should be true, is actually' . PHP_EOL . $phpObject->testArray[1]
         );
 
         $this->assertTrue(
             $phpObject->testObject->string === "a string",
-            'testObject should contain the string "a string", is actually'.PHP_EOL.$phpObject->testObject->string
+            'testObject should contain the string "a string", is actually' . PHP_EOL . $phpObject->testObject->string
         );
     }
 
-    public function testStringToStringObject() {
+    public function testStringToStringObject()
+    {
         $string = 'string';
 
         $request = new Request();
@@ -161,16 +168,17 @@ class RequestTest extends TestCase {
 
         $this->assertTrue(
             $stringObejct->text === $string,
-            "String should have been 'string', is acturally: ".PHP_EOL.$stringObejct->text
+            "String should have been 'string', is acturally: " . PHP_EOL . $stringObejct->text
         );
     }
 
-    public function testGetMethod() {
+    public function testGetMethod()
+    {
         $request = new Request();
         $method = $request->getMethod();
         $this->assertTrue(
             $method === Request::METHOD_GET,
-            'Default method should be GET, is actually: '.PHP_EOL.$method
+            'Default method should be GET, is actually: ' . PHP_EOL . $method
         );
 
         $_SERVER['REQUEST_METHOD'] = Request::METHOD_DELETE; // Tested later
@@ -178,18 +186,19 @@ class RequestTest extends TestCase {
         $method = $request->getMethod();
         $this->assertTrue(
             $method === Request::METHOD_POST,
-            'Method should be set to POST by constructor, is actually: '.PHP_EOL.$method
+            'Method should be set to POST by constructor, is actually: ' . PHP_EOL . $method
         );
 
         $request = new Request();
         $method = $request->getMethod();
         $this->assertTrue(
             $method === Request::METHOD_DELETE,
-            'Method should be set to DELETE by $_SERVER, is actually: '.PHP_EOL.$method
+            'Method should be set to DELETE by $_SERVER, is actually: ' . PHP_EOL . $method
         );
     }
 
-    public function testGetParameter() {
+    public function testGetParameter()
+    {
         $request = new Request(
             null,
             '',
@@ -201,42 +210,43 @@ class RequestTest extends TestCase {
         $result = $request->getParameter('this-parameter-not-set');
         $this->assertTrue(
             $result === null,
-            'The default value for an unknown value, is actually: '.PHP_EOL.print_r($result, true)
+            'The default value for an unknown value, is actually: ' . PHP_EOL . print_r($result, true)
         );
 
         $result = $request->getParameter('true');
         $this->assertTrue(
             $result === true,
-            'Test parameter "true" should be true, is actually: '.PHP_EOL.print_r($result, true)
+            'Test parameter "true" should be true, is actually: ' . PHP_EOL . print_r($result, true)
         );
 
         $result = $request->getParameter('false');
         $this->assertTrue(
             $result === false,
-            'Test parameter "false" should be false, is actually: '.PHP_EOL.print_r($result, true)
+            'Test parameter "false" should be false, is actually: ' . PHP_EOL . print_r($result, true)
         );
 
         $result = $request->getParameter('Header-String');
         $this->assertTrue(
             $result === 'a string',
-            'Header-String should be "a string", is actually: '.PHP_EOL.print_r($result, true)
+            'Header-String should be "a string", is actually: ' . PHP_EOL . print_r($result, true)
         );
 
         $result = $request->getParameter('bodyString');
         $this->assertTrue(
             $result === 'a string',
-            'bodyString should be "a string", is actually: '.PHP_EOL.print_r($result, true)
+            'bodyString should be "a string", is actually: ' . PHP_EOL . print_r($result, true)
         );
 
         $result = $request->getParameter('this-parameter-not-set');
         $this->assertTrue(
             $result === null,
-            'The default value for an unknown value, is actually: '.PHP_EOL.print_r($result, true)
+            'The default value for an unknown value, is actually: ' . PHP_EOL . print_r($result, true)
         );
 
     }
 
-    public function testJsonSerializable() {
+    public function testJsonSerializable()
+    {
         $request = new Request(
             Request::METHOD_POST,
             '/test/path.xml',
@@ -249,27 +259,33 @@ class RequestTest extends TestCase {
 
         $this->assertTrue(
             $jsonObject->method === Request::METHOD_POST,
-            'Request method should be POST, is actually: '.PHP_EOL.$jsonObject->method
+            'Request method should be POST, is actually: ' . PHP_EOL . $jsonObject->method
         );
 
         $this->assertTrue(
             $jsonObject->requestedUri === '/test/path.xml',
-            'Requested URI should be /test/path.xml, is actually: '.PHP_EOL.$jsonObject->requestedUri
+            'Requested URI should be /test/path.xml, is actually: ' . PHP_EOL . $jsonObject->requestedUri
         );
 
         $this->assertTrue(
             $jsonObject->method === Request::METHOD_POST,
-            'Request method should be POST, is actually: '.PHP_EOL.$jsonObject->method
+            'Request method should be POST, is actually: ' . PHP_EOL . $jsonObject->method
         );
 
         $this->assertTrue(
             $jsonObject->parameters->firstParameter === '1',
-            'First parameter should be 1, is actually: '.PHP_EOL.print_r($jsonObject->parameters->firstParameter, true)
+            'First parameter should be 1, is actually: ' . PHP_EOL . print_r(
+                $jsonObject->parameters->firstParameter,
+                true
+            )
         );
 
         $this->assertTrue(
             $jsonObject->parameters->secondParameter === 2,
-            'Second parameter should be 2, is actually: '.PHP_EOL.print_r($jsonObject->parameters->secondParameter, true)
+            'Second parameter should be 2, is actually: ' . PHP_EOL . print_r(
+                $jsonObject->parameters->secondParameter,
+                true
+            )
         );
 
         // Lets check the server variable is read too
@@ -279,7 +295,7 @@ class RequestTest extends TestCase {
         $jsonObject = json_decode(json_encode($request));
         $this->assertTrue(
             $jsonObject->requestedUri === $_SERVER['REQUEST_URI'],
-            "Request URI should be {$_SERVER['REQUEST_URI']}, is actually: ".PHP_EOL.$jsonObject->requestedUri
+            "Request URI should be {$_SERVER['REQUEST_URI']}, is actually: " . PHP_EOL . $jsonObject->requestedUri
         );
 
     }
@@ -289,9 +305,10 @@ class RequestTest extends TestCase {
      * @expectedExceptionMessage Add parameter: parameter name must be scalar
      * @expectedExceptionCode    0
      */
-    public function testAddParameterException() {
+    public function testAddParameterException()
+    {
         $request = new Request();
-        $request->addParameter([],[]);
+        $request->addParameter([], []);
     }
 
     /**
@@ -299,12 +316,14 @@ class RequestTest extends TestCase {
      * @expectedExceptionMessage Add parameters parameter newParameters can not be scalar
      * @expectedExceptionCode    0
      */
-    public function testAddParametersException() {
+    public function testAddParametersException()
+    {
         $request = new Request();
         $request->addParameters(true);
     }
 
-    public function testAddParameterFail() {
+    public function testAddParameterFail()
+    {
         $request = new Request();
         $this->assertTrue(
             $request->addParameter('name', 'value', false),
@@ -314,7 +333,7 @@ class RequestTest extends TestCase {
         $parameter = $request->getParameter('name');
         $this->assertTrue(
             $parameter === 'value',
-            "Parameter should have been 'value', is actually: ".PHP_EOL.print_r($parameter, true)
+            "Parameter should have been 'value', is actually: " . PHP_EOL . print_r($parameter, true)
         );
 
         $this->assertFalse(
@@ -323,7 +342,8 @@ class RequestTest extends TestCase {
         );
     }
 
-    public function testReadBodyDodgily() {
+    public function testReadBodyDodgily()
+    {
 
         require_once 'TestData/http_get_request_body.php';
 
@@ -335,28 +355,29 @@ class RequestTest extends TestCase {
         );
     }
 
-    public function testGetFormatFromUri() {
+    public function testGetFormatFromUri()
+    {
         $request = new Request();
 
         $uri = '/test/file.php';
         $format = $request->getFormatFromUri($uri);
         $this->assertTrue(
             $format === 'php',
-            'Format should be php, is actually: '.PHP_EOL.$format
+            'Format should be php, is actually: ' . PHP_EOL . $format
         );
 
         $uri = '/test/file.json';
         $format = $request->getFormatFromUri($uri);
         $this->assertTrue(
             $format === 'json',
-            'Format should be json, is actually: '.PHP_EOL.$format
+            'Format should be json, is actually: ' . PHP_EOL . $format
         );
 
         $uri = '/test/file.json?parameters=true';
         $format = $request->getFormatFromUri($uri);
         $this->assertTrue(
             $format === 'json',
-            'Format should be json, is actually: '.PHP_EOL.$format
+            'Format should be json, is actually: ' . PHP_EOL . $format
         );
     }
 

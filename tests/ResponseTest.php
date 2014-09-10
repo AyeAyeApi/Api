@@ -15,9 +15,11 @@ use Gisleburt\Formatter\Formats\Json;
 use Gisleburt\Formatter\Formats\Xml;
 use Gisleburt\Formatter\FormatFactory;
 
-class ResponseTest extends TestCase {
+class ResponseTest extends TestCase
+{
 
-    public function testSetData() {
+    public function testSetData()
+    {
         $testData = 'TestData';
         $response = new Response();
         $response->setData($testData);
@@ -25,14 +27,15 @@ class ResponseTest extends TestCase {
         $data = $response->getData();
         $this->assertTrue(
             $data === $testData,
-            'Data did not match test data'.PHP_EOL.$data
+            'Data did not match test data' . PHP_EOL . $data
         );
     }
 
     /**
      * Test setting the status with a status object
      */
-    public function testSetStatus() {
+    public function testSetStatus()
+    {
         $testStatus = new Status(418);
         $response = new Response();
         $response->setStatus($testStatus);
@@ -40,14 +43,15 @@ class ResponseTest extends TestCase {
         $status = $response->getStatus();
         $this->assertTrue(
             $status->getCode() === $testStatus->getCode(),
-            'Status did not match test status'.PHP_EOL.$status->getCode()
+            'Status did not match test status' . PHP_EOL . $status->getCode()
         );
     }
 
     /**
      * Test setting the status with a status object
      */
-    public function testSetStatusCode() {
+    public function testSetStatusCode()
+    {
         $testStatusCode = 418;
         $response = new Response();
         $response->setStatusCode($testStatusCode);
@@ -55,7 +59,7 @@ class ResponseTest extends TestCase {
         $status = $response->getStatus();
         $this->assertTrue(
             $status->getCode() === $testStatusCode,
-            'Status did not match test status'.PHP_EOL.$status->getCode()
+            'Status did not match test status' . PHP_EOL . $status->getCode()
         );
     }
 
@@ -65,13 +69,15 @@ class ResponseTest extends TestCase {
      * @expectedException        \Exception
      * @expectedExceptionMessage Format factory not set
      */
-    public function testSetFormatWithoutFactory() {
+    public function testSetFormatWithoutFactory()
+    {
         $testFormat = 'xml';
         $response = new Response;
         $response->setFormat($testFormat);
     }
 
-    public function testSetFormatWithFactory() {
+    public function testSetFormatWithFactory()
+    {
 
         $testFormat = 'xml';
         $formatFactory = new FormatFactory([
@@ -85,22 +91,26 @@ class ResponseTest extends TestCase {
         $format = $response->getFormat();
         $this->assertTrue(
             $format instanceof Xml,
-            'Format returned was not of type format: '.PHP_EOL.get_class($format)
+            'Format returned was not of type format: ' . PHP_EOL . get_class($format)
         );
 
     }
 
-    public function testSetRequest() {
+    public function testSetRequest()
+    {
         $request = new Request();
         $response = new Response();
-        $response->setFormatFactory(new FormatFactory([
+        $response->setFormatFactory(
+            new FormatFactory([
                 'json' => new Json()
-            ]));
+            ])
+        );
         $response->setRequest($request);
         $response->getRequest();
     }
 
-    public function testJsonSerializable() {
+    public function testJsonSerializable()
+    {
         $testData = new \stdClass();
         $testData->string = 'string';
         $testStatusCode = '418';
@@ -111,9 +121,11 @@ class ResponseTest extends TestCase {
         );
 
         $response = new Response();
-        $response->setFormatFactory(new FormatFactory([
+        $response->setFormatFactory(
+            new FormatFactory([
                 'json' => new Json()
-            ]));
+            ])
+        );
         $response->setData($testData);
         $response->setStatusCode($testStatusCode);
         $response->setRequest($testRequest);
@@ -122,17 +134,17 @@ class ResponseTest extends TestCase {
 
         $this->assertTrue(
             $responseObject->status->code === '418',
-            'The response object should contain status code 418, is actually: '.PHP_EOL.$responseObject->status->code
+            'The response object should contain status code 418, is actually: ' . PHP_EOL . $responseObject->status->code
         );
 
         $this->assertTrue(
             $responseObject->data->string === 'string',
-            'The response object should contain the string "string", is actually: '.PHP_EOL.$responseObject->data->string
+            'The response object should contain the string "string", is actually: ' . PHP_EOL . $responseObject->data->string
         );
 
         $this->assertTrue(
             $responseObject->request->requestedUri === '/test/path',
-            'The response object should contain the string "/test/path", is actually: '.PHP_EOL.$responseObject->request->requestedUri
+            'The response object should contain the string "/test/path", is actually: ' . PHP_EOL . $responseObject->request->requestedUri
         );
 
     }
@@ -140,7 +152,8 @@ class ResponseTest extends TestCase {
     /**
      * @runInSeparateProcess
      */
-    public function testJsonRespond() {
+    public function testJsonRespond()
+    {
         $complexObject = (object)[
             'childObject' => (object)[
                     'property' => 'value'
@@ -152,10 +165,10 @@ class ResponseTest extends TestCase {
         ];
         $expectedXml =
             '{'
-            .'"status":{"code":200,"message":"OK"},'
-            .'"request":{"method":"GET","requestedUri":"test.json","parameters":{"hackedJson":true}},'
-            .'"data":{"childObject":{"property":"value"},"childArray":["element1","element2"]}'
-            .'}';
+            . '"status":{"code":200,"message":"OK"},'
+            . '"request":{"method":"GET","requestedUri":"test.json","parameters":{"hackedJson":true}},'
+            . '"data":{"childObject":{"property":"value"},"childArray":["element1","element2"]}'
+            . '}';
 
         $request = new Request(
             Request::METHOD_GET,
@@ -185,7 +198,8 @@ class ResponseTest extends TestCase {
     /**
      * @runInSeparateProcess
      */
-    public function testXmlRespond() {
+    public function testXmlRespond()
+    {
         $complexObject = (object)[
             'childObject' => (object)[
                     'property' => 'value'
@@ -197,10 +211,10 @@ class ResponseTest extends TestCase {
         ];
         $expectedXml =
             '<?xml version="1.0" encoding="UTF-8" ?>'
-            .'<response>'
-            .'<status><array><code>200</code><message>OK</message></array></status>'
-            .'<request><array><method>GET</method><requestedUri>test.xml</requestedUri><parameters><hackedJson>true</hackedJson></parameters></array></request>'
-            .'<data><childObject><property>value</property></childObject><childArray><_0>element1</_0><_1>element2</_1></childArray></data>'.
+            . '<response>'
+            . '<status><array><code>200</code><message>OK</message></array></status>'
+            . '<request><array><method>GET</method><requestedUri>test.xml</requestedUri><parameters><hackedJson>true</hackedJson></parameters></array></request>'
+            . '<data><childObject><property>value</property></childObject><childArray><_0>element1</_0><_1>element2</_1></childArray></data>' .
             '</response>';
 
         $request = new Request(

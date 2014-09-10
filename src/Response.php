@@ -11,7 +11,8 @@ namespace Gisleburt\Api;
 use Gisleburt\Formatter\FormatFactory;
 use Gisleburt\Formatter\Format;
 
-class Response implements \JsonSerializable {
+class Response implements \JsonSerializable
+{
 
     /**
      * Used to name the data object that is returned to the user where applicable
@@ -105,7 +106,8 @@ class Response implements \JsonSerializable {
      * @param $data
      * @return $this
      */
-    public function setData($data) {
+    public function setData($data)
+    {
         $this->data = $data;
         return $this;
     }
@@ -114,7 +116,8 @@ class Response implements \JsonSerializable {
      * @param FormatFactory $formatFactory
      * @return $this
      */
-    public function setFormatFactory(FormatFactory $formatFactory) {
+    public function setFormatFactory(FormatFactory $formatFactory)
+    {
         $this->formatFactory = $formatFactory;
         return $this;
     }
@@ -125,8 +128,9 @@ class Response implements \JsonSerializable {
      * @return $this
      * @throws \Exception
      */
-    public function setFormat($suffix) {
-        if(!$this->formatFactory instanceof FormatFactory) {
+    public function setFormat($suffix)
+    {
+        if (!$this->formatFactory instanceof FormatFactory) {
             throw new Exception("Format factory not set");
         }
         $this->format = $this->formatFactory->getFormatFor($suffix);
@@ -136,7 +140,8 @@ class Response implements \JsonSerializable {
     /**
      * @return Format
      */
-    public function getFormat() {
+    public function getFormat()
+    {
         return $this->format;
     }
 
@@ -144,12 +149,13 @@ class Response implements \JsonSerializable {
      * Format the data and send as a response. Only one response can be sent
      * @return $this
      */
-    public function respond() {
+    public function respond()
+    {
         $format = $this->formatFactory->getFormatFor(
             $this->request->getFormat()
         );
 
-        if($this->status instanceof Status) {
+        if ($this->status instanceof Status) {
             header($this->status->getHttpHeader());
         }
 
@@ -164,7 +170,8 @@ class Response implements \JsonSerializable {
      * Used by PHP to get json object
      * @return array
      */
-    public function jsonSerialize() {
+    public function jsonSerialize()
+    {
         return [
             'status' => $this->getStatus(),
             'request' => $this->getRequest(),
