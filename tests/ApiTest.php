@@ -28,9 +28,7 @@ class ApiTest extends TestCase
 
         $api->go()->respond();
 
-        $output = json_decode(ob_get_contents());
-
-        ob_clean();
+        $output = json_decode(ob_get_clean());
 
 
         // Children
