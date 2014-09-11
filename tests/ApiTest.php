@@ -10,8 +10,12 @@ namespace Gisleburt\Api\Tests;
 use Gisleburt\Api\Api;
 use Gisleburt\Api\Controller;
 use Gisleburt\Api\Request;
+use Gisleburt\Api\Response;
 use Gisleburt\Api\Status;
 use Gisleburt\Api\Tests\TestData\TestController;
+use Gisleburt\Formatter\FormatFactory;
+use Gisleburt\Formatter\Formats\Php;
+use Gisleburt\Formatter\Formats\Xml;
 
 class ApiTest extends TestCase
 {
@@ -102,6 +106,90 @@ class ApiTest extends TestCase
         );
 
     }
+
+    public function testSetRequest()
+    {
+        $initialController = new Controller(); // Unimportant
+        $api = new Api($initialController);
+
+        $request = new Request(
+            null,
+            null,
+            ['key' => 'value']
+        );
+
+        $testRequest = $api->getRequest();
+
+        $this->assertSame(
+            $testRequest->getParameter('key'), null,
+            "Request should not contain a parameter for 'key'"
+        );
+
+        $api->setRequest($request);
+
+        $testRequest = $api->getRequest();
+
+        $this->assertSame(
+            $testRequest->getParameter('key'), 'value',
+            "Request should contain a parameter for 'key'"
+        );
+
+    }
+
+    public function testSetResponse()
+    {
+        $initialController = new Controller(); // Unimportant
+        $api = new Api($initialController);
+
+        $response = new Response();
+        $response->setData('test-data');
+
+        $testResponse = $api->getResponse();
+
+        $this->assertSame(
+            $testResponse->getData(), null,
+            "Response should not contain any data"
+        );
+
+        $api->setResponse($response);
+
+        $testResponse = $api->getResponse();
+
+        $this->assertSame(
+            $testResponse->getData(), 'test-data',
+            "Request should contain test data"
+        );
+
+    }
+
+    public function testFormatFactory()
+    {
+        $initialController = new Controller(); // Unimportant
+        $api = new Api($initialController);
+
+        $formatFactory = new FormatFactory([
+            'php' => new Php()
+        ]);
+
+        $testFormatFactory = $api->getFormatFactory();
+
+        $this->assertTrue(
+            $testFormatFactory->getFormatFor('xml') instanceof Xml,
+            "Response should not contain any data"
+        );
+
+        $api->setFormatFactory($formatFactory);
+
+        $testFormatFactory = $api->getFormatFactory();
+
+        $this->assertTrue(
+            $testFormatFactory->getFormatFor('php') instanceof Php,
+            "Response should not contain any data"
+        );
+
+    }
+
+
 
 }
  
