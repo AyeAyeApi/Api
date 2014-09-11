@@ -9,7 +9,8 @@ namespace Gisleburt\Api;
 
 use Gisleburt\Formatter\FormatFactory;
 
-class Api {
+class Api
+{
 
     /**
      * @var Controller
@@ -32,7 +33,8 @@ class Api {
     protected $formatFactory;
 
 
-    public function __construct(Controller $initialController) {
+    public function __construct(Controller $initialController)
+    {
         $this->controller = $initialController;
     }
 
@@ -41,7 +43,8 @@ class Api {
      * Tip. You can ->respond() straight off this method
      * @return Response
      */
-    public function go() {
+    public function go()
+    {
         $request = $this->getRequest();
         $response = $this->getResponse();
         $response->setFormatFactory(
@@ -63,7 +66,8 @@ class Api {
      * Set the request object. Use for dependency injection
      * @param Request $request
      */
-    public function setRequest(Request $request) {
+    public function setRequest(Request $request)
+    {
         $this->request = $request;
     }
 
@@ -71,8 +75,9 @@ class Api {
      * Get the request. If none is set it will create a default Request object
      * @return Request
      */
-    public function getRequest() {
-        if(!$this->request) {
+    public function getRequest()
+    {
+        if (!$this->request) {
             $this->request = new Request();
         }
         return $this->request;
@@ -82,7 +87,8 @@ class Api {
      * Set the response object. Use for dependency injection
      * @param Response $response
      */
-    public function setResponse(Response $response) {
+    public function setResponse(Response $response)
+    {
         $this->response = $response;
     }
 
@@ -90,8 +96,9 @@ class Api {
      * Get the response object. If none is set it will create a default Response object
      * @return Response
      */
-    public function getResponse() {
-        if(!$this->response) {
+    public function getResponse()
+    {
+        if (!$this->response) {
             $this->response = new Response();
         }
         return $this->response;
@@ -101,7 +108,8 @@ class Api {
      * Sets the format factory. Use for dependency injection, or additional formatters
      * @param FormatFactory $formatFactory
      */
-    public function setFormatFactory(FormatFactory $formatFactory) {
+    public function setFormatFactory(FormatFactory $formatFactory)
+    {
         $this->formatFactory = $formatFactory;
     }
 
@@ -109,8 +117,9 @@ class Api {
      * Get the format factory. If none is set it will create a default format factory for xml and json
      * @return FormatFactory
      */
-    public function getFormatFactory() {
-        if(!$this->formatFactory) {
+    public function getFormatFactory()
+    {
+        if (!$this->formatFactory) {
             $this->formatFactory = new FormatFactory([
                 'xml' => 'Gisleburt\Formatter\Formats\Xml',
                 'json' => 'Gisleburt\Formatter\Formats\Json',

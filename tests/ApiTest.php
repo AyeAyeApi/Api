@@ -121,7 +121,8 @@ class ApiTest extends TestCase
         $testRequest = $api->getRequest();
 
         $this->assertSame(
-            $testRequest->getParameter('key'), null,
+            $testRequest->getParameter('key'),
+            null,
             "Request should not contain a parameter for 'key'"
         );
 
@@ -130,7 +131,8 @@ class ApiTest extends TestCase
         $testRequest = $api->getRequest();
 
         $this->assertSame(
-            $testRequest->getParameter('key'), 'value',
+            $testRequest->getParameter('key'),
+            'value',
             "Request should contain a parameter for 'key'"
         );
 
@@ -147,7 +149,8 @@ class ApiTest extends TestCase
         $testResponse = $api->getResponse();
 
         $this->assertSame(
-            $testResponse->getData(), null,
+            $testResponse->getData(),
+            null,
             "Response should not contain any data"
         );
 
@@ -156,7 +159,8 @@ class ApiTest extends TestCase
         $testResponse = $api->getResponse();
 
         $this->assertSame(
-            $testResponse->getData(), 'test-data',
+            $testResponse->getData(),
+            'test-data',
             "Request should contain test data"
         );
 
@@ -188,7 +192,6 @@ class ApiTest extends TestCase
         );
 
     }
-
 
 
 }
