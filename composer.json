@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "gisleburt/formatter": "dev-master"
+        "ayeaye/formatters": "dev-master"
     },
     "require-dev": {
 
