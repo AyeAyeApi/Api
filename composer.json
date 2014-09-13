@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "ayeaye/formatters": "dev-master"
+        "ayeaye/formatters": "0.9.*"
     },
     "require-dev": {
 
