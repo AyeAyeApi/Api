@@ -81,7 +81,12 @@ class Request implements \JsonSerializable
     /**
      * @var \stdClass
      */
-    protected $body = null;
+    protected $body;
+
+    /**
+     * @var string
+     */
+    protected $baseUrl;
 
     /**
      * Create a Request object. You can override any request information
@@ -90,14 +95,18 @@ class Request implements \JsonSerializable
      * @param array $request
      * @param array $header
      * @param string $bodyText
+     * @param string $baseUrl
      */
     public function __construct(
         $requestedMethod = null,
         $requestedUri = null,
         array $request = null,
         array $header = null,
-        $bodyText = null
+        $bodyText = null,
+        $baseUrl = null
     ) {
+
+        $this->baseUrl = $baseUrl;
 
         if ($requestedMethod) {
             $this->requestMethod = $requestedMethod;
@@ -295,12 +304,26 @@ class Request implements \JsonSerializable
     protected function getRequestChainFromUri($requestedUri)
     {
         // Trim any get variables and the requested format, eg: /requested/uri.format?get=variables
-        $routingInformation = preg_replace('/[\?\.].*$/', '', $requestedUri);
-        $requestChain = explode('/', $routingInformation);
+        $requestedUri = preg_replace('/[\?\.].*$/', '', $requestedUri);
+        // Clear the base url
+        $requestedUri = $this->removeBaseUrl($requestedUri, $this->baseUrl);
+
+        $requestChain = explode('/', $requestedUri);
+
         if (!$requestChain[0]) {
             unset($requestChain[0]);
         }
+
         return $requestChain;
+    }
+
+    protected function removeBaseUrl($url, $baseUrl) {
+        $url = trim($url, '/');
+        $baseUrl = trim($baseUrl, '/');
+        if (substr($url, 0, strlen($baseUrl)) == $baseUrl) {
+            $url = substr($url, strlen($baseUrl));
+        }
+        return $url;
     }
 
 
