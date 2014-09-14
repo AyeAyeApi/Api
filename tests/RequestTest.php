@@ -358,5 +358,40 @@ class RequestTest extends TestCase
         );
     }
 
+    public function testBaseUrl() {
+
+        $request = new Request(
+            Request::METHOD_GET,
+            '/api'
+        );
+
+        $this->assertCount(
+            1, $request->getRequestChain(),
+            'Request should have contained 1 link in chain'
+        );
+
+        $request = new Request(
+            Request::METHOD_GET,
+            '/api'
+        );
+        $request->setBaseUrl('api');
+
+        $this->assertCount(
+            0, $request->getRequestChain(),
+            'Request should have contained 0 links in chain'
+        );
+
+    }
+
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage baseUrl must be a string
+     * @expectedExceptionCode    0
+     */
+    public function testBaseUrlException() {
+        $request = new Request();
+        $request->setBaseUrl(true);
+    }
+
 }
  
