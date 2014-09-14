@@ -24,10 +24,9 @@ class ResponseTest extends TestCase
         $response = new Response();
         $response->setData($testData);
 
-        $data = $response->getData();
-        $this->assertTrue(
-            $data === $testData,
-            'Data did not match test data' . PHP_EOL . $data
+        $this->assertSame(
+            $testData, $response->getData(),
+            'Data did not match test data'
         );
     }
 
@@ -40,10 +39,9 @@ class ResponseTest extends TestCase
         $response = new Response();
         $response->setStatus($testStatus);
 
-        $status = $response->getStatus();
-        $this->assertTrue(
-            $status->getCode() === $testStatus->getCode(),
-            'Status did not match test status' . PHP_EOL . $status->getCode()
+        $this->assertSame(
+            $testStatus->getCode(), $response->getStatus()->getCode(),
+            'Status did not match test status'
         );
     }
 
@@ -56,10 +54,9 @@ class ResponseTest extends TestCase
         $response = new Response();
         $response->setStatusCode($testStatusCode);
 
-        $status = $response->getStatus();
-        $this->assertTrue(
-            $status->getCode() === $testStatusCode,
-            'Status did not match test status' . PHP_EOL . $status->getCode()
+        $this->assertSame(
+            $testStatusCode, $response->getStatus()->getCode(),
+            'Status did not match test status'
         );
     }
 
@@ -89,9 +86,9 @@ class ResponseTest extends TestCase
         $response->setFormat($testFormat);
 
         $format = $response->getFormat();
-        $this->assertTrue(
-            $format instanceof Xml,
-            'Format returned was not of type format: ' . PHP_EOL . get_class($format)
+        $this->assertInstanceOf(
+            '\Gisleburt\Formatter\Formats\Xml', $format,
+            'Format returned was not of type xml'
         );
 
     }
@@ -132,19 +129,19 @@ class ResponseTest extends TestCase
 
         $responseObject = json_decode(json_encode($response));
 
-        $this->assertTrue(
-            $responseObject->status->code === '418',
-            'The response object should contain status code 418, is actually: ' . PHP_EOL . $responseObject->status->code
+        $this->assertSame(
+            '418', $responseObject->status->code,
+            'The response object should contain status code 418'
         );
 
-        $this->assertTrue(
-            $responseObject->data->string === 'string',
-            'The response object should contain the string "string", is actually: ' . PHP_EOL . $responseObject->data->string
+        $this->assertSame(
+            'string', $responseObject->data->string,
+            'The response object should contain the string "string"'
         );
 
-        $this->assertTrue(
-            $responseObject->request->requestedUri === '/test/path',
-            'The response object should contain the string "/test/path", is actually: ' . PHP_EOL . $responseObject->request->requestedUri
+        $this->assertSame(
+            '/test/path', $responseObject->request->requestedUri,
+            'The response object should contain the string "/test/path"'
         );
 
     }
@@ -189,8 +186,8 @@ class ResponseTest extends TestCase
         $responseData = ob_get_contents();
         ob_end_clean();
 
-        $this->assertTrue(
-            $responseData === $expectedXml,
+        $this->assertSame(
+            $responseData, $expectedXml,
             "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
         );
     }
@@ -236,8 +233,8 @@ class ResponseTest extends TestCase
         $responseData = ob_get_contents();
         ob_end_clean();
 
-        $this->assertTrue(
-            $responseData === $expectedXml,
+        $this->assertSame(
+            $responseData, $expectedXml,
             "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
         );
     }
