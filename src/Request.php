@@ -365,11 +365,18 @@ class Request implements \JsonSerializable
         return true;
     }
 
+    /**
+     * Set the base url for the request. This will be removed from the request chain
+     * @param $baseUrl
+     * @return $this
+     * @throws \Exception
+     */
     public function setBaseUrl($baseUrl) {
         if(!is_null($baseUrl) && !is_string($baseUrl)) {
             throw new \Exception('baseUrl must be a string');
         }
         $this->baseUrl = $baseUrl;
+        return $this;
     }
 
 
