@@ -106,7 +106,7 @@ class Request implements \JsonSerializable
         $baseUrl = null
     ) {
 
-        $this->baseUrl = $baseUrl;
+        $this->setBaseUrl($baseUrl);
 
         if ($requestedMethod) {
             $this->requestMethod = $requestedMethod;
@@ -363,6 +363,13 @@ class Request implements \JsonSerializable
         }
         $this->parameters[$name] = $value;
         return true;
+    }
+
+    public function setBaseUrl($baseUrl) {
+        if(!is_null($baseUrl) && !is_string($baseUrl)) {
+            throw new \Exception('baseUrl must be a string');
+        }
+        $this->baseUrl = $baseUrl;
     }
 
 
