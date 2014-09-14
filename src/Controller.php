@@ -237,7 +237,7 @@ class Controller
         foreach ($reflectionParameters as $reflectionParameter) {
             $parameters[$reflectionParameter->getName()] = $request->getParameter(
                 $reflectionParameter->getName(),
-                null
+                $reflectionParameter->isDefaultValueAvailable() ? $reflectionParameter->getDefaultValue() : null
             );
         }
         return $parameters;
