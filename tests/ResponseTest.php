@@ -239,6 +239,48 @@ class ResponseTest extends TestCase
         );
     }
 
+    /**
+     * @runInSeparateProcess
+     */
+    public function testRawData() {
+        $complexObject = (object)[
+            'childObject' => (object)[
+                    'property' => 'value'
+                ],
+            'childArray' => [
+                'element1',
+                'element2'
+            ]
+        ];
+        $expectedXml =
+            '{'
+            . '"data":{"childObject":{"property":"value"},"childArray":["element1","element2"]}'
+            . '}';
 
+        $request = new Request(
+            Request::METHOD_GET,
+            'test.json',
+            ['raw' => true]
+        );
+        $response = new Response();
+        $response->setFormatFactory(
+            new FormatFactory([
+                'json' => new Json()
+            ])
+        );
+        $response->setRequest($request);
+        $response->setStatus(new Status());
+        $response->setData($complexObject);
+
+        ob_start();
+        $response->respond();
+        $responseData = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertSame(
+            $responseData, $expectedXml,
+            "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
+        );
+    }
 }
  
