@@ -114,7 +114,10 @@ class ResponseTest extends TestCase
         $testRequest = new Request(
             Request::METHOD_POST,
             '/test/path',
-            ['testParameter' => 'value']
+            [
+                'testParameter' => 'value',
+                'debug' => true,
+            ]
         );
 
         $response = new Response();
@@ -149,7 +152,7 @@ class ResponseTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testJsonRespond()
+    public function testDebugJsonRespond()
     {
         $complexObject = (object)[
             'childObject' => (object)[
@@ -163,18 +166,67 @@ class ResponseTest extends TestCase
         $expectedXml =
             '{'
             . '"status":{"code":200,"message":"OK"},'
-            . '"request":{"method":"GET","requestedUri":"test.json","parameters":{"hackedJson":true}},'
+            . '"request":{"method":"GET","requestedUri":"test.json","parameters":{"debug":true,"hackedJson":true}},'
             . '"data":{"childObject":{"property":"value"},"childArray":["element1","element2"]}'
             . '}';
 
         $request = new Request(
             Request::METHOD_GET,
-            'test.json'
+            'test.json',
+            ['debug' => true]
         );
         $response = new Response();
         $response->setFormatFactory(
             new FormatFactory([
                 'json' => new Json()
+            ])
+        );
+        $response->setRequest($request);
+        $response->setStatus(new Status());
+        $response->setData($complexObject);
+
+        ob_start();
+        $response->respond();
+        $responseData = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertSame(
+            $responseData, $expectedXml,
+            "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
+        );
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testDebugXmlRespond()
+    {
+        $complexObject = (object)[
+            'childObject' => (object)[
+                    'property' => 'value'
+                ],
+            'childArray' => [
+                'element1',
+                'element2'
+            ]
+        ];
+        $expectedXml =
+            '<?xml version="1.0" encoding="UTF-8" ?>'
+            . '<response>'
+            . '<status><array><code>200</code><message>OK</message></array></status>'
+            . '<request><array><method>GET</method><requestedUri>test.xml</requestedUri><parameters><debug>true</debug><hackedJson>true</hackedJson></parameters></array></request>'
+            . '<data><childObject><property>value</property></childObject><childArray><_0>element1</_0><_1>element2</_1></childArray></data>' .
+            '</response>';
+
+        $request = new Request(
+            Request::METHOD_GET,
+            'test.xml',
+            ['debug' => true]
+        );
+        $response = new Response();
+        $response->setFormatFactory(
+            new FormatFactory([
+                'xml' => new Xml()
             ])
         );
         $response->setRequest($request);
@@ -209,10 +261,8 @@ class ResponseTest extends TestCase
         $expectedXml =
             '<?xml version="1.0" encoding="UTF-8" ?>'
             . '<response>'
-            . '<status><array><code>200</code><message>OK</message></array></status>'
-            . '<request><array><method>GET</method><requestedUri>test.xml</requestedUri><parameters><hackedJson>true</hackedJson></parameters></array></request>'
-            . '<data><childObject><property>value</property></childObject><childArray><_0>element1</_0><_1>element2</_1></childArray></data>' .
-            '</response>';
+            . '<data><childObject><property>value</property></childObject><childArray><_0>element1</_0><_1>element2</_1></childArray></data>'
+            . '</response>';
 
         $request = new Request(
             Request::METHOD_GET,
@@ -242,7 +292,7 @@ class ResponseTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testRawData() {
+    public function testJsonRespond() {
         $complexObject = (object)[
             'childObject' => (object)[
                     'property' => 'value'
@@ -259,8 +309,7 @@ class ResponseTest extends TestCase
 
         $request = new Request(
             Request::METHOD_GET,
-            'test.json',
-            ['raw' => true]
+            'test.json'
         );
         $response = new Response();
         $response->setFormatFactory(

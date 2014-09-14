@@ -173,7 +173,7 @@ class Response implements \JsonSerializable
     public function jsonSerialize()
     {
         // If in raw mode, only return data
-        if(!is_null($this->request->getParameter('raw'))) {
+        if(is_null($this->request->getParameter('debug'))) {
             return [
                 'data' => $this->getData()
             ];
