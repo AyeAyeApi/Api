@@ -5,10 +5,10 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api\Tests;
+namespace AyeAye\Api\Tests;
 
 
-use Gisleburt\Api\Request;
+use AyeAye\Api\Request;
 
 class RequestTest extends TestCase
 {

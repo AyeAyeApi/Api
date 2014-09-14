@@ -5,13 +5,13 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api\Tests;
+namespace AyeAye\Api\Tests;
 
 
-use Gisleburt\Api\Controller;
-use Gisleburt\Api\Request;
-use Gisleburt\Api\Status;
-use Gisleburt\Api\Tests\TestData\TestController;
+use AyeAye\Api\Controller;
+use AyeAye\Api\Request;
+use AyeAye\Api\Status;
+use AyeAye\Api\Tests\TestData\TestController;
 
 class ControllerTest extends TestCase
 {

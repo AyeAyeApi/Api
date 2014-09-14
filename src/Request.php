@@ -5,7 +5,7 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api;
+namespace AyeAye\Api;
 
 class Request implements \JsonSerializable
 {

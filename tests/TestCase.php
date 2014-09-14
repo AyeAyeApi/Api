@@ -5,7 +5,7 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api\Tests;
+namespace AyeAye\Api\Tests;
 
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase

@@ -15,15 +15,15 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "ayeaye/formatters": "0.9.*"
+        "ayeaye/formatters": "0.10.*"
     },
     "require-dev": {
 
     },
     "autoload": {
         "psr-4": {
-            "Gisleburt\\Api\\": "src/",
-            "Gisleburt\\Api\\Tests\\": "tests/"
+            "AyeAye\\Api\\": "src/",
+            "AyeAye\\Api\\Tests\\": "tests/"
         }
     }
 }

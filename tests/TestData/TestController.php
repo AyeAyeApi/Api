@@ -5,10 +5,10 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api\Tests\TestData;
+namespace AyeAye\Api\Tests\TestData;
 
 
-use Gisleburt\Api\Controller;
+use AyeAye\Api\Controller;
 
 class TestController extends Controller
 {
@@ -18,8 +18,8 @@ class TestController extends Controller
     ];
 
     protected $children = [
-        'me' => '\Gisleburt\Api\Tests\TestData\TestController',
-        'child' => '\Gisleburt\Api\Tests\TestData\TestChildController',
+        'me' => '\AyeAye\Api\Tests\TestData\TestController',
+        'child' => '\AyeAye\Api\Tests\TestData\TestChildController',
         'hiddenChild' => '\stdClass',
     ];
 

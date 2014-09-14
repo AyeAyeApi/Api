@@ -8,7 +8,7 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api;
+namespace AyeAye\Api;
 
 class Exception extends \Exception implements \JsonSerializable
 {

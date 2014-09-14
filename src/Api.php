@@ -5,9 +5,9 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api;
+namespace AyeAye\Api;
 
-use Gisleburt\Formatter\FormatFactory;
+use AyeAye\Formatter\FormatFactory;
 
 class Api
 {
@@ -121,8 +121,8 @@ class Api
     {
         if (!$this->formatFactory) {
             $this->formatFactory = new FormatFactory([
-                'xml' => 'Gisleburt\Formatter\Formats\Xml',
-                'json' => 'Gisleburt\Formatter\Formats\Json',
+                'xml' => 'AyeAye\Formatter\Formats\Xml',
+                'json' => 'AyeAye\Formatter\Formats\Json',
             ]);
         }
         return $this->formatFactory;

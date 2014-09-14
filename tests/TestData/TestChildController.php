@@ -5,10 +5,10 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api\Tests\TestData;
+namespace AyeAye\Api\Tests\TestData;
 
 
-use Gisleburt\Api\Controller;
+use AyeAye\Api\Controller;
 
 class TestChildController extends Controller
 {

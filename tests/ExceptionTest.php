@@ -5,17 +5,17 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api\Tests;
+namespace AyeAye\Api\Tests;
 
 
-use Gisleburt\Api\Exception;
+use AyeAye\Api\Exception;
 
 class ExceptionTest extends TestCase
 {
 
     /**
      * Test that general Exception behavior is maintained
-     * @throws \Gisleburt\Api\Exception
+     * @throws \AyeAye\Api\Exception
      *
      * @expectedException        \Exception
      * @expectedExceptionMessage Basic Exception Message

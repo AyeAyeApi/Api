@@ -5,17 +5,17 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api\Tests;
+namespace AyeAye\Api\Tests;
 
-use Gisleburt\Api\Api;
-use Gisleburt\Api\Controller;
-use Gisleburt\Api\Request;
-use Gisleburt\Api\Response;
-use Gisleburt\Api\Status;
-use Gisleburt\Api\Tests\TestData\TestController;
-use Gisleburt\Formatter\FormatFactory;
-use Gisleburt\Formatter\Formats\Php;
-use Gisleburt\Formatter\Formats\Xml;
+use AyeAye\Api\Api;
+use AyeAye\Api\Controller;
+use AyeAye\Api\Request;
+use AyeAye\Api\Response;
+use AyeAye\Api\Status;
+use AyeAye\Api\Tests\TestData\TestController;
+use AyeAye\Formatter\FormatFactory;
+use AyeAye\Formatter\Formats\Php;
+use AyeAye\Formatter\Formats\Xml;
 
 class ApiTest extends TestCase
 {

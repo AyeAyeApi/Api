@@ -5,18 +5,18 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api\Tests;
+namespace AyeAye\Api\Tests;
 
 
-use Gisleburt\Api\Exception;
-use Gisleburt\Api\Status;
+use AyeAye\Api\Exception;
+use AyeAye\Api\Status;
 
 class StatusTest extends TestCase
 {
 
     /**
      * Test that general Exception behavior is maintained
-     * @throws \Gisleburt\Api\Exception
+     * @throws \AyeAye\Api\Exception
      *
      * @expectedException        Exception
      * @expectedExceptionMessage Status '9001' does not exist

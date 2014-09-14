@@ -5,11 +5,11 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api;
+namespace AyeAye\Api;
 
 
-use Gisleburt\Formatter\FormatFactory;
-use Gisleburt\Formatter\Format;
+use AyeAye\Formatter\FormatFactory;
+use AyeAye\Formatter\Format;
 
 class Response implements \JsonSerializable
 {
@@ -48,7 +48,7 @@ class Response implements \JsonSerializable
     protected $data;
 
     /**
-     * @return \Gisleburt\Api\Status
+     * @return \AyeAye\Api\Status
      */
     public function getStatus()
     {
@@ -76,7 +76,7 @@ class Response implements \JsonSerializable
     }
 
     /**
-     * @return \Gisleburt\Api\Request
+     * @return \AyeAye\Api\Request
      */
     public function getRequest()
     {

@@ -5,15 +5,15 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api\Tests;
+namespace AyeAye\Api\Tests;
 
 
-use Gisleburt\Api\Request;
-use Gisleburt\Api\Response;
-use Gisleburt\Api\Status;
-use Gisleburt\Formatter\Formats\Json;
-use Gisleburt\Formatter\Formats\Xml;
-use Gisleburt\Formatter\FormatFactory;
+use AyeAye\Api\Request;
+use AyeAye\Api\Response;
+use AyeAye\Api\Status;
+use AyeAye\Formatter\Formats\Json;
+use AyeAye\Formatter\Formats\Xml;
+use AyeAye\Formatter\FormatFactory;
 
 class ResponseTest extends TestCase
 {
@@ -78,7 +78,7 @@ class ResponseTest extends TestCase
 
         $testFormat = 'xml';
         $formatFactory = new FormatFactory([
-            $testFormat => $this->getMock('\Gisleburt\Formatter\Formats\Xml')
+            $testFormat => $this->getMock('\AyeAye\Formatter\Formats\Xml')
         ]);
 
         $response = new Response;
@@ -87,7 +87,7 @@ class ResponseTest extends TestCase
 
         $format = $response->getFormat();
         $this->assertInstanceOf(
-            '\Gisleburt\Formatter\Formats\Xml', $format,
+            '\AyeAye\Formatter\Formats\Xml', $format,
             'Format returned was not of type xml'
         );
 

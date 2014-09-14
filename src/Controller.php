@@ -6,9 +6,9 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace Gisleburt\Api;
+namespace AyeAye\Api;
 
-use Gisleburt\Api\Exception as ApiException;
+use AyeAye\Api\Exception as ApiException;
 
 class Controller
 {
