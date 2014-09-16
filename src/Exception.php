@@ -10,6 +10,10 @@
 
 namespace AyeAye\Api;
 
+/**
+ * Used to give the context of HTTP status to an Exception
+ * @package AyeAye\Api
+ */
 class Exception extends \Exception implements \JsonSerializable
 {
 

@@ -7,6 +7,10 @@
 
 namespace AyeAye\Api;
 
+/**
+ * Describes every detail of a request to the server
+ * @package AyeAye\Api
+ */
 class Request implements \JsonSerializable
 {
 

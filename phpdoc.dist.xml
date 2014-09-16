@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+    <parser>
+        <target>reports/documentation</target>
+        <encoding>utf8</encoding>
+        <markers>
+            <item>TODO</item>
+            <item>FIXME</item>
+        </markers>
+    </parser>
+    <transformer>
+        <target>reports/documentation</target>
+    </transformer>
+    <transformations>
+        <template name="responsive-twig" />
+    </transformations>
+    <files>
+        <directory>src</directory>
+        <directory>tests</directory>
+        <directory>vendor/ayeaye/formatters/src</directory>
+        <directory>vendor/ayeaye/formatters/tests</directory>
+    </files>
+</phpdoc>

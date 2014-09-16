@@ -9,6 +9,10 @@ namespace AyeAye\Api;
 
 use AyeAye\Formatter\FormatFactory;
 
+/**
+ * Used to wrap the other classes into easier to manage code
+ * @package AyeAye\Api
+ */
 class Api
 {
 

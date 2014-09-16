@@ -7,7 +7,10 @@
 
 namespace AyeAye\Api;
 
-
+/**
+ * Collection of HTTP statuses
+ * @package AyeAye\Api
+ */
 class Status implements \JsonSerializable
 {
 

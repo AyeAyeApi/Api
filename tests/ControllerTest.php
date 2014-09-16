@@ -13,9 +13,18 @@ use AyeAye\Api\Request;
 use AyeAye\Api\Status;
 use AyeAye\Api\Tests\TestData\TestController;
 
+/**
+ * Test for the Controller Class
+ * @package AyeAye\Api\Tests
+ */
 class ControllerTest extends TestCase
 {
 
+    /**
+     * Test the parse action method
+     * Checks simple and long names
+     * @see Controller
+     */
     public function testParseActionName()
     {
         $controller = new Controller();
@@ -41,6 +50,12 @@ class ControllerTest extends TestCase
         );
     }
 
+    /**
+     * Tests the controller returns the correct status
+     * Tests default status and 418 status, looks at code and message
+     * @see Controller
+     * @see Status
+     */
     public function testStatus()
     {
 
@@ -85,6 +100,10 @@ class ControllerTest extends TestCase
 
     }
 
+    /**
+     * Tests controller returns all relevant children, including ignored
+     * @see TestController
+     */
     public function testGetChildren()
     {
         $controller = new TestController();
@@ -110,6 +129,10 @@ class ControllerTest extends TestCase
         );
     }
 
+    /**
+     * Tests the correct data is returned for the index action
+     * @see TestController
+     */
     public function testIndexAction()
     {
         $controller = new TestController();
@@ -196,6 +219,11 @@ class ControllerTest extends TestCase
 
     }
 
+    /**
+     * Tests routing with empty request chain
+     * @see Request
+     * @see TestController
+     */
     public function testDefaultIndexRoute()
     {
         $request = new Request();
@@ -208,6 +236,11 @@ class ControllerTest extends TestCase
         );
     }
 
+    /**
+     * Tests process request method works without giving a request chain, taking it from Request object
+     * @see Request
+     * @see TestController
+     */
     public function testAlternativeIndexRoute()
     {
         $request = new Request(Request::METHOD_PUT);
@@ -221,6 +254,9 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * Tests an incorrect route returns a 404
+     * @see Request
+     * @see TestController
      * @expectedException        \Exception
      * @expectedExceptionMessage Could not find controller or action matching
      * @expectedExceptionCode    404
@@ -238,6 +274,11 @@ class ControllerTest extends TestCase
         );
     }
 
+    /**
+     * Tests that a given request chain is routed correctly using only the Request object
+     * @see Request
+     * @see TestController
+     */
     public function testKnownRoute()
     {
         $request = new Request(

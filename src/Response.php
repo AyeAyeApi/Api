@@ -7,10 +7,13 @@
 
 namespace AyeAye\Api;
 
-
 use AyeAye\Formatter\FormatFactory;
 use AyeAye\Formatter\Format;
 
+/**
+ * Describes response to client
+ * @package AyeAye\Api
+ */
 class Response implements \JsonSerializable
 {
 

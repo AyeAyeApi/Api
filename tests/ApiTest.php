@@ -17,10 +17,17 @@ use AyeAye\Formatter\FormatFactory;
 use AyeAye\Formatter\Formats\Php;
 use AyeAye\Formatter\Formats\Xml;
 
+/**
+ * Test for the Api Class
+ * @package AyeAye\Api\Tests
+ */
 class ApiTest extends TestCase
 {
 
     /**
+     * Test the output of the Api using TestController
+     * @see Api
+     * @see TestController
      * @runInSeparateProcess
      */
     public function testQuickStart()

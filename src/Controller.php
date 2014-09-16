@@ -10,6 +10,11 @@ namespace AyeAye\Api;
 
 use AyeAye\Api\Exception as ApiException;
 
+/**
+ * Describes end points and child controllers
+ * @author Daniel Mason
+ * @package AyeAye\Api
+ */
 class Controller
 {
 

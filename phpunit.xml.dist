@@ -12,6 +12,6 @@
         </testsuite>
     </testsuites>
     <logging>
-        <log type="coverage-html" target="reports/html" charset="UTF-8" />
+        <log type="coverage-html" target="reports/coverage" charset="UTF-8" />
     </logging>
 </phpunit>
