@@ -41,17 +41,20 @@ class Controller
     ];
 
     /**
-     * The request object
+     * The request object that represents the users request
      * @var Request
      */
     protected $request;
 
     /**
+	 * The status object that represents an HTTP status
      * @var Status
      */
     protected $status;
 
     /**
+	 * Look at a request and work out what to do next.
+	 * Call a child controller, or an endpoint on this controller.
      * @param Request $request
      * @param array $requestChain
      * @return mixed
@@ -139,6 +142,7 @@ class Controller
     }
 
     /**
+	 * Get the Status object associated with the controller
      * @return Status
      */
     public function getStatus()
@@ -150,6 +154,7 @@ class Controller
     }
 
     /**
+	 * Set the status object associated with the controller
      * @param Status $status
      * @return $this
      */
@@ -160,6 +165,7 @@ class Controller
     }
 
     /**
+	 * Set the status object associated with the controller using an HTTP status code
      * @param $statusCode
      * @return $this
      */

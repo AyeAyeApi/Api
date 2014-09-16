@@ -17,26 +17,33 @@ class Api
 {
 
     /**
+	 * The starting controller for the Api
      * @var Controller
      */
     protected $controller;
 
     /**
+	 * The request object to use for this call
      * @var Request
      */
     protected $request;
 
     /**
+	 * The response object to return for this call
      * @var Response
      */
     protected $response;
 
     /**
+	 * A collection of formatters available
      * @var FormatFactory
      */
     protected $formatFactory;
 
-
+	/**
+	 * Initialise the API with a controller that forms the starting point of routing information
+	 * @param Controller $initialController The starting point for the Api
+	 */
     public function __construct(Controller $initialController)
     {
         $this->controller = $initialController;

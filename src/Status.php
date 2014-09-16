@@ -14,6 +14,10 @@ namespace AyeAye\Api;
 class Status implements \JsonSerializable
 {
 
+	/**
+	 * A list of common HTTP status codes and their associated messages
+	 * @var array
+	 */
     public static $statusCodes = [
         // Informational
         100 => 'Continue',
@@ -190,7 +194,8 @@ class Status implements \JsonSerializable
     protected $message;
 
     /**
-     * @param int $code
+	 * Construct a Status using an HTTP code
+     * @param int $code Default 200
      * @throws Exception If invalid code
      */
     public function __construct($code = 200)

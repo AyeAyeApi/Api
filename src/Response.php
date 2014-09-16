@@ -8,7 +8,7 @@
 namespace AyeAye\Api;
 
 use AyeAye\Formatter\FormatFactory;
-use AyeAye\Formatter\Format;
+use AyeAye\Formatter\Formatter;
 
 /**
  * Describes response to client
@@ -31,26 +31,30 @@ class Response implements \JsonSerializable
 
     /**
      * The format object used to format this response
-     * @var
+     * @var string
      */
     protected $format;
 
     /**
+	 * The HTTP status of the response
      * @var Status
      */
     protected $status;
 
     /**
+	 * The initial request. This will only be shown if debug is on
      * @var Request
      */
     protected $request;
 
     /**
-     * @var mixed The data you wish to return in the response
+	 * The data you wish to return in the response
+     * @var mixed
      */
     protected $data;
 
     /**
+	 * Get the Status object assigned to the response
      * @return \AyeAye\Api\Status
      */
     public function getStatus()
@@ -59,6 +63,7 @@ class Response implements \JsonSerializable
     }
 
     /**
+	 * Set the Status object that will report the HTTP status to the client
      * @param Status $status
      * @return $this
      */
@@ -69,6 +74,7 @@ class Response implements \JsonSerializable
     }
 
     /**
+	 * Set the Status object that will report the HTTP status to the client using only the HTTP status code
      * @param int $statusCode
      * @return $this
      */
@@ -79,7 +85,8 @@ class Response implements \JsonSerializable
     }
 
     /**
-     * @return \AyeAye\Api\Request
+	 * Get the Request the client made
+     * @return Request
      */
     public function getRequest()
     {
@@ -87,6 +94,7 @@ class Response implements \JsonSerializable
     }
 
     /**
+	 * Set the Request. This will only be returned in debug mode
      * @param Request $request
      * @return $this
      */
@@ -98,6 +106,7 @@ class Response implements \JsonSerializable
     }
 
     /**
+	 * Get the Data that is being returned
      * @return mixed
      */
     public function getData()
@@ -106,6 +115,7 @@ class Response implements \JsonSerializable
     }
 
     /**
+	 * Set the data that is to be returned
      * @param $data
      * @return $this
      */
@@ -116,6 +126,7 @@ class Response implements \JsonSerializable
     }
 
     /**
+	 * Set the format factory that will be used to choose a formatter
      * @param FormatFactory $formatFactory
      * @return $this
      */
@@ -141,7 +152,8 @@ class Response implements \JsonSerializable
     }
 
     /**
-     * @return Format
+	 * Get the Formatter that will format the Response
+     * @return Formatter
      */
     public function getFormat()
     {
