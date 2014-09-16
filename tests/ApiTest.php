@@ -44,76 +44,110 @@ class ApiTest extends TestCase
 
         // Children
 
-        $this->assertTrue(
-            in_array('me', $output->data->children),
+        $this->assertContains(
+            'me', $output->data->children,
             "Children should have contained 'me'"
         );
 
-        $this->assertTrue(
-            in_array('child', $output->data->children),
-            "Children should have contained 'me'"
+        $this->assertContains(
+            'child', $output->data->children,
+            "Children should have contained 'child'"
         );
 
-        $this->assertFalse(
-            in_array('hiddenChild', $output->data->children),
-            "Children should have contained 'me'"
+        $this->assertNotContains(
+            'hiddenChild', $output->data->children,
+            "Children should not have contained 'hiddenChild'"
         );
 
-        $this->assertTrue(
-            count($output->data->children) == 2,
-            "Children should have has 2 elements, it had: " . PHP_EOL . count($output->data->children)
+        $this->assertCount(
+            2, $output->data->children,
+            "Children should have has 2 elements"
         );
 
         // Endpoints
 
 
-        $this->assertTrue(
-            property_exists($output->data->endpoints->get, 'information'),
+        $this->assertObjectHasAttribute(
+			'information', $output->data->endpoints->get,
             "Get endpoints should have included 'information' it didn't"
         );
 
-        $this->assertTrue(
-            $output->data->endpoints->get->information->description === 'Gets some information',
+        $this->assertSame(
+			'Gets some information', $output->data->endpoints->get->information->description,
             "Get Information description was wrong"
         );
 
-        $this->assertTrue(
-            count($output->data->endpoints->get->information->parameters) === 0,
+        $this->assertCount(
+            0, $output->data->endpoints->get->information->parameters,
             "Get Information description should not contain any parameters"
         );
 
-        $this->assertTrue(
-            property_exists($output->data->endpoints->get, 'more-information'),
+        $this->assertObjectHasAttribute(
+			'more-information', $output->data->endpoints->get,
             "Get endpoints should have included more-information it didn't"
         );
 
-        $this->assertTrue(
-            $output->data->endpoints->get->{'more-information'}->description === 'Get some conditional information',
+        $this->assertSame(
+			'Get some conditional information', $output->data->endpoints->get->{'more-information'}->description,
             "Get More Information description was wrong"
         );
 
-        $this->assertTrue(
-            $output->data->endpoints->get->{'more-information'}->parameters->condition->type === 'string',
+        $this->assertSame(
+			'string', $output->data->endpoints->get->{'more-information'}->parameters->condition->type,
             "Get More Information should take a string called condition"
         );
 
-        $this->assertTrue(
-            $output->data->endpoints->get->{'more-information'}->parameters->condition->description === 'The condition for the information',
+        $this->assertSame(
+			'The condition for the information', $output->data->endpoints->get->{'more-information'}->parameters->condition->description,
             "Get More Information parameter should be described as 'The condition for the information'"
         );
 
-        $this->assertTrue(
-            count($output->data->endpoints->put) === 1,
-            "There should have been 1 get endpoints, there were: " . PHP_EOL . count($output->data->endpoints->put)
-        );
+		$this->assertTrue(
+			count($output->data->endpoints->put) === 1,
+			"There should have been 1 get endpoints, there were: " . PHP_EOL . count($output->data->endpoints->put)
+		);
 
-        $this->assertTrue(
-            array_key_exists('information', $output->data->endpoints->put),
+        $this->assertObjectHasAttribute(
+            'information', $output->data->endpoints->put,
             "Put endpoints should have included 'information' it didn't"
         );
 
     }
 
+	/**
+	 * Test the errors are reported to the client correctly
+	 * @see Api
+	 * @see TestController
+	 * @runInSeparateProcess
+	 */
+	public function testInvalidEndpoint() {
+		$initialController = new TestController();
+		$request = new Request(
+			Request::METHOD_GET,
+			'/not-a-real-endpoint'
+		);
+		$api = new Api($initialController);
+		$api->setRequest($request);
+
+		ob_start();
+
+		$api->go()->respond();
+
+		$output = json_decode(ob_get_clean());
+
+		$this->assertSame(
+			$output->data, "Could not find controller or action matching 'not-a-real-endpoint'",
+			'Exception should have been caught and returned an appropriate error to the user'
+		);
+
+	}
+
+    /**
+     * Tests setting and retrieving a Request object
+     * @see Api
+     * @see Controller
+     * @see Request
+     */
     public function testSetRequest()
     {
         $initialController = new Controller(); // Unimportant
@@ -145,6 +179,12 @@ class ApiTest extends TestCase
 
     }
 
+    /**
+     * Tests setting and retrieving a Response object
+     * @see Api
+     * @see Controller
+     * @see Response
+     */
     public function testSetResponse()
     {
         $initialController = new Controller(); // Unimportant
@@ -173,6 +213,12 @@ class ApiTest extends TestCase
 
     }
 
+    /**
+     * Tests setting and retrieving a Format Factory object
+     * @see Api
+     * @see Controller
+     * @see FormatFactory
+     */
     public function testFormatFactory()
     {
         $initialController = new Controller(); // Unimportant

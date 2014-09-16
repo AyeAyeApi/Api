@@ -44,26 +44,35 @@ class Api
 
     /**
      * Process the request, get a response and return it.
+	 * Exceptions thrown in most places will be handled here, though currently there's no way to handle exceptions
+	 * int the Response object itself (eg, invalid formats)
      * Tip. You can ->respond() straight off this method
      * @return Response
      */
     public function go()
     {
-        $request = $this->getRequest();
-        $response = $this->getResponse();
-        $response->setFormatFactory(
-            $this->getFormatFactory()
-        );
-        $response->setRequest(
-            $request
-        );
-        $response->setData(
-            $this->controller->processRequest($request)
-        );
-        $response->setStatus(
-            $this->controller->getStatus()
-        );
-        return $response;
+		$response = $this->getResponse();
+
+		try {
+			$request = $this->getRequest();
+			$response->setFormatFactory(
+				$this->getFormatFactory()
+			);
+			$response->setRequest(
+				$request
+			);
+			$response->setData(
+				$this->controller->processRequest($request)
+			);
+			$response->setStatus(
+				$this->controller->getStatus()
+			);
+			return $response;
+		}
+		catch(Exception $e) {
+			$response->setData($e->getPublicMessage());
+			return $response;
+		}
     }
 
     /**
