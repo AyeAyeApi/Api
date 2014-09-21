@@ -8,8 +8,6 @@
 
 namespace AyeAye\Api;
 
-use AyeAye\Api\Exception as ApiException;
-
 /**
  * Describes end points and child controllers
  * @author Daniel Mason
@@ -89,7 +87,7 @@ class Controller
             }
 
             $message = "Could not find controller or action matching '$nextLink'";
-            throw new Exception($message, 404, $message);
+            throw new Exception($message, 404);
         }
 
         $potentialAction = $this->parseActionName('index', $this->request->getMethod());

@@ -20,7 +20,7 @@ class StatusTest extends TestCase
      *
      * @expectedException        Exception
      * @expectedExceptionMessage Status '9001' does not exist
-     * @expectedExceptionCode    500
+     * @expectedExceptionCode    0
      */
     public function testConstructThrowException()
     {

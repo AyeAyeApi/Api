@@ -196,12 +196,12 @@ class Status implements \JsonSerializable
     /**
 	 * Construct a Status using an HTTP code
      * @param int $code Default 200
-     * @throws Exception If invalid code
+     * @throws \Exception If invalid code
      */
     public function __construct($code = 200)
     {
         if (!array_key_exists($code, static::$statusCodes)) {
-            throw new Exception("Status '$code' does not exist", 500);
+            throw new \Exception("Status '$code' does not exist");
         }
         $this->code = $code;
         $this->message = static::$statusCodes[$code];
