@@ -34,7 +34,7 @@ class ExceptionTest extends TestCase
         $testPublicMessage = 'Public Message';
 
         try {
-            throw new Exception($testMessage, $testCode, $testPublicMessage);
+            throw new Exception($testPublicMessage, $testCode, $testMessage);
         } catch (Exception $e) {
 
             $message = $e->getMessage();
@@ -63,7 +63,7 @@ class ExceptionTest extends TestCase
         $testPublicMessage = 'Internal Server Error';
 
         try {
-            throw new Exception('Test', $testCode);
+            throw new Exception('', $testCode);
         } catch (Exception $e) {
 
             $publicMessage = $e->getPublicMessage();
@@ -80,7 +80,7 @@ class ExceptionTest extends TestCase
         $testPublicMessage = "I'm a teapot";
 
         try {
-            throw new Exception('Test', 418);
+            throw new Exception('', 418);
         } catch (Exception $e) {
 
             $publicMessage = $e->getPublicMessage();
@@ -100,7 +100,7 @@ class ExceptionTest extends TestCase
         $testCode = 101;
         $testPublicMessage = 'Public Message';
 
-        $exception = new Exception($testMessage, $testCode, $testPublicMessage);
+        $exception = new Exception($testPublicMessage, $testCode, $testMessage);
 
         $json = json_encode($exception);
 

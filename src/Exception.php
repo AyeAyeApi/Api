@@ -28,21 +28,29 @@ class Exception extends \Exception implements \JsonSerializable
 
     /**
 	 * Create a new Exception, include information to pass to the client
-     * @param string $message Message to put into the log
+     * @param string $publicMessage Message to show the user if it's not caught
      * @param int $code HTTP Status code to send to the user
-     * @param string $publicMessage Message to show the user if different from the message associated with the status code
+     * @param string $systemMessage Message to show the enter into the log if different from the public message
      * @param \Exception $previous Any previous Exception
      */
-    public function __construct($message, $code = 500, $publicMessage = '', \Exception $previous = null)
+    public function __construct($publicMessage = '', $code = 500, $systemMessage = '', \Exception $previous = null)
     {
-        $this->publicMessage = $publicMessage;
+        // If a public message wasn't specified, get it from the code
         if (!$publicMessage) {
-            $this->publicMessage = Status::getMessageForCode($code);
-            if (!$this->publicMessage) {
-                $this->publicMessage = static::DEFAULT_MESSAGE;
+            $publicMessage = Status::getMessageForCode($code);
+            if (!$publicMessage) {
+                $publicMessage = static::DEFAULT_MESSAGE;
             }
         }
-        parent::__construct($message, $code, $previous);
+
+        // If the system message wasn't specified, use the public message
+        if(!$systemMessage) {
+            $systemMessage = $publicMessage;
+        }
+
+        $this->publicMessage = $publicMessage;
+
+        parent::__construct($systemMessage, $code, $previous);
     }
 
 	/**
