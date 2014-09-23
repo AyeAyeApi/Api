@@ -63,7 +63,7 @@ class ExceptionTest extends TestCase
         $testPublicMessage = 'Internal Server Error';
 
         try {
-            throw new Exception('', $testCode);
+            throw new Exception($testCode);
         } catch (Exception $e) {
 
             $publicMessage = $e->getPublicMessage();
@@ -76,11 +76,10 @@ class ExceptionTest extends TestCase
 
     public function testCodeStatusMessage()
     {
-
         $testPublicMessage = "I'm a teapot";
 
         try {
-            throw new Exception('', 418);
+            throw new Exception(418);
         } catch (Exception $e) {
 
             $publicMessage = $e->getPublicMessage();
@@ -90,7 +89,28 @@ class ExceptionTest extends TestCase
             );
 
         }
+    }
 
+    public function testCodeWithSystemMessage()
+    {
+        $testPublicMessage = "I'm a teapot";
+        $systemMessage = 'Teapot Exception triggered';
+
+        try {
+            throw new Exception(418, $systemMessage);
+        } catch (Exception $e) {
+
+            $this->assertSame(
+                $testPublicMessage, $e->getPublicMessage(),
+                "Exception public message incorrect"
+            );
+
+            $this->assertSame(
+                $systemMessage, $e->getMessage(),
+                "Exception system message incorrect"
+            );
+
+        }
     }
 
     public function testJsonSerialization()

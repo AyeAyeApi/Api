@@ -35,6 +35,14 @@ class Exception extends \Exception implements \JsonSerializable
      */
     public function __construct($publicMessage = '', $code = 500, $systemMessage = '', \Exception $previous = null)
     {
+        if(is_int($publicMessage)) {
+            if(is_string($code)) {
+                $systemMessage = $code;
+            }
+            $code = $publicMessage;
+            $publicMessage = null;
+        }
+
         // If a public message wasn't specified, get it from the code
         if (!$publicMessage) {
             $publicMessage = Status::getMessageForCode($code);
