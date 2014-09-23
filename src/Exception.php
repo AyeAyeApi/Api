@@ -28,7 +28,7 @@ class Exception extends \Exception implements \JsonSerializable
 
     /**
 	 * Create a new Exception, include information to pass to the client
-     * @param string $publicMessage Message to show the user if it's not caught
+     * @param string $publicMessage Message to show the user if not caught. Can be omitted so long as an integer code is used instead
      * @param int $code HTTP Status code to send to the user
      * @param string $systemMessage Message to show the enter into the log if different from the public message
      * @param \Exception $previous Any previous Exception
