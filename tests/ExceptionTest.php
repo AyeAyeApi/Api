@@ -123,8 +123,14 @@ class ExceptionTest extends TestCase
                 "Exception system message incorrect"
             );
 
+            $previous = $e->getPrevious();
+
+            $this->assertTrue(
+                $previous instanceof \Exception
+            );
+
             $this->assertSame(
-                $previousException->getMessage(), $e->getPrevious()->getMessage(),
+                $previousException->getMessage(), $previous->getMessage(),
                 "Previous exception not included"
             );
 
