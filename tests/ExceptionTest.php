@@ -32,27 +32,39 @@ class ExceptionTest extends TestCase
         $testMessage = 'Message';
         $testCode = 101;
         $testPublicMessage = 'Public Message';
+        $previousException = new \Exception('Previous exception');
 
         try {
-            throw new Exception($testPublicMessage, $testCode, $testMessage);
+            throw new Exception($testPublicMessage, $testCode, $testMessage, $previousException);
         } catch (Exception $e) {
 
             $message = $e->getMessage();
-            $this->assertTrue(
-                $message === $testMessage,
-                "Exception messsage was not $testMessage: " . PHP_EOL . $message
+            $this->assertSame(
+                $testMessage, $message,
+                "Exception messsage was not $testMessage"
             );
 
             $code = $e->getCode();
-            $this->assertTrue(
-                $code === $testCode,
-                "Exception code was not $testCode: " . PHP_EOL . $message
+            $this->assertSame(
+                $testCode, $code,
+                "Exception code was not $testCode"
             );
 
             $publicMessage = $e->getPublicMessage();
+            $this->assertSame(
+                $testPublicMessage, $publicMessage,
+                "Exception public message was not $testPublicMessage"
+            );
+
+            $previous = $e->getPrevious();
+
             $this->assertTrue(
-                $publicMessage == $testPublicMessage,
-                "Exception public message was not $testPublicMessage: " . PHP_EOL . $publicMessage
+                $previous instanceof \Exception
+            );
+
+            $this->assertSame(
+                $previousException->getMessage(), $previous->getMessage(),
+                "Previous exception not included"
             );
         }
     }
@@ -95,9 +107,10 @@ class ExceptionTest extends TestCase
     {
         $testPublicMessage = "I'm a teapot";
         $systemMessage = 'Teapot Exception triggered';
+        $previousException = new \Exception('Previous exception');
 
         try {
-            throw new Exception(418, $systemMessage);
+            throw new Exception(418, $systemMessage, $previousException);
         } catch (Exception $e) {
 
             $this->assertSame(
@@ -108,6 +121,11 @@ class ExceptionTest extends TestCase
             $this->assertSame(
                 $systemMessage, $e->getMessage(),
                 "Exception system message incorrect"
+            );
+
+            $this->assertSame(
+                $previousException->getMessage(), $e->getPrevious()->getMessage(),
+                "Previous exception not included"
             );
 
         }
