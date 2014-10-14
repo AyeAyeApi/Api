@@ -54,15 +54,17 @@ class Status implements \JsonSerializable
         301 => 'Moved Permanently',
         // And don't come back!
         302 => 'Found',
-        // Sometimes used to mean Moved Temporarily, however 307 should be used instead
+        // Sometimes used to mean Moved Temporarily, however it's implemented link 'See Other' 
+        // If that's not desired 307 should be used instead
         303 => 'See Other',
-        // Like Moved Temporarily accept the resource should be hit with GET regardless of method used here
+        // Like Moved Temporarily except the resource should be hit with GET regardless of method used here
         304 => 'Not Modified',
         // Can be used to respond to the headers If-Modified-Since or If-Match
         305 => 'Use Proxy',
         // Provides the address of a proxy through with the request needs to be passed (eg, for security)
         // 306 => 'Switch Proxy', // No longer used, see above
         307 => 'Temporary Redirect',
+        // Moved to a different location but uses the same verb
         308 => 'Permanent Redirect',
         // Like 301 but the redirect MUST use the same method. Not really used
 
