@@ -113,6 +113,16 @@ class Controller
     }
 
     /**
+     * Construct the method name for a controller
+     * @param string $controller
+     * @return string
+     */
+    public function parseControllerName($controller) {
+        $controller = str_replace(' ', '', lcfirst(ucwords(str_replace('-', ' ', $controller))));
+        return $controller . 'Controller';
+    }
+
+    /**
      * Returns a list of possible actions and child controllers
      * @return \stdClass
      */
@@ -195,6 +205,25 @@ class Controller
             }
         }
         return $endPoints;
+    }
+
+
+    /**
+     * Returns a list of controllers attached to this class
+     * @return array
+     */
+    public function getControllers() {
+        $methods = get_class_methods($this);
+        $controllers = [];
+        foreach ($methods as $method) {
+            if (preg_match('/(\w+)Controller$/', $method, $parts)) {
+                $controller = strtolower(preg_replace('/([a-z])([A-Z])/s', '$1-$2', $parts[1]));
+                if (!in_array($controller, $this->ignoreChildren)) {
+                    $controllers[] = $controller;
+                }
+            }
+        }
+        return $controllers;
     }
 
     /**
