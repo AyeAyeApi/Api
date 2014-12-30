@@ -78,6 +78,7 @@ class Api
 		}
 		catch(Exception $e) {
 			$response->setData($e->getPublicMessage());
+            $response->setStatusCode($e->getCode());
 			return $response;
 		}
     }
