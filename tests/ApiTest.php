@@ -131,7 +131,8 @@ class ApiTest extends TestCase
 
 		ob_start();
 
-		$api->go()->respond();
+		$response = $api->go();
+        $response->respond();
 
 		$output = json_decode(ob_get_clean());
 
@@ -139,6 +140,11 @@ class ApiTest extends TestCase
 			$output->data, "Could not find controller or action matching 'not-a-real-endpoint'",
 			'Exception should have been caught and returned an appropriate error to the user'
 		);
+
+        $this->assertSame(
+            $response->getStatus()->getHttpHeader(), 'HTTP/1.1 404 Not Found',
+            'Incorrect header response, got '.$response->getStatus()->getHttpHeader()
+        );
 
 	}
 
