@@ -46,7 +46,6 @@ class StatusTest extends TestCase
 
     /**
      * Headers can not be tested in CLI since PHP v5.2
-     * @runInSeparateProcess
      */
     public function testHttpHeader()
     {
