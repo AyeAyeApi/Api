@@ -45,22 +45,22 @@ class ApiTest extends TestCase
         // Children
 
         $this->assertContains(
-            'me', $output->data->children,
+            'me', $output->data->controllers,
             "Children should have contained 'me'"
         );
 
         $this->assertContains(
-            'child', $output->data->children,
+            'child', $output->data->controllers,
             "Children should have contained 'child'"
         );
 
         $this->assertNotContains(
-            'hiddenChild', $output->data->children,
+            'hiddenChild', $output->data->controllers,
             "Children should not have contained 'hiddenChild'"
         );
 
         $this->assertCount(
-            2, $output->data->children,
+            2, $output->data->controllers,
             "Children should have has 2 elements"
         );
 

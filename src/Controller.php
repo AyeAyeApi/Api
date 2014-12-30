@@ -124,7 +124,7 @@ class Controller
     public function getIndexAction()
     {
         $data = new \stdClass();
-        $data->children = $this->getControllers();
+        $data->controllers = $this->getControllers();
         $data->endpoints = $this->getEndpoints();
         return $data;
     }

@@ -141,23 +141,23 @@ class ControllerTest extends TestCase
         // Children
 
         $this->assertTrue(
-            in_array('me', $result->children),
+            in_array('me', $result->controllers),
             "Children should have contained 'me'"
         );
 
         $this->assertTrue(
-            in_array('child', $result->children),
+            in_array('child', $result->controllers),
             "Children should have contained 'me'"
         );
 
         $this->assertFalse(
-            in_array('hiddenChild', $result->children),
+            in_array('hiddenChild', $result->controllers),
             "Children should have contained 'me'"
         );
 
         $this->assertTrue(
-            count($result->children) == 2,
-            "Children should have has 2 elements, it had: " . PHP_EOL . count($result->children)
+            count($result->controllers) == 2,
+            "Children should have has 2 elements, it had: " . PHP_EOL . count($result->controllers)
         );
 
         // Endpoints
