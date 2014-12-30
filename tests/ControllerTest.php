@@ -104,10 +104,10 @@ class ControllerTest extends TestCase
      * Tests controller returns all relevant children, including ignored
      * @see TestController
      */
-    public function testGetChildren()
+    public function testGetControllers()
     {
         $controller = new TestController();
-        $children = $controller->getChildren();
+        $children = $controller->getControllers();
 
         $this->assertTrue(
             count($children) === 2
@@ -124,7 +124,7 @@ class ControllerTest extends TestCase
         );
 
         $this->assertFalse(
-            in_array('hiddenChild', $children),
+            in_array('hidden-child', $children),
             'Children should have included me'
         );
     }

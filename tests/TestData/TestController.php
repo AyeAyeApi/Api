@@ -14,13 +14,7 @@ class TestController extends Controller
 {
 
     protected $ignoreChildren = [
-        'hiddenChild'
-    ];
-
-    protected $children = [
-        'me' => '\AyeAye\Api\Tests\TestData\TestController',
-        'child' => '\AyeAye\Api\Tests\TestData\TestChildController',
-        'hiddenChild' => '\stdClass',
+        'hidden-child'
     ];
 
     /**
@@ -52,6 +46,33 @@ class TestController extends Controller
     public function putInformationAction($information)
     {
         return true;
+    }
+
+    /**
+     * This controller
+     * @return $this
+     */
+    public function meController()
+    {
+        return $this;
+    }
+
+    /**
+     * A child controller
+     * @return TestChildController
+     */
+    public function childController()
+    {
+        return new TestChildController();
+    }
+
+    /**
+     * A hidden controller
+     * @return \stdClass
+     */
+    public function hiddenChildController()
+    {
+        return new \stdClass();
     }
 
 } 

@@ -17,12 +17,6 @@ class Controller
 {
 
     /**
-     * Controllers that this API links to
-     * @var Controller[]
-     */
-    protected $children = [];
-
-    /**
      * Endpoints that should not be publicly listed
      * @var string[]
      */
@@ -70,11 +64,12 @@ class Controller
 
         $nextLink = array_shift($requestChain);
         if ($nextLink) {
-            if (array_key_exists($nextLink, $this->children)) {
-                /** @var Controller $child */
-                $child = new $this->children[$nextLink]();
-                $data = $child->processRequest($request, $requestChain);
-                $this->status = $child->getStatus();
+            $potentialController = $this->parseControllerName($nextLink);
+            if (method_exists($this, $potentialController)) {
+                /** @var Controller $controller */
+                $controller = $this->$potentialController();
+                $data = $controller->processRequest($request, $requestChain);
+                $this->status = $controller->getStatus();
                 return $data;
             }
 
@@ -129,24 +124,9 @@ class Controller
     public function getIndexAction()
     {
         $data = new \stdClass();
-        $data->children = $this->getChildren();
+        $data->children = $this->getControllers();
         $data->endpoints = $this->getEndpoints();
         return $data;
-    }
-
-    /**
-     * Get a list of child controllers to this one
-     * @return array
-     */
-    public function getChildren()
-    {
-        $children = [];
-        foreach ($this->children as $child => $class) {
-            if (!in_array($child, $this->ignoreChildren)) {
-                $children[] = $child;
-            }
-        }
-        return $children;
     }
 
     /**
