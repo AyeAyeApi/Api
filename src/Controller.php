@@ -195,7 +195,7 @@ class Controller
         foreach ($methods as $classMethod) {
             if (preg_match('/([a-z]+)([A-Z]\w+)Action$/', $classMethod, $parts)) {
                 $method = strtolower($parts[1]);
-                $endPoint = strtolower(preg_replace('/([a-z])([A-Z])/s', '$1-$2', $parts[2]));
+                $endPoint = $this->camelcaseToHyphenated($parts[2]);
                 if (!in_array($endPoint, $this->ignoreEndpoints)) {
                     if (!array_key_exists($method, $endPoints)) {
                         $endPoints[$method] = array();
@@ -207,7 +207,6 @@ class Controller
         return $endPoints;
     }
 
-
     /**
      * Returns a list of controllers attached to this class
      * @return array
@@ -217,13 +216,22 @@ class Controller
         $controllers = [];
         foreach ($methods as $method) {
             if (preg_match('/(\w+)Controller$/', $method, $parts)) {
-                $controller = strtolower(preg_replace('/([a-z])([A-Z])/s', '$1-$2', $parts[1]));
+                $controller = $this->camelcaseToHyphenated($parts[1]);
                 if (!in_array($controller, $this->ignoreChildren)) {
                     $controllers[] = $controller;
                 }
             }
         }
         return $controllers;
+    }
+
+    /**
+     * Takes a camelcase string, such as method names, and hyphenates it for urls
+     * @param string $camelcaseString
+     * @return string Hyphenated string for urls
+     */
+    protected function camelcaseToHyphenated($camelcaseString) {
+        return strtolower(preg_replace('/([a-z])([A-Z])/s', '$1-$2', $camelcaseString));
     }
 
     /**
