@@ -3,6 +3,7 @@
     "type": "library",
     "description": "A simple but powerful API framework",
     "homepage": "https://ayeayeapi.com",
+    "keywords": [ "api", "framework", "rest" ],
     "minimum-stability": "dev",
     "license" : "GPL-3.0+",
     "authors": [
@@ -18,12 +19,27 @@
         "ayeaye/formatters": "0.10.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "3.7.*"
+        "phpunit/phpunit": "@stable",
+        "squizlabs/php_codesniffer": "@stable",
+        "phploc/phploc": "@stable",
+        "pdepend/pdepend": "@stable",
+        "phpmd/phpmd": "@stable",
+        "sebastian/phpcpd": "@stable"
     },
     "autoload": {
         "psr-4": {
-            "AyeAye\\Api\\": "src/",
+            "AyeAye\\Api\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "AyeAye\\Api\\Tests\\": "tests/"
         }
+    },
+    "config": {
+        "bin-dir": "bin",
+        "process-timeout":      600,
+        "preferred-install":    "dist",
+        "github-protocols":     ["https"]
     }
 }
