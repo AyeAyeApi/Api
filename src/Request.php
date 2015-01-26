@@ -68,31 +68,31 @@ class Request implements \JsonSerializable
     protected $requestedFormat;
 
     /**
-	 * An amalgamation of all parameters sent in any way
+     * An amalgamation of all parameters sent in any way
      * @var array
      */
     protected $parameters = array();
 
     /**
-	 * Parameters sent as GET, POST, SESSION, COOKIE
+     * Parameters sent as GET, POST, SESSION, COOKIE
      * @var array
      */
     protected $request = array();
 
     /**
-	 * Parameters sent in the header
+     * Parameters sent in the header
      * @var array
      */
     protected $header = array();
 
     /**
-	 * The contents of the body of a request represented as an object
+     * The contents of the body of a request represented as an object
      * @var \stdClass
      */
     protected $body;
 
     /**
-	 * Used to trim the starting path (such as /api) from the front of the request
+     * Used to trim the starting path (such as /api) from the front of the request
      * @var string
      */
     protected $baseUrl;
@@ -326,7 +326,8 @@ class Request implements \JsonSerializable
         return $requestChain;
     }
 
-    protected function removeBaseUrl($url, $baseUrl) {
+    protected function removeBaseUrl($url, $baseUrl)
+    {
         $url = trim($url, '/');
         $baseUrl = trim($baseUrl, '/');
         if (substr($url, 0, strlen($baseUrl)) == $baseUrl) {
@@ -380,13 +381,12 @@ class Request implements \JsonSerializable
      * @return $this
      * @throws \Exception
      */
-    public function setBaseUrl($baseUrl) {
-        if(!is_null($baseUrl) && !is_string($baseUrl)) {
+    public function setBaseUrl($baseUrl)
+    {
+        if (!is_null($baseUrl) && !is_string($baseUrl)) {
             throw new \Exception('baseUrl must be a string');
         }
         $this->baseUrl = $baseUrl;
         return $this;
     }
-
-
 }

@@ -14,10 +14,10 @@ namespace AyeAye\Api;
 class Status implements \JsonSerializable
 {
 
-	/**
-	 * A list of common HTTP status codes and their associated messages
-	 * @var array
-	 */
+    /**
+     * A list of common HTTP status codes and their associated messages
+     * @var array
+     */
     public static $statusCodes = [
         // Informational
         100 => 'Continue',
@@ -54,7 +54,7 @@ class Status implements \JsonSerializable
         301 => 'Moved Permanently',
         // And don't come back!
         302 => 'Found',
-        // Sometimes used to mean Moved Temporarily, however it's implemented link 'See Other' 
+        // Sometimes used to mean Moved Temporarily, however it's implemented link 'See Other'
         // If that's not desired 307 should be used instead
         303 => 'See Other',
         // Like Moved Temporarily except the resource should be hit with GET regardless of method used here
@@ -196,7 +196,7 @@ class Status implements \JsonSerializable
     protected $message;
 
     /**
-	 * Construct a Status using an HTTP code
+     * Construct a Status using an HTTP code
      * @param int $code Default 200
      * @throws \Exception If invalid code
      */
@@ -260,6 +260,4 @@ class Status implements \JsonSerializable
     {
         return "HTTP/1.1 {$this->getCode()} {$this::getMessageForCode($this->getCode())}";
     }
-
-
 }

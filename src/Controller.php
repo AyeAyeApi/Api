@@ -39,14 +39,14 @@ class Controller
     protected $request;
 
     /**
-	 * The status object that represents an HTTP status
+     * The status object that represents an HTTP status
      * @var Status
      */
     protected $status;
 
     /**
-	 * Look at a request and work out what to do next.
-	 * Call a child controller, or an endpoint on this controller.
+     * Look at a request and work out what to do next.
+     * Call a child controller, or an endpoint on this controller.
      * @param Request $request
      * @param array $requestChain
      * @return mixed
@@ -112,7 +112,8 @@ class Controller
      * @param string $controller
      * @return string
      */
-    public function parseControllerName($controller) {
+    public function parseControllerName($controller)
+    {
         $controller = str_replace(' ', '', lcfirst(ucwords(str_replace('-', ' ', $controller))));
         return $controller . 'Controller';
     }
@@ -130,7 +131,7 @@ class Controller
     }
 
     /**
-	 * Get the Status object associated with the controller
+     * Get the Status object associated with the controller
      * @return Status
      */
     public function getStatus()
@@ -142,7 +143,7 @@ class Controller
     }
 
     /**
-	 * Set the status object associated with the controller
+     * Set the status object associated with the controller
      * @param Status $status
      * @return $this
      */
@@ -153,7 +154,7 @@ class Controller
     }
 
     /**
-	 * Set the status object associated with the controller using an HTTP status code
+     * Set the status object associated with the controller using an HTTP status code
      * @param $statusCode
      * @return $this
      */
@@ -191,7 +192,8 @@ class Controller
      * Returns a list of controllers attached to this class
      * @return array
      */
-    public function getControllers() {
+    public function getControllers()
+    {
         $methods = get_class_methods($this);
         $controllers = [];
         foreach ($methods as $method) {
@@ -210,7 +212,8 @@ class Controller
      * @param string $camelcaseString
      * @return string Hyphenated string for urls
      */
-    protected function camelcaseToHyphenated($camelcaseString) {
+    protected function camelcaseToHyphenated($camelcaseString)
+    {
         return strtolower(preg_replace('/([a-z])([A-Z])/s', '$1-$2', $camelcaseString));
     }
 
@@ -268,5 +271,4 @@ class Controller
         }
         return $parameters;
     }
-
 }

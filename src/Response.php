@@ -36,25 +36,25 @@ class Response implements \JsonSerializable
     protected $format;
 
     /**
-	 * The HTTP status of the response
+     * The HTTP status of the response
      * @var Status
      */
     protected $status;
 
     /**
-	 * The initial request. This will only be shown if debug is on
+     * The initial request. This will only be shown if debug is on
      * @var Request
      */
     protected $request;
 
     /**
-	 * The data you wish to return in the response
+     * The data you wish to return in the response
      * @var mixed
      */
     protected $data;
 
     /**
-	 * Get the Status object assigned to the response
+     * Get the Status object assigned to the response
      * @return \AyeAye\Api\Status
      */
     public function getStatus()
@@ -63,7 +63,7 @@ class Response implements \JsonSerializable
     }
 
     /**
-	 * Set the Status object that will report the HTTP status to the client
+     * Set the Status object that will report the HTTP status to the client
      * @param Status $status
      * @return $this
      */
@@ -74,7 +74,7 @@ class Response implements \JsonSerializable
     }
 
     /**
-	 * Set the Status object that will report the HTTP status to the client using only the HTTP status code
+     * Set the Status object that will report the HTTP status to the client using only the HTTP status code
      * @param int $statusCode
      * @return $this
      */
@@ -85,7 +85,7 @@ class Response implements \JsonSerializable
     }
 
     /**
-	 * Get the Request the client made
+     * Get the Request the client made
      * @return Request
      */
     public function getRequest()
@@ -94,7 +94,7 @@ class Response implements \JsonSerializable
     }
 
     /**
-	 * Set the Request. This will only be returned in debug mode
+     * Set the Request. This will only be returned in debug mode
      * @param Request $request
      * @return $this
      */
@@ -106,7 +106,7 @@ class Response implements \JsonSerializable
     }
 
     /**
-	 * Get the Data that is being returned
+     * Get the Data that is being returned
      * @return mixed
      */
     public function getData()
@@ -115,7 +115,7 @@ class Response implements \JsonSerializable
     }
 
     /**
-	 * Set the data that is to be returned
+     * Set the data that is to be returned
      * @param $data
      * @return $this
      */
@@ -126,7 +126,7 @@ class Response implements \JsonSerializable
     }
 
     /**
-	 * Set the format factory that will be used to choose a formatter
+     * Set the format factory that will be used to choose a formatter
      * @param FormatFactory $formatFactory
      * @return $this
      */
@@ -152,7 +152,7 @@ class Response implements \JsonSerializable
     }
 
     /**
-	 * Get the Formatter that will format the Response
+     * Get the Formatter that will format the Response
      * @return Formatter
      */
     public function getFormat()
@@ -188,7 +188,7 @@ class Response implements \JsonSerializable
     public function jsonSerialize()
     {
         // If in raw mode, only return data
-        if(is_null($this->request->getParameter('debug'))) {
+        if (is_null($this->request->getParameter('debug'))) {
             return [
                 'data' => $this->getData()
             ];
@@ -201,5 +201,4 @@ class Response implements \JsonSerializable
             'data' => $this->getData(),
         ];
     }
-
 }

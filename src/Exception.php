@@ -21,14 +21,14 @@ class Exception extends \Exception implements \JsonSerializable
     const DEFAULT_MESSAGE = 'Internal Server Error';
 
     /**
-	 * A message to show the client if available
+     * A message to show the client if available
      * @var string
      */
     public $publicMessage;
 
     /**
-	 * Create a new Exception, include information to pass to the client
-     * @param string $publicMessage Message to show the user if not caught. Can be omitted so long as an integer code is used instead
+     * Create a new Exception, include information to pass to the client
+     * @param string $publicMessage Message to show the user if not caught. Optional
      * @param int $code HTTP Status code to send to the user
      * @param string $systemMessage Message to show the enter into the log if different from the public message
      * @param \Exception $previous Any previous Exception
@@ -36,9 +36,9 @@ class Exception extends \Exception implements \JsonSerializable
     public function __construct($publicMessage = '', $code = 500, $systemMessage = '', \Exception $previous = null)
     {
         // Shift all parameters along if the first parameter is a string
-        if(is_int($publicMessage)) {
-            if(is_string($code)) {
-                if($systemMessage instanceof \Exception) {
+        if (is_int($publicMessage)) {
+            if (is_string($code)) {
+                if ($systemMessage instanceof \Exception) {
                     $previous = $systemMessage;
                 }
                 $systemMessage = $code;
@@ -56,7 +56,7 @@ class Exception extends \Exception implements \JsonSerializable
         }
 
         // If the system message wasn't specified, use the public message
-        if(!$systemMessage) {
+        if (!$systemMessage) {
             $systemMessage = $publicMessage;
         }
 
@@ -65,19 +65,19 @@ class Exception extends \Exception implements \JsonSerializable
         parent::__construct($systemMessage, $code, $previous);
     }
 
-	/**
-	 * Get the message to tell the client
-	 * @return string
-	 */
+    /**
+     * Get the message to tell the client
+     * @return string
+     */
     public function getPublicMessage()
     {
         return $this->publicMessage;
     }
 
-	/**
-	 * Return data to be serialised into Json
-	 * @return array
-	 */
+    /**
+     * Return data to be serialised into Json
+     * @return array
+     */
     public function jsonSerialize()
     {
         return [
@@ -86,5 +86,4 @@ class Exception extends \Exception implements \JsonSerializable
             'previous' => $this->getPrevious(),
         ];
     }
-
-} 
+}

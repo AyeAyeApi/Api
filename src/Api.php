@@ -17,33 +17,33 @@ class Api
 {
 
     /**
-	 * The starting controller for the Api
+     * The starting controller for the Api
      * @var Controller
      */
     protected $controller;
 
     /**
-	 * The request object to use for this call
+     * The request object to use for this call
      * @var Request
      */
     protected $request;
 
     /**
-	 * The response object to return for this call
+     * The response object to return for this call
      * @var Response
      */
     protected $response;
 
     /**
-	 * A collection of formatters available
+     * A collection of formatters available
      * @var FormatFactory
      */
     protected $formatFactory;
 
-	/**
-	 * Initialise the API with a controller that forms the starting point of routing information
-	 * @param Controller $initialController The starting point for the Api
-	 */
+    /**
+     * Initialise the API with a controller that forms the starting point of routing information
+     * @param Controller $initialController The starting point for the Api
+     */
     public function __construct(Controller $initialController)
     {
         $this->controller = $initialController;
@@ -51,36 +51,35 @@ class Api
 
     /**
      * Process the request, get a response and return it.
-	 * Exceptions thrown in most places will be handled here, though currently there's no way to handle exceptions
-	 * int the Response object itself (eg, invalid formats)
+     * Exceptions thrown in most places will be handled here, though currently there's no way to handle exceptions
+     * int the Response object itself (eg, invalid formats)
      * Tip. You can ->respond() straight off this method
      * @return Response
      */
     public function go()
     {
-		$response = $this->getResponse();
+        $response = $this->getResponse();
 
-		try {
-			$request = $this->getRequest();
-			$response->setFormatFactory(
-				$this->getFormatFactory()
-			);
-			$response->setRequest(
-				$request
-			);
-			$response->setData(
-				$this->controller->processRequest($request)
-			);
-			$response->setStatus(
-				$this->controller->getStatus()
-			);
-			return $response;
-		}
-		catch(Exception $e) {
-			$response->setData($e->getPublicMessage());
+        try {
+            $request = $this->getRequest();
+            $response->setFormatFactory(
+                $this->getFormatFactory()
+            );
+            $response->setRequest(
+                $request
+            );
+            $response->setData(
+                $this->controller->processRequest($request)
+            );
+            $response->setStatus(
+                $this->controller->getStatus()
+            );
+            return $response;
+        } catch (Exception $e) {
+            $response->setData($e->getPublicMessage());
             $response->setStatusCode($e->getCode());
-			return $response;
-		}
+            return $response;
+        }
     }
 
     /**
@@ -148,5 +147,4 @@ class Api
         }
         return $this->formatFactory;
     }
-
 }
