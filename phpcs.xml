@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<ruleset name="Rules for PHPCS">
+    <description>Used for maintaining standards in Aye Aye Api</description>
+    <rule ref="PSR1"/>
+    <rule ref="PSR2"/>
+</ruleset>
