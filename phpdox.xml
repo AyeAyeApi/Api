@@ -4,7 +4,7 @@
             <include mask="*.php" />
         </collector>
 
-        <generator output="build">
+        <generator output="reports">
             <build engine="html" enabled="true" output="api">
                 <file extension="html" />
             </build>
