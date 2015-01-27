@@ -33,12 +33,6 @@ class Controller
     ];
 
     /**
-     * The request object that represents the users request
-     * @var Request
-     */
-    protected $request;
-
-    /**
      * The status object that represents an HTTP status
      * @var Status
      */
@@ -55,9 +49,6 @@ class Controller
     public function processRequest(Request $request, array $requestChain = null)
     {
 
-        // Set these internally in case we require access to them
-        $this->request = $request;
-
         if (is_null($requestChain)) {
             $requestChain = $request->getRequestChain();
         }
@@ -73,7 +64,7 @@ class Controller
                 return $data;
             }
 
-            $potentialEndpoint = $this->parseEndpointName($nextLink, $this->request->getMethod());
+            $potentialEndpoint = $this->parseEndpointName($nextLink, $request->getMethod());
             if (method_exists($this, $potentialEndpoint)) {
                 return call_user_func_array(
                     [$this, $potentialEndpoint],
@@ -85,7 +76,7 @@ class Controller
             throw new Exception($message, 404);
         }
 
-        $potentialEndpoint = $this->parseEndpointName('index', $this->request->getMethod());
+        $potentialEndpoint = $this->parseEndpointName('index', $request->getMethod());
         if (method_exists($this, $potentialEndpoint)) {
             return $this->$potentialEndpoint();
         }
