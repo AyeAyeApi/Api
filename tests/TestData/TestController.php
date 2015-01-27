@@ -13,7 +13,7 @@ use AyeAye\Api\Controller;
 class TestController extends Controller
 {
 
-    protected $ignoreChildren = [
+    protected $ignoreControllers = [
         'hidden-child'
     ];
 

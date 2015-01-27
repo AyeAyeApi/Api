@@ -9,7 +9,7 @@
 namespace AyeAye\Api;
 
 /**
- * Describes end points and child controllers
+ * Describes end points and controllers
  * @author Daniel Mason
  * @package AyeAye\Api
  */
@@ -25,10 +25,10 @@ class Controller
     ];
 
     /**
-     * Children that should not be publicly listed
+     * Controllers that should not be publicly listed
      * @var string
      */
-    protected $ignoreChildren = [
+    protected $ignoreControllers = [
 
     ];
 
@@ -46,7 +46,7 @@ class Controller
 
     /**
      * Look at a request and work out what to do next.
-     * Call a child controller, or an endpoint on this controller.
+     * Call a controller, or an endpoint on this controller.
      * @param Request $request
      * @param array $requestChain
      * @return mixed
@@ -119,7 +119,7 @@ class Controller
     }
 
     /**
-     * Returns a list of possible endpoints and child controllers
+     * Returns a list of possible endpoints and controllers
      * @return \stdClass
      */
     public function getIndexEndpoint()
@@ -199,7 +199,7 @@ class Controller
         foreach ($methods as $method) {
             if (preg_match('/(\w+)Controller$/', $method, $parts)) {
                 $controller = $this->camelcaseToHyphenated($parts[1]);
-                if (!in_array($controller, $this->ignoreChildren)) {
+                if (!in_array($controller, $this->ignoreControllers)) {
                     $controllers[] = $controller;
                 }
             }

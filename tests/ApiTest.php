@@ -42,26 +42,26 @@ class ApiTest extends TestCase
         $output = json_decode(ob_get_clean());
 
 
-        // Children
+        // Controllers
 
         $this->assertContains(
             'me', $output->data->controllers,
-            "Children should have contained 'me'"
+            "Controllers should have contained 'me'"
         );
 
         $this->assertContains(
             'child', $output->data->controllers,
-            "Children should have contained 'child'"
+            "Controllers should have contained 'child'"
         );
 
         $this->assertNotContains(
             'hiddenChild', $output->data->controllers,
-            "Children should not have contained 'hiddenChild'"
+            "Controllers should not have contained 'hiddenChild'"
         );
 
         $this->assertCount(
             2, $output->data->controllers,
-            "Children should have has 2 elements"
+            "Controllers should have has 2 elements"
         );
 
         // Endpoints

@@ -101,31 +101,31 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Tests controller returns all relevant children, including ignored
+     * Tests controller returns all relevant controllers, including ignored
      * @see TestController
      */
     public function testGetControllers()
     {
         $controller = new TestController();
-        $children = $controller->getControllers();
+        $controllers = $controller->getControllers();
 
         $this->assertTrue(
-            count($children) === 2
+            count($controllers) === 2
         );
 
         $this->assertTrue(
-            in_array('child', $children),
-            'Children should have included child'
+            in_array('child', $controllers),
+            'Controllers should have included child'
         );
 
         $this->assertTrue(
-            in_array('me', $children),
-            'Children should have included me'
+            in_array('me', $controllers),
+            'Controllers should have included me'
         );
 
         $this->assertFalse(
-            in_array('hidden-child', $children),
-            'Children should have included me'
+            in_array('hidden-child', $controllers),
+            'Controllers should have included me'
         );
     }
 
@@ -138,26 +138,26 @@ class ControllerTest extends TestCase
         $controller = new TestController();
         $result = $controller->getIndexEndpoint();
 
-        // Children
+        // Controllers
 
         $this->assertTrue(
             in_array('me', $result->controllers),
-            "Children should have contained 'me'"
+            "Controllers should have contained 'me'"
         );
 
         $this->assertTrue(
             in_array('child', $result->controllers),
-            "Children should have contained 'me'"
+            "Controllers should have contained 'me'"
         );
 
         $this->assertFalse(
             in_array('hiddenChild', $result->controllers),
-            "Children should have contained 'me'"
+            "Controllers should have contained 'me'"
         );
 
         $this->assertTrue(
             count($result->controllers) == 2,
-            "Children should have has 2 elements, it had: " . PHP_EOL . count($result->controllers)
+            "Controllers should have has 2 elements, it had: " . PHP_EOL . count($result->controllers)
         );
 
         // Endpoints
