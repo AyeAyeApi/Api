@@ -24,7 +24,8 @@
         "phploc/phploc": "@stable",
         "pdepend/pdepend": "@stable",
         "phpmd/phpmd": "@stable",
-        "sebastian/phpcpd": "@stable"
+        "sebastian/phpcpd": "@stable",
+        "theseer/phpdox": "@stable"
     },
     "autoload": {
         "psr-4": {
