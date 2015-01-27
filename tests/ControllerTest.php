@@ -21,28 +21,28 @@ class ControllerTest extends TestCase
 {
 
     /**
-     * Test the parse action method
+     * Test the parse endpoint method
      * Checks simple and long names
      * @see Controller
      */
-    public function testParseActionName()
+    public function testParseEndpointName()
     {
         $controller = new Controller();
 
-        $action = 'index';
+        $endpoint = 'index';
         $method = Request::METHOD_GET;
-        $expectedEndpoint = 'getIndexAction';
-        $actualEndpoint = $controller->parseActionName($action, $method);
+        $expectedEndpoint = 'getIndexEndpoint';
+        $actualEndpoint = $controller->parseEndpointName($endpoint, $method);
 
         $this->assertTrue(
             $actualEndpoint === $expectedEndpoint,
             "Expected $expectedEndpoint, is actually: " . PHP_EOL . $actualEndpoint
         );
 
-        $action = 'a-longer-name';
+        $endpoint = 'a-longer-name';
         $method = Request::METHOD_POST;
-        $expectedEndpoint = 'postALongerNameAction';
-        $actualEndpoint = $controller->parseActionName($action, $method);
+        $expectedEndpoint = 'postALongerNameEndpoint';
+        $actualEndpoint = $controller->parseEndpointName($endpoint, $method);
 
         $this->assertTrue(
             $actualEndpoint === $expectedEndpoint,
@@ -130,13 +130,13 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Tests the correct data is returned for the index action
+     * Tests the correct data is returned for the index endpoint
      * @see TestController
      */
-    public function testIndexAction()
+    public function testIndexEndpoint()
     {
         $controller = new TestController();
-        $result = $controller->getIndexAction();
+        $result = $controller->getIndexEndpoint();
 
         // Children
 
@@ -232,7 +232,7 @@ class ControllerTest extends TestCase
 
         $this->assertTrue(
             property_exists($result, 'endpoints'),
-            "Default index action not hit"
+            "Default index endpoint not hit"
         );
     }
 
@@ -249,7 +249,7 @@ class ControllerTest extends TestCase
 
         $this->assertTrue(
             property_exists($result, 'endpoints'),
-            "Alternative index action not hit"
+            "Alternative index endpoint not hit"
         );
     }
 
@@ -258,14 +258,14 @@ class ControllerTest extends TestCase
      * @see Request
      * @see TestController
      * @expectedException        \Exception
-     * @expectedExceptionMessage Could not find controller or action matching
+     * @expectedExceptionMessage Could not find controller or endpoint matching
      * @expectedExceptionCode    404
      */
-    public function testActionNotFound()
+    public function testEndpointNotFound()
     {
         $request = new Request(
             Request::METHOD_GET,
-            'not-a-real-action.json'
+            'not-a-real-endpoint.json'
         );
         $controller = new TestController();
         $controller->processRequest(
@@ -291,7 +291,7 @@ class ControllerTest extends TestCase
         $this->assertEquals(
             $result,
             'information',
-            "Correct action not hit"
+            "Correct endpoint not hit"
         );
     }
 

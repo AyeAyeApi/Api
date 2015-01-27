@@ -21,7 +21,7 @@ class TestController extends Controller
      * Gets some information
      * @return string
      */
-    public function getInformationAction()
+    public function getInformationEndpoint()
     {
         return 'information';
     }
@@ -31,7 +31,7 @@ class TestController extends Controller
      * @param string $condition The condition for the information
      * @return \stdClass
      */
-    public function getMoreInformationAction($condition)
+    public function getMoreInformationEndpoint($condition)
     {
         $object = new \stdClass();
         $object->condition = $condition;
@@ -43,7 +43,7 @@ class TestController extends Controller
      * @param $information string The information to put
      * @return bool
      */
-    public function putInformationAction($information)
+    public function putInformationEndpoint($information)
     {
         return true;
     }

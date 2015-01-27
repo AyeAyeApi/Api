@@ -137,7 +137,7 @@ class ApiTest extends TestCase
 		$output = json_decode(ob_get_clean());
 
 		$this->assertSame(
-			$output->data, "Could not find controller or action matching 'not-a-real-endpoint'",
+			$output->data, "Could not find controller or endpoint matching 'not-a-real-endpoint'",
 			'Exception should have been caught and returned an appropriate error to the user'
 		);
 

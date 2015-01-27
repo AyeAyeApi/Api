@@ -73,38 +73,38 @@ class Controller
                 return $data;
             }
 
-            $potentialAction = $this->parseActionName($nextLink, $this->request->getMethod());
-            if (method_exists($this, $potentialAction)) {
+            $potentialEndpoint = $this->parseEndpointName($nextLink, $this->request->getMethod());
+            if (method_exists($this, $potentialEndpoint)) {
                 return call_user_func_array(
-                    [$this, $potentialAction],
-                    $this->getParametersFromRequest($request, $potentialAction)
+                    [$this, $potentialEndpoint],
+                    $this->getParametersFromRequest($request, $potentialEndpoint)
                 );
             }
 
-            $message = "Could not find controller or action matching '$nextLink'";
+            $message = "Could not find controller or endpoint matching '$nextLink'";
             throw new Exception($message, 404);
         }
 
-        $potentialAction = $this->parseActionName('index', $this->request->getMethod());
-        if (method_exists($this, $potentialAction)) {
-            return $this->$potentialAction();
+        $potentialEndpoint = $this->parseEndpointName('index', $this->request->getMethod());
+        if (method_exists($this, $potentialEndpoint)) {
+            return $this->$potentialEndpoint();
         }
 
-        return $this->getIndexAction();
+        return $this->getIndexEndpoint();
 
     }
 
     /**
-     * Construct the method name for an action
-     * @param string $action
+     * Construct the method name for an endpoint
+     * @param string $endpoint
      * @param string $method
      * @return string
      */
-    public function parseActionName($action, $method = Request::METHOD_GET)
+    public function parseEndpointName($endpoint, $method = Request::METHOD_GET)
     {
-        $action = str_replace(' ', '', ucwords(str_replace('-', ' ', $action)));
+        $endpoint = str_replace(' ', '', ucwords(str_replace('-', ' ', $endpoint)));
         $method = strtolower($method);
-        return $method . $action . 'Action';
+        return $method . $endpoint . 'Endpoint';
     }
 
     /**
@@ -119,10 +119,10 @@ class Controller
     }
 
     /**
-     * Returns a list of possible actions and child controllers
+     * Returns a list of possible endpoints and child controllers
      * @return \stdClass
      */
-    public function getIndexAction()
+    public function getIndexEndpoint()
     {
         $data = new \stdClass();
         $data->controllers = $this->getControllers();
@@ -165,7 +165,7 @@ class Controller
     }
 
     /**
-     * Returns a list of actions attached to this class
+     * Returns a list of endpoints attached to this class
      * @return array
      */
     public function getEndpoints()
@@ -174,7 +174,7 @@ class Controller
         $parts = [];
         $methods = get_class_methods($this);
         foreach ($methods as $classMethod) {
-            if (preg_match('/([a-z]+)([A-Z]\w+)Action$/', $classMethod, $parts)) {
+            if (preg_match('/([a-z]+)([A-Z]\w+)Endpoint$/', $classMethod, $parts)) {
                 $method = strtolower($parts[1]);
                 $endPoint = $this->camelcaseToHyphenated($parts[2]);
                 if (!in_array($endPoint, $this->ignoreEndpoints)) {
