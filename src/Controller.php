@@ -93,7 +93,7 @@ class Controller
      */
     public function parseEndpointName($endpoint, $method = Request::METHOD_GET)
     {
-        $endpoint = str_replace(' ', '', ucwords(str_replace('-', ' ', $endpoint)));
+        $endpoint = str_replace(' ', '', ucwords(str_replace(['-', '+', '%20'], ' ', $endpoint)));
         $method = strtolower($method);
         return $method . $endpoint . 'Endpoint';
     }
@@ -105,7 +105,7 @@ class Controller
      */
     public function parseControllerName($controller)
     {
-        $controller = str_replace(' ', '', ucwords(str_replace('-', ' ', $controller)));
+        $controller = str_replace(' ', '', ucwords(str_replace(['-', '+', '%20'], ' ', $controller)));
         return 'get' . $controller . 'Controller';
     }
 
