@@ -14,7 +14,7 @@ class TestController extends Controller
 {
 
     public function __construct() {
-        $this->hideController('getHiddenChildController');
+        $this->hideControllerMethod('hiddenChildController');
     }
 
     /**
@@ -52,7 +52,7 @@ class TestController extends Controller
      * This controller
      * @return $this
      */
-    public function getMeController()
+    public function meController()
     {
         return $this;
     }
@@ -61,7 +61,7 @@ class TestController extends Controller
      * A child controller
      * @return TestChildController
      */
-    public function getChildController()
+    public function childController()
     {
         return new TestChildController();
     }
@@ -70,7 +70,7 @@ class TestController extends Controller
      * A hidden controller
      * @return \stdClass
      */
-    public function getHiddenChildController()
+    public function hiddenChildController()
     {
         return new \stdClass();
     }
