@@ -55,8 +55,8 @@ class ApiTest extends TestCase
         );
 
         $this->assertNotContains(
-            'hiddenChild', $output->data->controllers,
-            "Controllers should not have contained 'hiddenChild'"
+            'hidden-child', $output->data->controllers,
+            "Controllers should not have contained 'hidden-child'"
         );
 
         $this->assertCount(
@@ -66,10 +66,10 @@ class ApiTest extends TestCase
 
         // Endpoints
 
-
         $this->assertObjectHasAttribute(
 			'information', $output->data->endpoints->get,
-            "Get endpoints should have included 'information' it didn't"
+            "Get endpoints should have included 'information' it didn't".print_r($output->data, true
+            )
         );
 
         $this->assertSame(
