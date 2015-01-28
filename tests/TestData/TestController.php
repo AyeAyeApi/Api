@@ -13,9 +13,9 @@ use AyeAye\Api\Controller;
 class TestController extends Controller
 {
 
-    protected $ignoreControllers = [
-        'hidden-child'
-    ];
+    public function __construct() {
+        $this->hideController('getHiddenChildController');
+    }
 
     /**
      * Gets some information
@@ -52,7 +52,7 @@ class TestController extends Controller
      * This controller
      * @return $this
      */
-    public function meController()
+    public function getMeController()
     {
         return $this;
     }
@@ -61,7 +61,7 @@ class TestController extends Controller
      * A child controller
      * @return TestChildController
      */
-    public function childController()
+    public function getChildController()
     {
         return new TestChildController();
     }
@@ -70,7 +70,7 @@ class TestController extends Controller
      * A hidden controller
      * @return \stdClass
      */
-    public function hiddenChildController()
+    public function getHiddenChildController()
     {
         return new \stdClass();
     }

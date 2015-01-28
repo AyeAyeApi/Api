@@ -20,15 +20,15 @@ class Controller
      * Endpoints that should not be publicly listed
      * @var string[]
      */
-    protected $ignoreEndpoints = [
-        'index',
+    protected $hiddenEndpoints = [
+        'getIndexEndpoint' => true, // Value not used
     ];
 
     /**
      * Controllers that should not be publicly listed
      * @var string
      */
-    protected $ignoreControllers = [
+    protected $hiddenControllers = [
 
     ];
 
@@ -105,8 +105,8 @@ class Controller
      */
     public function parseControllerName($controller)
     {
-        $controller = str_replace(' ', '', lcfirst(ucwords(str_replace('-', ' ', $controller))));
-        return $controller . 'Controller';
+        $controller = str_replace(' ', '', ucwords(str_replace('-', ' ', $controller)));
+        return 'get' . $controller . 'Controller';
     }
 
     /**
@@ -156,27 +156,97 @@ class Controller
     }
 
     /**
+     * Hide an endpoint
+     * @param $methodName
+     * @return $this
+     */
+    protected function hideEndpoint($methodName) {
+        if(!is_array($this->hiddenEndpoints)) {
+            $this->hiddenEndpoints = [];
+        }
+        $this->hiddenEndpoints[$methodName] = true;
+        return $this;
+    }
+
+    /**
+     * Is an endpoint currently hidden
+     * @param $methodName
+     * @return bool
+     */
+    protected function isEndpointHidden($methodName) {
+        return is_array($this->hiddenEndpoints)
+            && isset($this->hiddenEndpoints[$methodName]);
+    }
+
+    /**
+     * Show a hidden endpoint
+     * @param $methodName
+     * @return $this
+     */
+    protected function showEndpoint($methodName) {
+        if($this->isEndpointHidden($methodName)) {
+            unset($this->hiddenEndpoints[$methodName]);
+        }
+        return $this;
+    }
+
+    /**
+     * Hide a controller
+     * @param $methodName
+     * @return $this
+     */
+    protected function hideController($methodName) {
+        if(!is_array($this->hiddenControllers)) {
+            $this->hiddenControllers = [];
+        }
+        $this->hiddenControllers[$methodName] = true;
+        return $this;
+    }
+
+    /**
+     * Is a controller currently hidden
+     * @param $methodName
+     * @return bool
+     */
+    protected function isControllerHidden($methodName) {
+        return is_array($this->hiddenControllers)
+            && isset($this->hiddenControllers[$methodName]);
+    }
+
+    /**
+     * Show a hidden controller
+     * @param $methodName
+     * @return $this
+     */
+    protected function showController($methodName) {
+        if($this->isControllerHidden($methodName)) {
+            unset($this->hiddenControllers[$methodName]);
+        }
+        return $this;
+    }
+
+    /**
      * Returns a list of endpoints attached to this class
      * @return array
      */
     public function getEndpoints()
     {
-        $endPoints = [];
+        $endpoints = [];
         $parts = [];
         $methods = get_class_methods($this);
         foreach ($methods as $classMethod) {
             if (preg_match('/([a-z]+)([A-Z]\w+)Endpoint$/', $classMethod, $parts)) {
-                $method = strtolower($parts[1]);
-                $endPoint = $this->camelcaseToHyphenated($parts[2]);
-                if (!in_array($endPoint, $this->ignoreEndpoints)) {
-                    if (!array_key_exists($method, $endPoints)) {
-                        $endPoints[$method] = array();
+                if (!$this->isEndpointHidden($classMethod)) {
+                    $method = strtolower($parts[1]);
+                    $endpoint = $this->camelcaseToHyphenated($parts[2]);
+                    if (!array_key_exists($method, $endpoints)) {
+                        $endpoints[$method] = array();
                     }
-                    $endPoints[$method][$endPoint] = $this->getMethodDocumentation($classMethod);
+                    $endpoints[$method][$endpoint] = $this->getMethodDocumentation($classMethod);
                 }
             }
         }
-        return $endPoints;
+        return $endpoints;
     }
 
     /**
@@ -188,9 +258,9 @@ class Controller
         $methods = get_class_methods($this);
         $controllers = [];
         foreach ($methods as $method) {
-            if (preg_match('/(\w+)Controller$/', $method, $parts)) {
-                $controller = $this->camelcaseToHyphenated($parts[1]);
-                if (!in_array($controller, $this->ignoreControllers)) {
+            if (preg_match('/get([A-Z]\w+)Controller$/', $method, $parts)) {
+                if (!$this->isControllerHidden($parts[0])) {
+                    $controller = $this->camelcaseToHyphenated($parts[1]);
                     $controllers[] = $controller;
                 }
             }
