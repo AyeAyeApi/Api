@@ -7,7 +7,6 @@
 
 namespace AyeAye\Api\Tests;
 
-
 use AyeAye\Api\Controller;
 use AyeAye\Api\Request;
 use AyeAye\Api\Status;
@@ -203,7 +202,8 @@ class ControllerTest extends TestCase
         );
 
         $this->assertTrue(
-            $result->endpoints['get']['more-information']['parameters']['condition']->description === 'The condition for the information',
+            $result->endpoints['get']['more-information']['parameters']['condition']->description
+            === 'The condition for the information',
             "Get More Information parameter should be described as 'The condition for the information'"
         );
 
@@ -331,6 +331,4 @@ class ControllerTest extends TestCase
             "Data not parsed correctly"
         );
     }
-
 }
- 

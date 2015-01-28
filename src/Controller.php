@@ -160,8 +160,9 @@ class Controller
      * @param $methodName
      * @return $this
      */
-    protected function hideEndpointMethod($methodName) {
-        if(!is_array($this->hiddenEndpoints)) {
+    protected function hideEndpointMethod($methodName)
+    {
+        if (!is_array($this->hiddenEndpoints)) {
             $this->hiddenEndpoints = [];
         }
         $this->hiddenEndpoints[$methodName] = true;
@@ -173,7 +174,8 @@ class Controller
      * @param $methodName
      * @return bool
      */
-    protected function isEndpointMethodHidden($methodName) {
+    protected function isEndpointMethodHidden($methodName)
+    {
         return is_array($this->hiddenEndpoints)
             && isset($this->hiddenEndpoints[$methodName]);
     }
@@ -183,8 +185,9 @@ class Controller
      * @param $methodName
      * @return $this
      */
-    protected function showEndpointMethod($methodName) {
-        if($this->isEndpointMethodHidden($methodName)) {
+    protected function showEndpointMethod($methodName)
+    {
+        if ($this->isEndpointMethodHidden($methodName)) {
             unset($this->hiddenEndpoints[$methodName]);
         }
         return $this;
@@ -195,8 +198,9 @@ class Controller
      * @param $methodName
      * @return $this
      */
-    protected function hideControllerMethod($methodName) {
-        if(!is_array($this->hiddenControllers)) {
+    protected function hideControllerMethod($methodName)
+    {
+        if (!is_array($this->hiddenControllers)) {
             $this->hiddenControllers = [];
         }
         $this->hiddenControllers[$methodName] = true;
@@ -208,7 +212,8 @@ class Controller
      * @param $methodName
      * @return bool
      */
-    protected function isControllerHiddenMethod($methodName) {
+    protected function isControllerHiddenMethod($methodName)
+    {
         return is_array($this->hiddenControllers)
             && isset($this->hiddenControllers[$methodName]);
     }
@@ -218,8 +223,9 @@ class Controller
      * @param $methodName
      * @return $this
      */
-    protected function showControllerMethod($methodName) {
-        if($this->isControllerHiddenMethod($methodName)) {
+    protected function showControllerMethod($methodName)
+    {
+        if ($this->isControllerHiddenMethod($methodName)) {
             unset($this->hiddenControllers[$methodName]);
         }
         return $this;

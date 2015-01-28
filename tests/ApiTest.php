@@ -45,108 +45,122 @@ class ApiTest extends TestCase
         // Controllers
 
         $this->assertContains(
-            'me', $output->data->controllers,
+            'me',
+            $output->data->controllers,
             "Controllers should have contained 'me'"
         );
 
         $this->assertContains(
-            'child', $output->data->controllers,
+            'child',
+            $output->data->controllers,
             "Controllers should have contained 'child'"
         );
 
         $this->assertNotContains(
-            'hidden-child', $output->data->controllers,
+            'hidden-child',
+            $output->data->controllers,
             "Controllers should not have contained 'hidden-child'"
         );
 
         $this->assertCount(
-            2, $output->data->controllers,
+            2,
+            $output->data->controllers,
             "Controllers should have has 2 elements"
         );
 
         // Endpoints
 
         $this->assertObjectHasAttribute(
-			'information', $output->data->endpoints->get,
-            "Get endpoints should have included 'information' it didn't".print_r($output->data, true
-            )
+            'information',
+            $output->data->endpoints->get,
+            "Get endpoints should have included 'information' it didn't".print_r($output->data, true)
         );
 
         $this->assertSame(
-			'Gets some information', $output->data->endpoints->get->information->description,
+            'Gets some information',
+            $output->data->endpoints->get->information->description,
             "Get Information description was wrong"
         );
 
         $this->assertCount(
-            0, $output->data->endpoints->get->information->parameters,
+            0,
+            $output->data->endpoints->get->information->parameters,
             "Get Information description should not contain any parameters"
         );
 
         $this->assertObjectHasAttribute(
-			'more-information', $output->data->endpoints->get,
+            'more-information',
+            $output->data->endpoints->get,
             "Get endpoints should have included more-information it didn't"
         );
 
         $this->assertSame(
-			'Get some conditional information', $output->data->endpoints->get->{'more-information'}->description,
+            'Get some conditional information',
+            $output->data->endpoints->get->{'more-information'}->description,
             "Get More Information description was wrong"
         );
 
         $this->assertSame(
-			'string', $output->data->endpoints->get->{'more-information'}->parameters->condition->type,
+            'string',
+            $output->data->endpoints->get->{'more-information'}->parameters->condition->type,
             "Get More Information should take a string called condition"
         );
 
         $this->assertSame(
-			'The condition for the information', $output->data->endpoints->get->{'more-information'}->parameters->condition->description,
+            'The condition for the information',
+            $output->data->endpoints->get->{'more-information'}->parameters->condition->description,
             "Get More Information parameter should be described as 'The condition for the information'"
         );
 
-		$this->assertTrue(
-			count($output->data->endpoints->put) === 1,
-			"There should have been 1 get endpoints, there were: " . PHP_EOL . count($output->data->endpoints->put)
-		);
+        $this->assertTrue(
+            count($output->data->endpoints->put) === 1,
+            "There should have been 1 get endpoints, there were: " . PHP_EOL . count($output->data->endpoints->put)
+        );
 
         $this->assertObjectHasAttribute(
-            'information', $output->data->endpoints->put,
+            'information',
+            $output->data->endpoints->put,
             "Put endpoints should have included 'information' it didn't"
         );
 
     }
 
-	/**
-	 * Test the errors are reported to the client correctly
-	 * @see Api
-	 * @see TestController
-	 * @runInSeparateProcess
-	 */
-	public function testInvalidEndpoint() {
-		$initialController = new TestController();
-		$request = new Request(
-			Request::METHOD_GET,
-			'/not-a-real-endpoint'
-		);
-		$api = new Api($initialController);
-		$api->setRequest($request);
+    /**
+     * Test the errors are reported to the client correctly
+     * @see Api
+     * @see TestController
+     * @runInSeparateProcess
+     */
+    public function testInvalidEndpoint()
+    {
+        $initialController = new TestController();
+        $request = new Request(
+            Request::METHOD_GET,
+            '/not-a-real-endpoint'
+        );
+        $api = new Api($initialController);
+        $api->setRequest($request);
 
-		ob_start();
+        ob_start();
 
-		$response = $api->go();
+        $response = $api->go();
         $response->respond();
 
-		$output = json_decode(ob_get_clean());
-
-		$this->assertSame(
-			$output->data, "Could not find controller or endpoint matching 'not-a-real-endpoint'",
-			'Exception should have been caught and returned an appropriate error to the user'
-		);
+        $output = json_decode(ob_get_clean());
 
         $this->assertSame(
-            $response->getStatus()->getHttpHeader(), 'HTTP/1.1 404 Not Found',
+            $output->data,
+            "Could not find controller or endpoint matching 'not-a-real-endpoint'",
+            'Exception should have been caught and returned an appropriate error to the user'
+        );
+
+        $this->assertSame(
+            $response->getStatus()->getHttpHeader(),
+            'HTTP/1.1 404 Not Found',
             'Incorrect header response, got '.$response->getStatus()->getHttpHeader()
         );
 
-	}
+    }
 
     /**
      * Tests setting and retrieving a Request object
@@ -251,7 +265,4 @@ class ApiTest extends TestCase
         );
 
     }
-
-
 }
- 

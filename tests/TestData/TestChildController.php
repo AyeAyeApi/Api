@@ -7,7 +7,6 @@
 
 namespace AyeAye\Api\Tests\TestData;
 
-
 use AyeAye\Api\Controller;
 
 class TestChildController extends Controller
@@ -22,5 +21,4 @@ class TestChildController extends Controller
             'param4' => $param4,
         ];
     }
-
-} 
+}

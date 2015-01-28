@@ -7,7 +7,6 @@
 
 namespace AyeAye\Api\Tests;
 
-
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
@@ -25,7 +24,8 @@ class ResponseTest extends TestCase
         $response->setData($testData);
 
         $this->assertSame(
-            $testData, $response->getData(),
+            $testData,
+            $response->getData(),
             'Data did not match test data'
         );
     }
@@ -40,7 +40,8 @@ class ResponseTest extends TestCase
         $response->setStatus($testStatus);
 
         $this->assertSame(
-            $testStatus->getCode(), $response->getStatus()->getCode(),
+            $testStatus->getCode(),
+            $response->getStatus()->getCode(),
             'Status did not match test status'
         );
     }
@@ -55,7 +56,8 @@ class ResponseTest extends TestCase
         $response->setStatusCode($testStatusCode);
 
         $this->assertSame(
-            $testStatusCode, $response->getStatus()->getCode(),
+            $testStatusCode,
+            $response->getStatus()->getCode(),
             'Status did not match test status'
         );
     }
@@ -87,7 +89,8 @@ class ResponseTest extends TestCase
 
         $format = $response->getFormat();
         $this->assertInstanceOf(
-            '\AyeAye\Formatter\Formats\Xml', $format,
+            '\AyeAye\Formatter\Formats\Xml',
+            $format,
             'Format returned was not of type xml'
         );
 
@@ -133,17 +136,20 @@ class ResponseTest extends TestCase
         $responseObject = json_decode(json_encode($response));
 
         $this->assertSame(
-            '418', $responseObject->status->code,
+            '418',
+            $responseObject->status->code,
             'The response object should contain status code 418'
         );
 
         $this->assertSame(
-            'string', $responseObject->data->string,
+            'string',
+            $responseObject->data->string,
             'The response object should contain the string "string"'
         );
 
         $this->assertSame(
-            '/test/path', $responseObject->request->requestedUri,
+            '/test/path',
+            $responseObject->request->requestedUri,
             'The response object should contain the string "/test/path"'
         );
 
@@ -191,7 +197,8 @@ class ResponseTest extends TestCase
         ob_end_clean();
 
         $this->assertSame(
-            $responseData, $expectedXml,
+            $responseData,
+            $expectedXml,
             "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
         );
     }
@@ -239,7 +246,8 @@ class ResponseTest extends TestCase
         ob_end_clean();
 
         $this->assertSame(
-            $responseData, $expectedXml,
+            $responseData,
+            $expectedXml,
             "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
         );
     }
@@ -284,7 +292,8 @@ class ResponseTest extends TestCase
         ob_end_clean();
 
         $this->assertSame(
-            $responseData, $expectedXml,
+            $responseData,
+            $expectedXml,
             "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
         );
     }
@@ -292,7 +301,8 @@ class ResponseTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testJsonRespond() {
+    public function testJsonRespond()
+    {
         $complexObject = (object)[
             'childObject' => (object)[
                     'property' => 'value'
@@ -327,9 +337,9 @@ class ResponseTest extends TestCase
         ob_end_clean();
 
         $this->assertSame(
-            $responseData, $expectedXml,
+            $responseData,
+            $expectedXml,
             "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
         );
     }
 }
- 

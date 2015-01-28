@@ -7,7 +7,6 @@
 
 namespace AyeAye\Api\Tests;
 
-
 use AyeAye\Api\Exception;
 
 class ExceptionTest extends TestCase
@@ -37,22 +36,24 @@ class ExceptionTest extends TestCase
         try {
             throw new Exception($testPublicMessage, $testCode, $testMessage, $previousException);
         } catch (Exception $e) {
-
             $message = $e->getMessage();
             $this->assertSame(
-                $testMessage, $message,
+                $testMessage,
+                $message,
                 "Exception messsage was not $testMessage"
             );
 
             $code = $e->getCode();
             $this->assertSame(
-                $testCode, $code,
+                $testCode,
+                $code,
                 "Exception code was not $testCode"
             );
 
             $publicMessage = $e->getPublicMessage();
             $this->assertSame(
-                $testPublicMessage, $publicMessage,
+                $testPublicMessage,
+                $publicMessage,
                 "Exception public message was not $testPublicMessage"
             );
 
@@ -63,7 +64,8 @@ class ExceptionTest extends TestCase
             );
 
             $this->assertSame(
-                $previousException->getMessage(), $previous->getMessage(),
+                $previousException->getMessage(),
+                $previous->getMessage(),
                 "Previous exception not included"
             );
         }
@@ -77,7 +79,6 @@ class ExceptionTest extends TestCase
         try {
             throw new Exception($testCode);
         } catch (Exception $e) {
-
             $publicMessage = $e->getPublicMessage();
             $this->assertTrue(
                 $publicMessage == $testPublicMessage,
@@ -93,7 +94,6 @@ class ExceptionTest extends TestCase
         try {
             throw new Exception(418);
         } catch (Exception $e) {
-
             $publicMessage = $e->getPublicMessage();
             $this->assertTrue(
                 $publicMessage == $testPublicMessage,
@@ -112,14 +112,15 @@ class ExceptionTest extends TestCase
         try {
             throw new Exception(418, $systemMessage, $previousException);
         } catch (Exception $e) {
-
             $this->assertSame(
-                $testPublicMessage, $e->getPublicMessage(),
+                $testPublicMessage,
+                $e->getPublicMessage(),
                 "Exception public message incorrect"
             );
 
             $this->assertSame(
-                $systemMessage, $e->getMessage(),
+                $systemMessage,
+                $e->getMessage(),
                 "Exception system message incorrect"
             );
 
@@ -130,7 +131,8 @@ class ExceptionTest extends TestCase
             );
 
             $this->assertSame(
-                $previousException->getMessage(), $previous->getMessage(),
+                $previousException->getMessage(),
+                $previous->getMessage(),
                 "Previous exception not included"
             );
 
@@ -169,6 +171,4 @@ class ExceptionTest extends TestCase
         );
 
     }
-
 }
- 

@@ -7,7 +7,6 @@
 
 namespace AyeAye\Api\Tests;
 
-
 use AyeAye\Api\Exception;
 use AyeAye\Api\Status;
 
@@ -65,6 +64,4 @@ class StatusTest extends TestCase
             '418 Header not correct'
         );
     }
-
 }
- 

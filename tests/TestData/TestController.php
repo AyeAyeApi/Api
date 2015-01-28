@@ -7,13 +7,13 @@
 
 namespace AyeAye\Api\Tests\TestData;
 
-
 use AyeAye\Api\Controller;
 
 class TestController extends Controller
 {
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->hideControllerMethod('hiddenChildController');
     }
 
@@ -74,5 +74,4 @@ class TestController extends Controller
     {
         return new \stdClass();
     }
-
-} 
+}
