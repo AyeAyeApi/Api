@@ -15,7 +15,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      * @param $methodName
      * @return \ReflectionMethod
      */
-    protected function getClassMethod($class, $methodName) {
+    protected function getClassMethod($class, $methodName)
+    {
         $method = new \ReflectionMethod($class, $methodName);
         $method->setAccessible(true);
         return $method;

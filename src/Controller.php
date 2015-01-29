@@ -80,7 +80,7 @@ class Controller
      */
     protected function hideEndpointMethod($methodName)
     {
-        if(!method_exists($this, $methodName)) {
+        if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
         }
         if (!is_array($this->hiddenEndpoints)) {
@@ -98,7 +98,7 @@ class Controller
      */
     public function isEndpointMethodHidden($methodName)
     {
-        if(!method_exists($this, $methodName)) {
+        if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
         }
         return is_array($this->hiddenEndpoints)
@@ -113,7 +113,7 @@ class Controller
      */
     protected function showEndpointMethod($methodName)
     {
-        if(!method_exists($this, $methodName)) {
+        if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
         }
         if ($this->isEndpointMethodHidden($methodName)) {
@@ -130,7 +130,7 @@ class Controller
      */
     protected function hideControllerMethod($methodName)
     {
-        if(!method_exists($this, $methodName)) {
+        if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
         }
         if (!is_array($this->hiddenControllers)) {
@@ -148,7 +148,7 @@ class Controller
      */
     public function isControllerHiddenMethod($methodName)
     {
-        if(!method_exists($this, $methodName)) {
+        if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
         }
         return is_array($this->hiddenControllers)
@@ -163,7 +163,7 @@ class Controller
      */
     protected function showControllerMethod($methodName)
     {
-        if(!method_exists($this, $methodName)) {
+        if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
         }
         if ($this->isControllerHiddenMethod($methodName)) {

@@ -34,5 +34,4 @@ class TestBrokenController extends Controller
     {
         return new TestChildController();
     }
-
 }

@@ -80,7 +80,8 @@ class Api
             );
             $response->setData(
                 $this->getRouter()->processRequest(
-                    $this->getRequest(), $this->getInitialController()
+                    $this->getRequest(),
+                    $this->getInitialController()
                 )
             );
             $response->setStatus(

@@ -135,71 +135,71 @@ class ControllerTest extends TestCase
 
     /**
      * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'noSuchController' does not exist in AyeAye\Api\Tests\TestData\TestController
+     * @expectedExceptionMessage The method 'fakeController' does not exist in AyeAye\Api\Tests\TestData\TestController
      * @expectedExceptionCode    500
      */
     public function testHideControllerException()
     {
         $controller = new TestController();
         $hideControllerMethod = $this->getClassMethod($controller, 'hideControllerMethod');
-        $hideControllerMethod->invoke($controller, 'noSuchController');
+        $hideControllerMethod->invoke($controller, 'fakeController');
     }
 
     /**
      * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'noSuchEndpoint' does not exist in AyeAye\Api\Tests\TestData\TestController
+     * @expectedExceptionMessage The method 'fakeEndpoint' does not exist in AyeAye\Api\Tests\TestData\TestController
      * @expectedExceptionCode    500
      */
     public function testHideEndpointException()
     {
         $controller = new TestController();
         $hideEndpointMethod = $this->getClassMethod($controller, 'hideEndpointMethod');
-        $hideEndpointMethod->invoke($controller, 'noSuchEndpoint');
+        $hideEndpointMethod->invoke($controller, 'fakeEndpoint');
     }
 
     /**
      * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'noSuchController' does not exist in AyeAye\Api\Tests\TestData\TestController
+     * @expectedExceptionMessage The method 'fakeController' does not exist in AyeAye\Api\Tests\TestData\TestController
      * @expectedExceptionCode    500
      */
     public function testIsControllerHiddenException()
     {
         $controller = new TestController();
-        $controller->isControllerHiddenMethod('noSuchController');
+        $controller->isControllerHiddenMethod('fakeController');
     }
 
     /**
      * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'noSuchEndpoint' does not exist in AyeAye\Api\Tests\TestData\TestController
+     * @expectedExceptionMessage The method 'fakeEndpoint' does not exist in AyeAye\Api\Tests\TestData\TestController
      * @expectedExceptionCode    500
      */
     public function testIsEndpointHiddenException()
     {
         $controller = new TestController();
-        $controller->isEndpointMethodHidden('noSuchEndpoint');
+        $controller->isEndpointMethodHidden('fakeEndpoint');
     }
 
     /**
      * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'noSuchController' does not exist in AyeAye\Api\Tests\TestData\TestController
+     * @expectedExceptionMessage The method 'fakeController' does not exist in AyeAye\Api\Tests\TestData\TestController
      * @expectedExceptionCode    500
      */
     public function testShowControllerException()
     {
         $controller = new TestController();
         $showControllerMethod = $this->getClassMethod($controller, 'showControllerMethod');
-        $showControllerMethod->invoke($controller, 'noSuchController');
+        $showControllerMethod->invoke($controller, 'fakeController');
     }
 
     /**
      * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'noSuchEndpoint' does not exist in AyeAye\Api\Tests\TestData\TestController
+     * @expectedExceptionMessage The method 'fakeEndpoint' does not exist in AyeAye\Api\Tests\TestData\TestController
      * @expectedExceptionCode    500
      */
     public function testShowEndpointException()
     {
         $controller = new TestController();
         $showEndpointMethod = $this->getClassMethod($controller, 'showEndpointMethod');
-        $showEndpointMethod->invoke($controller, 'noSuchEndpoint');
+        $showEndpointMethod->invoke($controller, 'fakeEndpoint');
     }
 }

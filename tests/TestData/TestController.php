@@ -85,7 +85,8 @@ class TestController extends Controller
         return new \stdClass();
     }
 
-    public function getHiddenEndpoint() {
+    public function getHiddenEndpoint()
+    {
         return 'You found me!';
     }
 }
