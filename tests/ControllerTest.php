@@ -10,6 +10,7 @@ namespace AyeAye\Api\Tests;
 use AyeAye\Api\Controller;
 use AyeAye\Api\Exception;
 use AyeAye\Api\Status;
+use AyeAye\Api\Tests\TestData\TestBrokenController;
 use AyeAye\Api\Tests\TestData\TestController;
 
 /**
@@ -85,6 +86,16 @@ class ControllerTest extends TestCase
         $this->assertFalse(
             $controller->isControllerHiddenMethod('hiddenChildController')
         );
+
+        $controller = new TestBrokenController();
+        $this->assertFalse(
+            $controller->isControllerHiddenMethod('childController')
+        );
+        $hideControllerMethod = $this->getClassMethod($controller, 'hideControllerMethod');
+        $hideControllerMethod->invoke($controller, 'childController');
+        $this->assertTrue(
+            $controller->isControllerHiddenMethod('childController')
+        );
     }
 
     public function testHiddenControllers()
@@ -107,6 +118,18 @@ class ControllerTest extends TestCase
         );
         $this->assertFalse(
             $controller->isEndpointMethodHidden('getHiddenEndpoint')
+        );
+
+        $controller = new TestBrokenController();
+        $this->assertFalse(
+            $controller->isEndpointMethodHidden('getInformationEndpoint')
+        );
+
+        $hideEndpointMethod = $this->getClassMethod($controller, 'hideEndpointMethod');
+        $hideEndpointMethod->invoke($controller, 'getInformationEndpoint');
+
+        $this->assertTrue(
+            $controller->isEndpointMethodHidden('getInformationEndpoint')
         );
     }
 
