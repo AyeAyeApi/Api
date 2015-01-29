@@ -11,8 +11,8 @@ use AyeAye\Api\Api;
 use AyeAye\Api\Controller;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
-use AyeAye\Api\Status;
 use AyeAye\Api\Tests\TestData\TestController;
+use AyeAye\Api\Tests\TestData\TestRouter;
 use AyeAye\Formatter\FormatFactory;
 use AyeAye\Formatter\Formats\Php;
 use AyeAye\Formatter\Formats\Xml;
@@ -23,6 +23,46 @@ use AyeAye\Formatter\Formats\Xml;
  */
 class ApiTest extends TestCase
 {
+
+    public function testSetRouter()
+    {
+        $controller = new TestController();
+        $api = new Api($controller);
+        $router = $api->getRouter();
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Router',
+            $router
+        );
+        $this->assertNotInstanceOf(
+            '\AyeAye\Api\Tests\TestData\TestRouter',
+            $router
+        );
+
+        $testRouter = new TestRouter();
+        $api->setRouter($testRouter);
+        $router = $api->getRouter();
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Router',
+            $router
+        );
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Tests\TestData\TestRouter',
+            $router
+        );
+
+        $controller = new TestController();
+        $router = new TestRouter();
+        $api = new Api($controller, $router);
+        $router = $api->getRouter();
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Router',
+            $router
+        );
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Tests\TestData\TestRouter',
+            $router
+        );
+    }
 
     /**
      * Test the output of the Api using TestController
