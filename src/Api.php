@@ -23,6 +23,12 @@ class Api
     protected $controller;
 
     /**
+     * The router that will direct the request
+     * @var Router
+     */
+    protected $router;
+
+    /**
      * The request object to use for this call
      * @var Request
      */
@@ -42,11 +48,15 @@ class Api
 
     /**
      * Initialise the API with a controller that forms the starting point of routing information
+     * @param Router $router The router to power the api
      * @param Controller $initialController The starting point for the Api
      */
-    public function __construct(Controller $initialController)
+    public function __construct(Controller $initialController, Router $router = null)
     {
-        $this->controller = $initialController;
+        $this->setInitialController($initialController);
+        if ($router) {
+            $this->setRouter($router);
+        }
     }
 
     /**
@@ -69,7 +79,9 @@ class Api
                 $request
             );
             $response->setData(
-                $this->controller->processRequest($request)
+                $this->getRouter()->processRequest(
+                    $this->getRequest(), $this->getInitialController()
+                )
             );
             $response->setStatus(
                 $this->controller->getStatus()
@@ -80,6 +92,45 @@ class Api
             $response->setStatusCode($e->getCode());
             return $response;
         }
+    }
+
+    /**
+     * Set the router to be used when go is called
+     * @param Router $router
+     */
+    public function setRouter(Router $router)
+    {
+        $this->router = $router;
+    }
+
+    /**
+     * Get the router
+     * @return Router
+     */
+    public function getRouter()
+    {
+        if (!$this->router) {
+            $this->router = new Router();
+        }
+        return $this->router;
+    }
+
+    /**
+     * Set the initial controller that the api will begin with
+     * @param Controller $controller
+     */
+    public function setInitialController(Controller $controller)
+    {
+        $this->controller = $controller;
+    }
+
+    /**
+     * Get the initial controller that the api will begin with
+     * @return Controller
+     */
+    public function getInitialController()
+    {
+        return $this->controller;
     }
 
     /**

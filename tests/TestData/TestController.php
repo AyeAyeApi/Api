@@ -15,6 +15,7 @@ class TestController extends Controller
     public function __construct()
     {
         $this->hideControllerMethod('hiddenChildController');
+        $this->hideEndpointMethod('getHiddenEndpoint');
     }
 
     /**
@@ -24,6 +25,15 @@ class TestController extends Controller
     public function getInformationEndpoint()
     {
         return 'information';
+    }
+
+    /**
+     * A post index. Why? Who knows.
+     * @return string
+     */
+    public function postIndexEndpoint()
+    {
+        return 'Why are you posting to the index?';
     }
 
     /**
@@ -73,5 +83,9 @@ class TestController extends Controller
     public function hiddenChildController()
     {
         return new \stdClass();
+    }
+
+    public function getHiddenEndpoint() {
+        return 'You found me!';
     }
 }

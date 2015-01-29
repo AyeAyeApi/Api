@@ -221,9 +221,18 @@ class ResponseTest extends TestCase
             '<?xml version="1.0" encoding="UTF-8" ?>'
             . '<response>'
             . '<status><array><code>200</code><message>OK</message></array></status>'
-            . '<request><array><method>GET</method><requestedUri>test.xml</requestedUri><parameters><debug>true</debug><hackedJson>true</hackedJson></parameters></array></request>'
-            . '<data><childObject><property>value</property></childObject><childArray><_0>element1</_0><_1>element2</_1></childArray></data>' .
-            '</response>';
+            . '<request>'
+            . '<array>'
+            . '<method>GET</method>'
+            . '<requestedUri>test.xml</requestedUri>'
+            . '<parameters><debug>true</debug><hackedJson>true</hackedJson></parameters>'
+            . '</array>'
+            . '</request>'
+            . '<data>'
+            . '<childObject><property>value</property></childObject>'
+            . '<childArray><_0>element1</_0><_1>element2</_1></childArray>'
+            . '</data>'
+            . '</response>';
 
         $request = new Request(
             Request::METHOD_GET,
@@ -269,7 +278,10 @@ class ResponseTest extends TestCase
         $expectedXml =
             '<?xml version="1.0" encoding="UTF-8" ?>'
             . '<response>'
-            . '<data><childObject><property>value</property></childObject><childArray><_0>element1</_0><_1>element2</_1></childArray></data>'
+            . '<data>'
+            . '<childObject><property>value</property></childObject>'
+            . '<childArray><_0>element1</_0><_1>element2</_1></childArray>'
+            . '</data>'
             . '</response>';
 
         $request = new Request(
