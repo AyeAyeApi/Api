@@ -146,9 +146,9 @@ class Request implements \JsonSerializable
         }
         $this->body = $this->stringToObject($bodyText);
 
-        $this->addParameters($this->request);
-        $this->addParameters($this->header);
-        $this->addParameters($this->body);
+        $this->setParameters($this->request);
+        $this->setParameters($this->header);
+        $this->setParameters($this->body);
 
     }
 
@@ -340,17 +340,16 @@ class Request implements \JsonSerializable
     /**
      * Add a set of parameters to the Request
      * @param array|object $newParameters
-     * @param bool $overwrite
      * @throws \Exception
      * @returns $this
      */
-    public function addParameters($newParameters, $overwrite = true)
+    public function setParameters($newParameters)
     {
         if (is_scalar($newParameters)) {
             throw new \Exception('Add parameters parameter newParameters can not be scalar');
         }
         foreach ($newParameters as $field => $value) {
-            $this->addParameter($field, $value, $overwrite);
+            $this->setParameter($field, $value);
         }
         return $this;
     }
@@ -359,17 +358,13 @@ class Request implements \JsonSerializable
      * Add a parameter
      * @param $name
      * @param $value
-     * @param bool $overwrite Overwrite existing parameters
      * @return bool Returns true of value was set
      * @throws \Exception
      */
-    public function addParameter($name, $value, $overwrite = true)
+    public function setParameter($name, $value)
     {
         if (!is_scalar($name)) {
             throw new \Exception('Add parameter: parameter name must be scalar');
-        }
-        if (!$overwrite && array_key_exists($name, $this->parameters)) {
-            return false;
         }
         $this->parameters[$name] = $value;
         return true;

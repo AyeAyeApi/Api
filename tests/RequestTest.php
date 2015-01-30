@@ -322,7 +322,7 @@ class RequestTest extends TestCase
     public function testAddParameterException()
     {
         $request = new Request();
-        $request->addParameter([], []);
+        $request->setParameter([], []);
     }
 
     /**
@@ -333,14 +333,14 @@ class RequestTest extends TestCase
     public function testAddParametersException()
     {
         $request = new Request();
-        $request->addParameters(true);
+        $request->setParameters(true);
     }
 
     public function testAddParameterFail()
     {
         $request = new Request();
         $this->assertTrue(
-            $request->addParameter('name', 'value', false),
+            $request->setParameter('name', 'value'),
             "Add parameter should have returned true, it didn't"
         );
 
@@ -348,11 +348,6 @@ class RequestTest extends TestCase
             'value',
             $request->getParameter('name'),
             "Parameter should have been 'value'"
-        );
-
-        $this->assertFalse(
-            $request->addParameter('name', 'new value', false),
-            "Add parameter should have returned false, it didn't"
         );
     }
 
