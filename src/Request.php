@@ -105,6 +105,7 @@ class Request implements \JsonSerializable
      * @param array $header
      * @param string $bodyText
      * @param string $baseUrl
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function __construct(
         $requestedMethod = null,

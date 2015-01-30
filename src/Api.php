@@ -65,6 +65,7 @@ class Api
      * int the Response object itself (eg, invalid formats)
      * Tip. You can ->respond() straight off this method
      * @return Response
+     * @SuppressWarnings(PHPMD.ShortMethodName)
      */
     public function go()
     {

@@ -32,6 +32,7 @@ class Exception extends \Exception implements \JsonSerializable
      * @param int $code HTTP Status code to send to the user
      * @param string $systemMessage Message to show the enter into the log if different from the public message
      * @param \Exception $previous Any previous Exception
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct($publicMessage = '', $code = 500, $systemMessage = '', \Exception $previous = null)
     {
