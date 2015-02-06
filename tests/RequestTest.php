@@ -218,7 +218,6 @@ class RequestTest extends TestCase
             null,
             '',
             ['true' => true, 'false' => false],
-            ['HTTP_HEADER_STRING' => 'a string'],
             '{"bodyString": "a string", "object": {"integer": 3}}'
         );
 
@@ -237,12 +236,6 @@ class RequestTest extends TestCase
             false,
             $request->getParameter('false'),
             'Test parameter "false" should be false'
-        );
-
-        $this->assertSame(
-            'a string',
-            $request->getParameter('Header-String'),
-            'Header-String should be "a string"'
         );
 
         $this->assertSame(
