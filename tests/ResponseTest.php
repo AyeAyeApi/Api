@@ -179,7 +179,8 @@ class ResponseTest extends TestCase
         $request = new Request(
             Request::METHOD_GET,
             'test.json',
-            ['debug' => true]
+            ['debug' => true],
+            http_get_request_body()
         );
         $response = new Response();
         $response->setFormatFactory(
@@ -237,7 +238,8 @@ class ResponseTest extends TestCase
         $request = new Request(
             Request::METHOD_GET,
             'test.xml',
-            ['debug' => true]
+            ['debug' => true],
+            http_get_request_body()
         );
         $response = new Response();
         $response->setFormatFactory(

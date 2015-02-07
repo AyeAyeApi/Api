@@ -32,7 +32,7 @@ class Request implements \JsonSerializable
      * however, you could extend Request and provide a different list.
      * @var array
      */
-    public static $allowedMethods = array(
+    public $allowedMethods = [
         self::METHOD_GET,
         self::METHOD_HEAD,
         self::METHOD_POST,
@@ -42,7 +42,7 @@ class Request implements \JsonSerializable
         self::METHOD_OPTIONS,
         self::METHOD_CONNECT,
         self::METHOD_PATCH,
-    );
+    ];
 
     /**
      * The method of request
@@ -71,86 +71,81 @@ class Request implements \JsonSerializable
      * An amalgamation of all parameters sent in any way
      * @var array
      */
-    protected $parameters = array();
-
-    /**
-     * Parameters sent as GET, POST, SESSION, COOKIE
-     * @var array
-     */
-    protected $request = array();
-
-    /**
-     * Parameters sent in the header
-     * @var array
-     */
-    protected $header = array();
-
-    /**
-     * The contents of the body of a request represented as an object
-     * @var \stdClass
-     */
-    protected $body;
-
-    /**
-     * Used to trim the starting path (such as /api) from the front of the request
-     * @var string
-     */
-    protected $baseUrl;
+    protected $parameters = [];
 
     /**
      * Create a Request object. You can override any request information
      * @param string $requestedMethod
      * @param string $requestedUri
-     * @param array $request
-     * @param array $header
-     * @param string $bodyText
-     * @param string $baseUrl
-     * @SuppressWarnings(PHPMD.Superglobals)
+     * @param array|object ...$parameters Any number of arrays or objects containing request parameters
+     *                                    such as _GET, _POST. If omitted, defaults will be used.
      */
     public function __construct(
         $requestedMethod = null,
-        $requestedUri = null,
-        array $request = null,
-        array $header = null,
-        $bodyText = null,
-        $baseUrl = null
+        $requestedUri = null
     ) {
-
-        $this->setBaseUrl($baseUrl);
-
-        if ($requestedMethod) {
-            $this->requestMethod = $requestedMethod;
-        } elseif (array_key_exists('REQUEST_METHOD', $_SERVER)) {
-            $this->requestMethod = $_SERVER['REQUEST_METHOD'];
+        $parameters =  array_slice(func_get_args(), 2);
+        foreach ($parameters as $parameterGroup) {
+            $this->setParameters($parameterGroup);
         }
 
-        if ($requestedUri) {
-            $this->requestedUri = $requestedUri;
+        $this->requestMethod = $this->getRequestMethod($requestedMethod);
+        $this->requestedUri = $this->getRequestedUri($requestedUri);
+        if (!$this->parameters) {
+            $this->parameters = $this->useActualParameters();
+        }
+    }
+
+    /**
+     * Get the HTTP verb for this request
+     * Checks it's one the API allows for. Can be overridden with override.
+     * @param string|null $override
+     * @return string
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    protected function getRequestMethod($override = null)
+    {
+        $requestMethod = $this->requestMethod;
+        if ($override && in_array($override, $this->allowedMethods)) {
+            $requestMethod = $override;
+        } elseif (array_key_exists('REQUEST_METHOD', $_SERVER)
+            && in_array($_SERVER['REQUEST_METHOD'], $this->allowedMethods)
+        ) {
+            $requestMethod = $_SERVER['REQUEST_METHOD'];
+        }
+        return $requestMethod;
+    }
+
+    /**
+     * Get the requested uri.
+     * Can be overridden with override.
+     * @param string|null $override
+     * @return string
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    protected function getRequestedUri($override = null)
+    {
+        $requestedUri = '';
+        if ($override) {
+            $requestedUri = $override;
         } elseif (array_key_exists('REQUEST_URI', $_SERVER)) {
-            $this->requestedUri = $_SERVER['REQUEST_URI'];
+            $requestedUri = $_SERVER['REQUEST_URI'];
         }
+        return $requestedUri;
+    }
 
-
-        // Set parameters
-        if (is_null($request)) {
-            $request = $_REQUEST;
-        }
-        $this->request = $request;
-
-        if (is_null($header)) {
-            $header = $_SERVER;
-        }
-        $this->header = $this->parseHeader($header);
-
-        if (is_null($bodyText)) {
-            $bodyText = $this->readBody();
-        }
-        $this->body = $this->stringToObject($bodyText);
-
-        $this->setParameters($this->request);
-        $this->setParameters($this->header);
-        $this->setParameters($this->body);
-
+    /**
+     * Get parameters associated with this request.
+     * Starts with _REQUEST super global, adds headers, then body, overriding in that order
+     * @return array
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    protected function useActualParameters()
+    {
+        $this->setParameters($_REQUEST);
+        $this->setParameters($this->parseHeader($_SERVER));
+        $this->setParameters($this->stringToObject($this->readBody()));
+        return $this->parameters;
     }
 
     /**
@@ -158,7 +153,7 @@ class Request implements \JsonSerializable
      * @param string[] $headers
      * @return string
      */
-    public function parseHeader(array $headers = array())
+    public function parseHeader(array $headers = [])
     {
         $processedHeaders = array();
         foreach ($headers as $key => $value) {
@@ -191,6 +186,7 @@ class Request implements \JsonSerializable
      * Failing all else it will return a standard class with the string attached to data
      * eg. $this->stringObject('fail')->body == 'fail'
      * @param string $string a string of data
+     * @param string $contentType
      * @throws \Exception
      * @return \stdClass
      */
@@ -316,7 +312,6 @@ class Request implements \JsonSerializable
         // Trim any get variables and the requested format, eg: /requested/uri.format?get=variables
         $requestedUri = preg_replace('/[\?\.].*$/', '', $requestedUri);
         // Clear the base url
-        $requestedUri = $this->removeBaseUrl($requestedUri, $this->baseUrl);
 
         $requestChain = explode('/', $requestedUri);
 
@@ -327,17 +322,6 @@ class Request implements \JsonSerializable
         return $requestChain;
     }
 
-    protected function removeBaseUrl($url, $baseUrl)
-    {
-        $url = trim($url, '/');
-        $baseUrl = trim($baseUrl, '/');
-        if (substr($url, 0, strlen($baseUrl)) == $baseUrl) {
-            $url = substr($url, strlen($baseUrl));
-        }
-        return $url;
-    }
-
-
     /**
      * Add a set of parameters to the Request
      * @param array|object $newParameters
@@ -347,7 +331,10 @@ class Request implements \JsonSerializable
     public function setParameters($newParameters)
     {
         if (is_scalar($newParameters)) {
-            throw new \Exception('Add parameters parameter newParameters can not be scalar');
+            if (!is_string($newParameters)) {
+                throw new \Exception('Add parameters parameter newParameters can not be scalar');
+            }
+            $newParameters = $this->stringToObject($newParameters);
         }
         foreach ($newParameters as $field => $value) {
             $this->setParameter($field, $value);

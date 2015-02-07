@@ -218,7 +218,6 @@ class RequestTest extends TestCase
             null,
             '',
             ['true' => true, 'false' => false],
-            ['HTTP_HEADER_STRING' => 'a string'],
             '{"bodyString": "a string", "object": {"integer": 3}}'
         );
 
@@ -237,12 +236,6 @@ class RequestTest extends TestCase
             false,
             $request->getParameter('false'),
             'Test parameter "false" should be false'
-        );
-
-        $this->assertSame(
-            'a string',
-            $request->getParameter('Header-String'),
-            'Header-String should be "a string"'
         );
 
         $this->assertSame(
@@ -388,44 +381,5 @@ class RequestTest extends TestCase
             $request->getFormatFromUri($uri),
             'Format should be json'
         );
-    }
-
-    public function testBaseUrl()
-    {
-
-        $request = new Request(
-            Request::METHOD_GET,
-            '/api'
-        );
-
-        $this->assertCount(
-            1,
-            $request->getRequestChain(),
-            'Request should have contained 1 link in chain'
-        );
-
-        $request = new Request(
-            Request::METHOD_GET,
-            '/api'
-        );
-        $request->setBaseUrl('api');
-
-        $this->assertCount(
-            0,
-            $request->getRequestChain(),
-            'Request should have contained 0 links in chain'
-        );
-
-    }
-
-    /**
-     * @expectedException        \Exception
-     * @expectedExceptionMessage baseUrl must be a string
-     * @expectedExceptionCode    0
-     */
-    public function testBaseUrlException()
-    {
-        $request = new Request();
-        $request->setBaseUrl(true);
     }
 }
