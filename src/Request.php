@@ -79,21 +79,19 @@ class Request implements \JsonSerializable
      * @param string $requestedUri
      * @param array|object ...$parameters Any number of arrays or objects containing request parameters
      *                                    such as _GET, _POST. If omitted, defaults will be used.
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function __construct(
         $requestedMethod = null,
         $requestedUri = null
     ) {
         $parameters =  array_slice(func_get_args(), 2);
-        foreach($parameters as $parameterGroup) {
+        foreach ($parameters as $parameterGroup) {
             $this->setParameters($parameterGroup);
         }
 
         $this->requestMethod = $this->getRequestMethod($requestedMethod);
         $this->requestedUri = $this->getRequestedUri($requestedUri);
-        if(!$this->parameters) {
+        if (!$this->parameters) {
             $this->parameters = $this->useActualParameters();
         }
     }
@@ -103,15 +101,14 @@ class Request implements \JsonSerializable
      * Checks it's one the API allows for. Can be overridden with override.
      * @param string|null $override
      * @return string
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function getRequestMethod($override = null)
     {
         $requestMethod = $this->requestMethod;
-        if($override && in_array($override, $this->allowedMethods)) {
+        if ($override && in_array($override, $this->allowedMethods)) {
             $requestMethod = $override;
-        }
-        elseif(
-            array_key_exists('REQUEST_METHOD', $_SERVER)
+        } elseif (array_key_exists('REQUEST_METHOD', $_SERVER)
             && in_array($_SERVER['REQUEST_METHOD'], $this->allowedMethods)
         ) {
             $requestMethod = $_SERVER['REQUEST_METHOD'];
@@ -124,6 +121,7 @@ class Request implements \JsonSerializable
      * Can be overridden with override.
      * @param string|null $override
      * @return string
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function getRequestedUri($override = null)
     {
@@ -140,6 +138,7 @@ class Request implements \JsonSerializable
      * Get parameters associated with this request.
      * Starts with _REQUEST super global, adds headers, then body, overriding in that order
      * @return array
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function useActualParameters()
     {
@@ -191,7 +190,7 @@ class Request implements \JsonSerializable
      * @throws \Exception
      * @return \stdClass
      */
-    public function stringToObject($string, $contentType = null)
+    public function stringToObject($string)
     {
         if (!$string) {
             return new \stdClass();
@@ -332,7 +331,7 @@ class Request implements \JsonSerializable
     public function setParameters($newParameters)
     {
         if (is_scalar($newParameters)) {
-            if(!is_string($newParameters)) {
+            if (!is_string($newParameters)) {
                 throw new \Exception('Add parameters parameter newParameters can not be scalar');
             }
             $newParameters = $this->stringToObject($newParameters);
