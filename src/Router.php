@@ -129,7 +129,7 @@ class Router
         $controllers = [];
         foreach ($methods as $method) {
             if (preg_match('/(\w+)Controller$/', $method, $parts)) {
-                if (!$controller->isControllerHiddenMethod($method)) {
+                if (!$controller->isControllerMethodHidden($method)) {
                     $controllers[] = $this->camelcaseToHyphenated($parts[1]);
                 }
             }

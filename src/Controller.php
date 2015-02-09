@@ -20,7 +20,7 @@ class Controller
      * Endpoints that should not be publicly listed
      * @var string[]
      */
-    protected $hiddenEndpoints = [
+    private $hiddenEndpoints = [
         'getIndexEndpoint' => true, // Value not used
     ];
 
@@ -28,7 +28,7 @@ class Controller
      * Controllers that should not be publicly listed
      * @var string
      */
-    protected $hiddenControllers = [
+    private $hiddenControllers = [
 
     ];
 
@@ -36,7 +36,7 @@ class Controller
      * The status object that represents an HTTP status
      * @var Status
      */
-    protected $status;
+    private $status;
 
     /**
      * Get the Status object associated with the controller
@@ -146,7 +146,7 @@ class Controller
      * @return bool
      * @throws Exception
      */
-    public function isControllerHiddenMethod($methodName)
+    public function isControllerMethodHidden($methodName)
     {
         if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
@@ -166,7 +166,7 @@ class Controller
         if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
         }
-        if ($this->isControllerHiddenMethod($methodName)) {
+        if ($this->isControllerMethodHidden($methodName)) {
             unset($this->hiddenControllers[$methodName]);
         }
         return $this;
