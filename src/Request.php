@@ -62,12 +62,6 @@ class Request implements \JsonSerializable
     protected $requestChain = null;
 
     /**
-     * The format for requested data
-     * @var string Defaults to 'json'
-     */
-    protected $requestedFormat;
-
-    /**
      * An amalgamation of all parameters sent in any way
      * @var array
      */
@@ -186,7 +180,6 @@ class Request implements \JsonSerializable
      * Failing all else it will return a standard class with the string attached to data
      * eg. $this->stringObject('fail')->body == 'fail'
      * @param string $string a string of data
-     * @param string $contentType
      * @throws \Exception
      * @return \stdClass
      */
@@ -259,18 +252,16 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Gets the expected response format
+     * The request could specify the desired response format in a number of ways, this returns them all
      * @return string
      */
-    public function getFormat()
+    public function getFormats()
     {
-        if (is_null($this->requestedFormat)) {
-            $this->requestedFormat = $this->getFormatFromUri($this->requestedUri);
-            if (is_null($this->requestedFormat)) {
-                $this->requestedFormat = static::DEFAULT_FORMAT;
-            }
-        }
-        return $this->requestedFormat;
+        return [
+            'header' => $this->getParameter('Accept'),
+            'suffix' => $this->getFormatFromUri($this->requestedUri),
+            'default' => static::DEFAULT_FORMAT,
+        ];
     }
 
     /**
