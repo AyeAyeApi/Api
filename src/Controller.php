@@ -83,9 +83,6 @@ class Controller
         if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
         }
-        if (!is_array($this->hiddenEndpoints)) {
-            $this->hiddenEndpoints = [];
-        }
         $this->hiddenEndpoints[$methodName] = true;
         return $this;
     }
@@ -132,9 +129,6 @@ class Controller
     {
         if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
-        }
-        if (!is_array($this->hiddenControllers)) {
-            $this->hiddenControllers = [];
         }
         $this->hiddenControllers[$methodName] = true;
         return $this;
