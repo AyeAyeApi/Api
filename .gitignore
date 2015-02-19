@@ -1,5 +1,7 @@
 .idea
 composer.lock
+composer.phar
 /vendor/
 bin/
 phpunit.xml
+build/cache.properties

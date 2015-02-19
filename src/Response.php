@@ -101,7 +101,6 @@ class Response implements \JsonSerializable
     public function setRequest(Request $request)
     {
         $this->request = $request;
-        $this->setFormat($this->request->getFormat());
         return $this;
     }
 
@@ -137,37 +136,13 @@ class Response implements \JsonSerializable
     }
 
     /**
-     * Set the format using a file suffix
-     * @param $suffix
-     * @return $this
-     * @throws \Exception
-     */
-    public function setFormat($suffix)
-    {
-        if (!$this->formatFactory instanceof FormatFactory) {
-            throw new Exception("Format factory not set");
-        }
-        $this->format = $this->formatFactory->getFormatFor($suffix);
-        return $this;
-    }
-
-    /**
-     * Get the Formatter that will format the Response
-     * @return Formatter
-     */
-    public function getFormat()
-    {
-        return $this->format;
-    }
-
-    /**
      * Format the data and send as a response. Only one response can be sent
      * @return $this
      */
     public function respond()
     {
-        $format = $this->formatFactory->getFormatFor(
-            $this->request->getFormat()
+        $format = $this->formatFactory->getFormatterFor(
+            $this->request->getFormats()
         );
 
         if ($this->status instanceof Status) {

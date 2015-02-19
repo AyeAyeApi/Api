@@ -62,40 +62,6 @@ class ResponseTest extends TestCase
         );
     }
 
-    /**
-     * Test that an exception is thrown when there is no Format Factory
-     *
-     * @expectedException        \Exception
-     * @expectedExceptionMessage Format factory not set
-     */
-    public function testSetFormatWithoutFactory()
-    {
-        $testFormat = 'xml';
-        $response = new Response;
-        $response->setFormat($testFormat);
-    }
-
-    public function testSetFormatWithFactory()
-    {
-
-        $testFormat = 'xml';
-        $formatFactory = new FormatFactory([
-            $testFormat => $this->getMock('\AyeAye\Formatter\Formats\Xml')
-        ]);
-
-        $response = new Response;
-        $response->setFormatFactory($formatFactory);
-        $response->setFormat($testFormat);
-
-        $format = $response->getFormat();
-        $this->assertInstanceOf(
-            '\AyeAye\Formatter\Formats\Xml',
-            $format,
-            'Format returned was not of type xml'
-        );
-
-    }
-
     public function testSetRequest()
     {
         $request = new Request();
@@ -179,7 +145,8 @@ class ResponseTest extends TestCase
         $request = new Request(
             Request::METHOD_GET,
             'test.json',
-            ['debug' => true]
+            ['debug' => true],
+            http_get_request_body()
         );
         $response = new Response();
         $response->setFormatFactory(
@@ -237,7 +204,8 @@ class ResponseTest extends TestCase
         $request = new Request(
             Request::METHOD_GET,
             'test.xml',
-            ['debug' => true]
+            ['debug' => true],
+            http_get_request_body()
         );
         $response = new Response();
         $response->setFormatFactory(

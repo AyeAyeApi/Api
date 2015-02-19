@@ -8,6 +8,8 @@
 namespace AyeAye\Api;
 
 use AyeAye\Formatter\FormatFactory;
+use AyeAye\Formatter\Formats\Json;
+use AyeAye\Formatter\Formats\Xml;
 
 /**
  * Used to wrap the other classes into easier to manage code
@@ -193,9 +195,16 @@ class Api
     public function getFormatFactory()
     {
         if (!$this->formatFactory) {
+            $xmlFormatter = new Xml();
+            $jsonFormatter = new Json();
             $this->formatFactory = new FormatFactory([
-                'xml' => 'AyeAye\Formatter\Formats\Xml',
-                'json' => 'AyeAye\Formatter\Formats\Json',
+                // xml
+                'xml' => $xmlFormatter,
+                'text/xml' => $xmlFormatter,
+                'application/xml' => $xmlFormatter,
+                // json
+                'json' => $jsonFormatter,
+                'application/json' => $jsonFormatter,
             ]);
         }
         return $this->formatFactory;
