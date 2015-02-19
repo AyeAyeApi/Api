@@ -291,7 +291,7 @@ class ApiTest extends TestCase
         $testFormatFactory = $api->getFormatFactory();
 
         $this->assertTrue(
-            $testFormatFactory->getFormatFor('xml') instanceof Xml,
+            $testFormatFactory->getFormatterFor('xml') instanceof Xml,
             "Response should not contain any data"
         );
 
@@ -300,7 +300,7 @@ class ApiTest extends TestCase
         $testFormatFactory = $api->getFormatFactory();
 
         $this->assertTrue(
-            $testFormatFactory->getFormatFor('php') instanceof Php,
+            $testFormatFactory->getFormatterFor('php') instanceof Php,
             "Response should not contain any data"
         );
 

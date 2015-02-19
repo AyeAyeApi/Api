@@ -16,11 +16,18 @@ class RequestTest extends TestCase
     {
         $request = new Request();
 
-        $format = $request->getFormat();
+        $format = $request->getFormats();
         $this->assertSame(
             'json',
-            $format,
-            'Format is not json: ' . PHP_EOL . $format
+            $format['default']
+        );
+
+        $this->assertNull(
+            $format['suffix']
+        );
+
+        $this->assertNull(
+            $format['header']
         );
 
         $method = $request->getMethod();

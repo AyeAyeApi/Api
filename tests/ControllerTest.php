@@ -69,10 +69,10 @@ class ControllerTest extends TestCase
     {
         $controller = new TestController();
         $this->assertTrue(
-            $controller->isControllerHiddenMethod('hiddenChildController')
+            $controller->isControllerMethodHidden('hiddenChildController')
         );
         $this->assertFalse(
-            $controller->isControllerHiddenMethod('childController')
+            $controller->isControllerMethodHidden('childController')
         );
 
         $hideControllerMethod = $this->getClassMethod($controller, 'hideControllerMethod');
@@ -81,20 +81,20 @@ class ControllerTest extends TestCase
         $showControllerMethod->invoke($controller, 'hiddenChildController');
 
         $this->assertTrue(
-            $controller->isControllerHiddenMethod('childController')
+            $controller->isControllerMethodHidden('childController')
         );
         $this->assertFalse(
-            $controller->isControllerHiddenMethod('hiddenChildController')
+            $controller->isControllerMethodHidden('hiddenChildController')
         );
 
         $controller = new TestBrokenController();
         $this->assertFalse(
-            $controller->isControllerHiddenMethod('childController')
+            $controller->isControllerMethodHidden('childController')
         );
         $hideControllerMethod = $this->getClassMethod($controller, 'hideControllerMethod');
         $hideControllerMethod->invoke($controller, 'childController');
         $this->assertTrue(
-            $controller->isControllerHiddenMethod('childController')
+            $controller->isControllerMethodHidden('childController')
         );
     }
 
@@ -165,7 +165,7 @@ class ControllerTest extends TestCase
     public function testIsControllerHiddenException()
     {
         $controller = new TestController();
-        $controller->isControllerHiddenMethod('fakeController');
+        $controller->isControllerMethodHidden('fakeController');
     }
 
     /**
