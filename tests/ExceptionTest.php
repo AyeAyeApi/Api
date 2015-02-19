@@ -154,8 +154,8 @@ class ExceptionTest extends TestCase
 
         $count = count($object);
         $this->assertTrue(
-            $count === 3,
-            'There should only be 3 items in the array, there were: ' . PHP_EOL . $count
+            $count === 2,
+            'There should only be 2 items in the array, there were: ' . PHP_EOL . $count
         );
 
         $publicMessage = $object['message'];
@@ -170,5 +170,36 @@ class ExceptionTest extends TestCase
             "Exception code was not $testCode: " . PHP_EOL . $code
         );
 
+    }
+
+    public function testExceptionChaining() {
+        $testMessage = 'Message';
+        $testCode = 101;
+        $testPublicMessage = 'Public Message';
+        $previousException = new \Exception('Previous exception');
+
+        $exception = new Exception($testPublicMessage, $testCode, $testMessage, $previousException);
+
+        $json = json_encode($exception);
+
+        $object = json_decode($json, true);
+
+        $count = count($object);
+        $this->assertTrue(
+            $count === 2,
+            'There should only be 2 items in the array, there were: ' . PHP_EOL . $count
+        );
+
+        $newException = new Exception($testPublicMessage, $testCode, $testMessage, $exception);
+
+        $json = json_encode($newException);
+
+        $object = json_decode($json, true);
+
+        $count = count($object);
+        $this->assertTrue(
+            $count === 3,
+            'There should be 3 items in the array, there were: ' . PHP_EOL . $count
+        );
     }
 }
