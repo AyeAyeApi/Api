@@ -15,15 +15,13 @@ Create a project and include Aye Aye
 ```bash
 composer init --require="ayeaye/api 0.13.*" -n
 composer install
-mkdir public
-mkdir src
 ```
 
 Write your first controller
 
 ```php
 <?php
-// src/HelloWorldController.php
+// HelloWorldController.php
 
 use AyeAye\Api\Controller;
 
@@ -45,10 +43,10 @@ Write an entry point into the API
 
 ```php
 <?php
-// public/index.php
+// index.php
 
 require_once '../vendor/autoload.php';
-require_once '../src/HelloWorldController.php';
+require_once 'HelloWorldController.php';
 
 use AyeAye\Api\Api;
 
@@ -61,8 +59,7 @@ $api->go()->respond();
 Enjoy
 
 ```bash
-$ cd public
-$ php -S localhost:8000 public/index.php &
+$ php -S localhost:8000 index.php &
 $ curl localhost:8000/hello
 $ curl localhost:8000/hello?name=Aye%20Aye
 $ curl localhost:8000
@@ -136,7 +133,7 @@ Above we wrote a controller to say hello.
 
 ```php
 <?php
-// src/HelloWorldController.php
+// HelloWorldController.php
 
 use AyeAye\Api\Controller;
 
@@ -182,7 +179,7 @@ our application quick start application, we can just return `$this`.
  
 ```php
 <?php
-// src/HelloWorldController.php
+// HelloWorldController.php
 
 use AyeAye\Api\Controller;
  
