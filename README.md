@@ -1,11 +1,14 @@
 # Aye Aye API
 
+Aye Aye API is a micro framework for building API's, and we mean _micro_. It's designed to be easy to use, fast to
+develop with and to scale from tiny projects to world devouring titans.
+
 Development Build Status:
 
 Travis CI: [![Build Status](https://travis-ci.org/AyeAyeApi/Api.svg?branch=master)](https://travis-ci.org/AyeAyeApi/Api)
 [Report](https://travis-ci.org/AyeAyeApi/Api)
 
-## Super Turbo Quick Start
+## Super Turbo Quick Start Guide
 
 Create a project and include Aye Aye
 
@@ -58,9 +61,11 @@ $api->go()->respond();
 Enjoy
 
 ```bash
+$ cd public
 $ php -S localhost:8000 public/index.php &
 $ curl localhost:8000/hello
 $ curl localhost:8000/hello?name=Aye%20Aye
+$ curl localhost:8000
 ```
 
 Don't forget to close the server down when you're done
@@ -69,12 +74,6 @@ Don't forget to close the server down when you're done
 $ fg
 ^C
 ```
-
-## What is it?
-
-Aye Aye API is a micro framework for building API's, and we mean _micro_.
-
-It's designed to be easy to use, fast to develop with and to scale from tiny projects to world devouring titans.
 
 ## Why should you use it?
 
@@ -93,6 +92,10 @@ Aye Aye is self aware... though not in the scary killer robot way. It knows abou
 and what sub-controllers are available on any given controller, and by reading the documentation in the doc-block
 comments, it can tell users what those end points do! You only need to write your documentation once, for developers,
 and Aye Aye will read it and tell your users what those end points do, and what parameters they take.
+
+By default it can read and format data as json (the default) and xml. It also reads GET, POST and HEADER. Data from
+these sources is passed into your methods for you. In the traditional computational model `input -> process -> output`
+Aye Aye takes care of the in and out, you just have to worry about the process!
 
 ## Installation
 
@@ -123,11 +126,17 @@ Endpoints are methods on the controllers that are named in this way `[verb][name
 
 You can put define any parameters you like for the method, and Aye Aye will automatically populate them for you.
 
-### My First Controller
+Controllers can also reference other controllers with methods named like this `[name]Controller()`
 
+These should return a controller object, and it's how Aye Aye navigates the Api.
+
+### The hello world controller
+
+Above we wrote a controller to say hello.
 
 ```php
 <?php
+// src/HelloWorldController.php
 
 use AyeAye\Api\Controller;
 
@@ -138,39 +147,71 @@ class HelloWorldController extends Controller
      * @param string $name Optional, defaults to 'World'
      * @returns string
      */
-    public function getHelloAction($name = 'World')
+    public function getHelloEndpoint($name = 'World')
     {
         return "Hello $name";
     }
 }
 ```
 
+The one method in this controller tells you everything you need to know.
+ * It will respond to a GET request send to the hello endpoint. 
+ * It takes one parameter, 'name', which will default to World
+ * It returns a string
+ 
+So how did we go from that, to sending and receiving the data with curl?
+
+When we created the Api object, we passed it HelloWorldController as a parameter, this tells the Api this is our
+starting point. The Aye Aye identifies getHelloEndpoint as an endpoint called "hello" that is triggered with a GET
+request.
+
 You'll notice that we used a PHP Doc Block to explain what the method does. This is _really_ important. Not only does
 it tell other developers what this end point does... it tells your API's users too!
 
+Going back to the Quick Start guide, you might have tried querying "/", and you will have seen that the Api tells you
+it has one GET endpoint, called 'hello, that it takes one parameter, as string called name, and it described all
+of these things with the documentation you made for the method!
+
 That's right, the API is truly self documenting!
 
-### Starting the API
+### Child Controllers
 
-To use this controller we need to pass it a request. For this we can use the `AyeAye\Api\Api` class. This class is
-really just wrapping together the other classes, so you don't have to use it but for most use cases this will suffice.
-
-To use the `Api` class, we initialise it with our starting controller. This controller will be the entry point into the
-rest of the api.
-
+Obviously just having one controller is pretty useless. To go from one controller to the next, we use the 
+`[name]Controller()` method. This method should return another object that extends Controller. To demonstrate that in
+our application quick start application, we can just return `$this`.
+ 
 ```php
 <?php
+// src/HelloWorldController.php
 
-use AyeAye\Api\Api;
-
-$initialController = new HelloWorldController();
-$api = new Api($initialController);
-
-$api->go()->respond();
+use AyeAye\Api\Controller;
+ 
+class HelloWorldController extends Controller
+{
+    /**
+     * Says hello
+     * @param string $name Optional, defaults to 'World'
+     * @returns string
+     */
+    public function getHelloEndpoint($name = 'World')
+    {
+        return "Hello $name";
+    }
+    
+    /**
+     * lol...
+     * @returns $this
+     */
+    public function ayeController()
+    {
+        return $this;
+    }
+}
 ```
+ 
+Now when we start our application and the fun begins!
 
-And that's it! We just made a RESTful Api in next to no time. Lets try it out.
-
-### Seeing it work
-
-As a quick test, we can test it out with the built in php server...
+```bash
+$ php -S localhost:8000 public/index.php &
+curl localhost:8000/aye/aye/aye/aye/hello?name=Aye%20Aye
+```
