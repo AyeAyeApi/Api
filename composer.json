@@ -4,7 +4,7 @@
     "description": "A simple but powerful API framework",
     "homepage": "https://ayeayeapi.com",
     "keywords": [ "api", "framework", "rest" ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "license" : "GPL-3.0+",
     "authors": [
         {
@@ -15,17 +15,17 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
-        "ayeaye/formatters": "0.11.*"
+        "php": "^5.4",
+        "ayeaye/formatters": "^0.11@dev"
     },
     "require-dev": {
-        "phpunit/phpunit": "@stable",
-        "squizlabs/php_codesniffer": "@stable",
-        "phploc/phploc": "@stable",
-        "pdepend/pdepend": "@stable",
-        "phpmd/phpmd": "@stable",
-        "sebastian/phpcpd": "@stable",
-        "theseer/phpdox": "@stable"
+        "phpunit/phpunit": "^4.5",
+        "squizlabs/php_codesniffer": "^2.2",
+        "phploc/phploc": "^2.0",
+        "pdepend/pdepend": "^2.0",
+        "phpmd/phpmd": "^2.2",
+        "sebastian/phpcpd": "^2.0",
+        "theseer/phpdox": "^0.7"
     },
     "autoload": {
         "psr-4": {
