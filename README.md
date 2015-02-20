@@ -5,14 +5,94 @@ Development Build Status:
 Travis CI: [![Build Status](https://travis-ci.org/AyeAyeApi/Api.svg?branch=master)](https://travis-ci.org/AyeAyeApi/Api)
 [Report](https://travis-ci.org/AyeAyeApi/Api)
 
+## Super Turbo Quick Start
+
+Create a project and include Aye Aye
+
+```bash
+composer init --require="ayeaye/api 0.13.*" -n
+composer install
+mkdir public
+mkdir src
+```
+
+Write your first controller
+
+```php
+<?php
+// src/HelloWorldController.php
+
+use AyeAye\Api\Controller;
+
+class HelloWorldController extends Controller
+{
+    /**
+     * Says hello
+     * @param string $name Optional, defaults to 'World'
+     * @returns string
+     */
+    public function getHelloEndpoint($name = 'World')
+    {
+        return "Hello $name";
+    }
+}
+```
+
+Write an entry point into the API
+
+```php
+<?php
+// public/index.php
+
+require_once '../vendor/autoload.php';
+require_once '../src/HelloWorldController.php';
+
+use AyeAye\Api\Api;
+
+$initialController = new HelloWorldController();
+$api = new Api($initialController);
+
+$api->go()->respond();
+```
+
+Enjoy
+
+```bash
+$ php -S localhost:8000 public/index.php &
+$ curl localhost:8000/hello
+$ curl localhost:8000/hello?name=Aye%20Aye
+```
+
+Don't forget to close the server down when you're done
+
+```bash
+$ fg
+^C
+```
+
 ## What is it?
 
-Aye Aye API is a light weight framework for building API's, and we mean _light_. 
-
-While we describe it as a framework, we haven't included any fluff. Aye Aye is focused on sending and receiving data,
-and leaves processing that data entirely up to you.
+Aye Aye API is a micro framework for building API's, and we mean _micro_.
 
 It's designed to be easy to use, fast to develop with and to scale from tiny projects to world devouring titans.
+
+## Why should you use it?
+
+Developing in Aye Aye is simple, clean and logical. Aye Aye processes requests and gives them to the appropriate
+endpoint on the appropriate controller. You write the code to process the data and return the result. That's it.
+Seriously.
+
+There's no fluff. You don't need to learn new database tools, or logging interfaces (assuming you know [PSR-3]
+(https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md), and you should) or
+authentication methods.
+
+If you follow [PSR-4](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md), then
+your API will look a lot like your directory structure, making maintainence a breeze.
+
+Aye Aye is self aware... though not in the scary killer robot way. It knows about itself. It knows what endpoints
+and what sub-controllers are available on any given controller, and by reading the documentation in the doc-block
+comments, it can tell users what those end points do! You only need to write your documentation once, for developers,
+and Aye Aye will read it and tell your users what those end points do, and what parameters they take.
 
 ## Installation
 
@@ -28,7 +108,7 @@ composer require --prefer-dist "AyeAye/Api 0.13.*"
 __Important__: While Aye Aye has stable and usable releases, it's version 1 release has not yet been finalised. Minor
 version increments (see [Semantic Versioning](http://semver.org)) may break backwards compatibility.
 
-## Quick Start
+## Quick Start explained
 
 The most important and powerful feature of Aye Aye is it's controllers. Controllers do two things. They provide
 endpoints, and access to other controllers.
