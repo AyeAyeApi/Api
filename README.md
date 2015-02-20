@@ -21,7 +21,7 @@ or above. Aye Aye should also work with [HHVM](https://github.com/facebook/hhvm)
 
 To include Aye Aye in your Composer project we recommend using the following.
 
-```
+```bash
 composer require --prefer-dist "AyeAye/Api 0.13.*"
 ```
 
@@ -51,7 +51,7 @@ You can put define any parameters you like for the method, and Aye Aye will auto
 
 use AyeAye\Api\Controller;
 
-class HelloWorldController extend Controller
+class HelloWorldController extends Controller
 {
     /**
      * Says hello
@@ -69,3 +69,28 @@ You'll notice that we used a PHP Doc Block to explain what the method does. This
 it tell other developers what this end point does... it tells your API's users too!
 
 That's right, the API is truly self documenting!
+
+### Starting the API
+
+To use this controller we need to pass it a request. For this we can use the `AyeAye\Api\Api` class. This class is
+really just wrapping together the other classes, so you don't have to use it but for most use cases this will suffice.
+
+To use the `Api` class, we initialise it with our starting controller. This controller will be the entry point into the
+rest of the api.
+
+```php
+<?php
+
+use AyeAye\Api\Api;
+
+$initialController = new HelloWorldController();
+$api = new Api($initialController);
+
+$api->go()->respond();
+```
+
+And that's it! We just made a RESTful Api in next to no time. Lets try it out.
+
+### Seeing it work
+
+As a quick test, we can test it out with the built in php server...
