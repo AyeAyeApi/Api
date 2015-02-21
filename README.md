@@ -214,3 +214,22 @@ Now when we start our application and the fun begins!
 $ php -S localhost:8000 public/index.php &
 curl localhost:8000/aye/aye/aye/aye/hello?name=Aye%20Aye
 ```
+
+## Contributing
+
+Aye Aye is an Open Source project and contributions are very welcome.
+
+### Issues
+
+To report problems, please open an Issue on the [GitHub Issue Tracker](https://github.com/AyeAyeApi/Api/issues).
+
+### Changes
+
+To make changes, clone the repository and use `composer install` with the developer dependencies. 
+
+Branch from `develop`. We (now) use the Git Flow naming convention with date of creation (YYYY-MM-DD). See [this guide]
+(http://nvie.com/posts/a-successful-git-branching-model/) for how Git Flow works.
+
+We follow the [PSR-1](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md) and
+[PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) coding standards.
+PHPMD and PHPCS, and their rule files will help guide you in this.
