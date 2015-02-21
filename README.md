@@ -3,6 +3,8 @@
 Aye Aye API is a micro framework for building API's, and we mean _micro_. It's designed to be easy to use, fast to
 develop with and to scale from tiny projects to world devouring titans.
 
+**License**: [GPL-3.0+](https://www.gnu.org/copyleft/gpl.html)
+
 Development Build Status:
 
 Travis CI: [![Build Status](https://travis-ci.org/AyeAyeApi/Api.svg?branch=master)](https://travis-ci.org/AyeAyeApi/Api)
@@ -113,7 +115,7 @@ version increments (see [Semantic Versioning](http://semver.org)) may break back
 The most important and powerful feature of Aye Aye is it's controllers. Controllers do two things. They provide
 endpoints, and access to other controllers.
 
-Controllers are classes that extend `AyeAye\Api\Controller'
+Controllers are classes that extend `AyeAye\Api\Controller`
 
 Endpoints are methods on the controllers that are named in this way `[verb][name]Endpoint(...)`
 
