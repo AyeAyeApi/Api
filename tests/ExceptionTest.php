@@ -164,7 +164,8 @@ class ExceptionTest extends TestCase
 
     }
 
-    public function testExceptionChaining() {
+    public function testExceptionChaining()
+    {
         $testMessage = 'Message';
         $testCode = 101;
         $testPublicMessage = 'Public Message';

@@ -185,7 +185,7 @@ class Request implements \JsonSerializable
     public function urlToParameters($url = null)
     {
         $urlParameters = [];
-        if(is_null($url)) {
+        if (is_null($url)) {
             $url = array_key_exists('REQUEST_URI', $_SERVER)
                 ? $_SERVER['REQUEST_URI']
                 : '';
@@ -194,7 +194,7 @@ class Request implements \JsonSerializable
         $urlParts = explode('/', $url);
         reset($urlParts); // Note, the first entry will always be blank
         $key = next($urlParts);
-        while(($value = next($urlParts)) !== false) {
+        while (($value = next($urlParts)) !== false) {
             $urlParameters[$key] = $value;
             $key = $value;
         }
@@ -255,8 +255,8 @@ class Request implements \JsonSerializable
         }
         // We can also flatten out the variable names to see if they exist
         $flatKey = $this->flatten($key);
-        foreach($this->parameters as $index => $value) {
-            if($flatKey == $this->flatten($index)) {
+        foreach ($this->parameters as $index => $value) {
+            if ($flatKey == $this->flatten($index)) {
                 return $value;
             }
         }
