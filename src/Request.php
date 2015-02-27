@@ -227,7 +227,24 @@ class Request implements \JsonSerializable
         if (array_key_exists($key, $this->parameters)) {
             return $this->parameters[$key];
         }
+        // We can also flatten out the variable names to see if they exist
+        $flatKey = $this->flatten($key);
+        foreach($this->parameters as $index => $value) {
+            if($flatKey == $this->flatten($index)) {
+                return $value;
+            }
+        }
         return $default;
+    }
+
+    /**
+     * Flatten a variable name by removing all non alpha numeric characters and making it lower case
+     * @param $name
+     * @return string
+     */
+    protected function flatten($name)
+    {
+        return strtolower(preg_replace('/\W_/', '', $key));
     }
 
     /**
