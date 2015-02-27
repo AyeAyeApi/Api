@@ -39,22 +39,19 @@ class ExceptionTest extends TestCase
             $message = $e->getMessage();
             $this->assertSame(
                 $testMessage,
-                $message,
-                "Exception messsage was not $testMessage"
+                $message
             );
 
             $code = $e->getCode();
             $this->assertSame(
                 $testCode,
-                $code,
-                "Exception code was not $testCode"
+                $code
             );
 
             $publicMessage = $e->getPublicMessage();
             $this->assertSame(
                 $testPublicMessage,
-                $publicMessage,
-                "Exception public message was not $testPublicMessage"
+                $publicMessage
             );
 
             $previous = $e->getPrevious();
@@ -65,8 +62,7 @@ class ExceptionTest extends TestCase
 
             $this->assertSame(
                 $previousException->getMessage(),
-                $previous->getMessage(),
-                "Previous exception not included"
+                $previous->getMessage()
             );
         }
     }
@@ -80,9 +76,9 @@ class ExceptionTest extends TestCase
             throw new Exception($testCode);
         } catch (Exception $e) {
             $publicMessage = $e->getPublicMessage();
-            $this->assertTrue(
-                $publicMessage == $testPublicMessage,
-                "Exception public message was not $testPublicMessage: " . PHP_EOL . $publicMessage
+            $this->assertSame(
+                $testPublicMessage,
+                $publicMessage
             );
         }
     }
@@ -95,9 +91,9 @@ class ExceptionTest extends TestCase
             throw new Exception(418);
         } catch (Exception $e) {
             $publicMessage = $e->getPublicMessage();
-            $this->assertTrue(
-                $publicMessage == $testPublicMessage,
-                "Exception public message was not $testPublicMessage: " . PHP_EOL . $publicMessage
+            $this->assertSame(
+                $testPublicMessage,
+                $publicMessage
             );
 
         }
@@ -114,14 +110,12 @@ class ExceptionTest extends TestCase
         } catch (Exception $e) {
             $this->assertSame(
                 $testPublicMessage,
-                $e->getPublicMessage(),
-                "Exception public message incorrect"
+                $e->getPublicMessage()
             );
 
             $this->assertSame(
                 $systemMessage,
-                $e->getMessage(),
-                "Exception system message incorrect"
+                $e->getMessage()
             );
 
             $previous = $e->getPrevious();
@@ -132,8 +126,7 @@ class ExceptionTest extends TestCase
 
             $this->assertSame(
                 $previousException->getMessage(),
-                $previous->getMessage(),
-                "Previous exception not included"
+                $previous->getMessage()
             );
 
         }
@@ -152,22 +145,21 @@ class ExceptionTest extends TestCase
 
         $object = json_decode($json, true);
 
-        $count = count($object);
-        $this->assertTrue(
-            $count === 2,
-            'There should only be 2 items in the array, there were: ' . PHP_EOL . $count
+        $this->assertCount(
+            2,
+            $object
         );
 
         $publicMessage = $object['message'];
-        $this->assertTrue(
-            $publicMessage === $testPublicMessage,
-            "Exception messsage was not $testMessage: " . PHP_EOL . $publicMessage
+        $this->assertSame(
+            $testPublicMessage,
+            $publicMessage
         );
 
         $code = $object['code'];
-        $this->assertTrue(
-            $code === $testCode,
-            "Exception code was not $testCode: " . PHP_EOL . $code
+        $this->assertSame(
+            $testCode,
+            $code
         );
 
     }
@@ -184,10 +176,9 @@ class ExceptionTest extends TestCase
 
         $object = json_decode($json, true);
 
-        $count = count($object);
-        $this->assertTrue(
-            $count === 2,
-            'There should only be 2 items in the array, there were: ' . PHP_EOL . $count
+        $this->assertCount(
+            2,
+            $object
         );
 
         $newException = new Exception($testPublicMessage, $testCode, $testMessage, $exception);
@@ -196,10 +187,9 @@ class ExceptionTest extends TestCase
 
         $object = json_decode($json, true);
 
-        $count = count($object);
-        $this->assertTrue(
-            $count === 3,
-            'There should be 3 items in the array, there were: ' . PHP_EOL . $count
+        $this->assertCount(
+            3,
+            $object
         );
     }
 }
