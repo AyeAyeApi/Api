@@ -180,6 +180,7 @@ class Request implements \JsonSerializable
      * Turns a url string into an array of parameters
      * @param string $url
      * @return array
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function urlToParameters($url = null)
     {
