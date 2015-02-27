@@ -25,8 +25,7 @@ class ResponseTest extends TestCase
 
         $this->assertSame(
             $testData,
-            $response->getData(),
-            'Data did not match test data'
+            $response->getData()
         );
     }
 
@@ -41,8 +40,7 @@ class ResponseTest extends TestCase
 
         $this->assertSame(
             $testStatus->getCode(),
-            $response->getStatus()->getCode(),
-            'Status did not match test status'
+            $response->getStatus()->getCode()
         );
     }
 
@@ -57,8 +55,7 @@ class ResponseTest extends TestCase
 
         $this->assertSame(
             $testStatusCode,
-            $response->getStatus()->getCode(),
-            'Status did not match test status'
+            $response->getStatus()->getCode()
         );
     }
 
@@ -103,20 +100,17 @@ class ResponseTest extends TestCase
 
         $this->assertSame(
             '418',
-            $responseObject->status->code,
-            'The response object should contain status code 418'
+            $responseObject->status->code
         );
 
         $this->assertSame(
             'string',
-            $responseObject->data->string,
-            'The response object should contain the string "string"'
+            $responseObject->data->string
         );
 
         $this->assertSame(
             '/test/path',
-            $responseObject->request->requestedUri,
-            'The response object should contain the string "/test/path"'
+            $responseObject->request->requestedUri
         );
 
     }
@@ -165,8 +159,7 @@ class ResponseTest extends TestCase
 
         $this->assertSame(
             $responseData,
-            $expectedXml,
-            "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
+            $expectedXml
         );
     }
 
@@ -224,8 +217,7 @@ class ResponseTest extends TestCase
 
         $this->assertSame(
             $responseData,
-            $expectedXml,
-            "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
+            $expectedXml
         );
     }
 
@@ -273,8 +265,7 @@ class ResponseTest extends TestCase
 
         $this->assertSame(
             $responseData,
-            $expectedXml,
-            "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
+            $expectedXml
         );
     }
 
@@ -318,8 +309,7 @@ class ResponseTest extends TestCase
 
         $this->assertSame(
             $responseData,
-            $expectedXml,
-            "Response data not correct Expected:\n$expectedXml\nGot:\n$responseData"
+            $expectedXml
         );
     }
 }
