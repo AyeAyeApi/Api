@@ -184,7 +184,12 @@ class Request implements \JsonSerializable
     public function urlToParameters($url = null)
     {
         $urlParameters = [];
-        $url = is_null($url) ? parse_url(PHP_URL_PATH) : $url;
+        if(is_null($url)) {
+            $url = array_key_exists('REQUEST_URI', $_SERVER)
+                ? $_SERVER['REQUEST_URI']
+                : '';
+        }
+        $url = is_null($url) ? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) : $url;
         $urlParts = explode('/', $url);
         reset($urlParts); // Note, the first entry will always be blank
         $key = next($urlParts);
