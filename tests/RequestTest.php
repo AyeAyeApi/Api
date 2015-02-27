@@ -251,11 +251,11 @@ class RequestTest extends TestCase
         $string = 'string';
 
         $request = new Request();
-        $stringObejct = $request->stringToObject($string);
+        $stringObject = $request->stringToObject($string);
 
         $this->assertSame(
             $string,
-            $stringObejct->text,
+            $stringObject->text,
             'String should have been "string"'
         );
     }
