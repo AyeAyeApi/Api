@@ -136,6 +136,7 @@ class Request implements \JsonSerializable
      */
     protected function useActualParameters()
     {
+        $this->setParameters($this->urlToParameters());
         $this->setParameters($_REQUEST);
         $this->setParameters($this->parseHeader($_SERVER));
         $this->setParameters($this->stringToObject($this->readBody()));
@@ -173,6 +174,25 @@ class Request implements \JsonSerializable
             return http_get_request_body();
         }
         return @file_get_contents('php://input');
+    }
+
+    /**
+     * Turns a url string into an array of parameters
+     * @param string $url
+     * @return array
+     */
+    public function urlToParameters($url = null)
+    {
+        $urlParameters = [];
+        $url = is_null($url) ? parse_url(PHP_URL_PATH) : $url;
+        $urlParts = explode('/', $url);
+        reset($urlParts); // Note, the first entry will always be blank
+        $key = next($urlParts);
+        while(($value = next($urlParts)) !== false) {
+            $urlParameters[$key] = $value;
+            $key = $value;
+        }
+        return $urlParameters;
     }
 
     /**
