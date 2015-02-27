@@ -69,32 +69,32 @@ class ControllerTest extends TestCase
     {
         $controller = new TestController();
         $this->assertTrue(
-            $controller->isControllerMethodHidden('hiddenChildController')
+            $controller->isMethodHidden('hiddenChildController')
         );
         $this->assertFalse(
-            $controller->isControllerMethodHidden('childController')
+            $controller->isMethodHidden('childController')
         );
 
-        $hideControllerMethod = $this->getClassMethod($controller, 'hideControllerMethod');
+        $hideControllerMethod = $this->getClassMethod($controller, 'hideMethod');
         $hideControllerMethod->invoke($controller, 'childController');
-        $showControllerMethod = $this->getClassMethod($controller, 'showControllerMethod');
+        $showControllerMethod = $this->getClassMethod($controller, 'showMethod');
         $showControllerMethod->invoke($controller, 'hiddenChildController');
 
         $this->assertTrue(
-            $controller->isControllerMethodHidden('childController')
+            $controller->isMethodHidden('childController')
         );
         $this->assertFalse(
-            $controller->isControllerMethodHidden('hiddenChildController')
+            $controller->isMethodHidden('hiddenChildController')
         );
 
         $controller = new TestBrokenController();
         $this->assertFalse(
-            $controller->isControllerMethodHidden('childController')
+            $controller->isMethodHidden('childController')
         );
-        $hideControllerMethod = $this->getClassMethod($controller, 'hideControllerMethod');
+        $hideControllerMethod = $this->getClassMethod($controller, 'hideMethod');
         $hideControllerMethod->invoke($controller, 'childController');
         $this->assertTrue(
-            $controller->isControllerMethodHidden('childController')
+            $controller->isMethodHidden('childController')
         );
     }
 
@@ -102,34 +102,34 @@ class ControllerTest extends TestCase
     {
         $controller = new TestController();
         $this->assertTrue(
-            $controller->isEndpointMethodHidden('getHiddenEndpoint')
+            $controller->isMethodHidden('getHiddenEndpoint')
         );
         $this->assertFalse(
-            $controller->isEndpointMethodHidden('getInformationEndpoint')
+            $controller->isMethodHidden('getInformationEndpoint')
         );
 
-        $hideEndpointMethod = $this->getClassMethod($controller, 'hideEndpointMethod');
+        $hideEndpointMethod = $this->getClassMethod($controller, 'hideMethod');
         $hideEndpointMethod->invoke($controller, 'getInformationEndpoint');
-        $showEndpointMethod = $this->getClassMethod($controller, 'showEndpointMethod');
+        $showEndpointMethod = $this->getClassMethod($controller, 'showMethod');
         $showEndpointMethod->invoke($controller, 'getHiddenEndpoint');
 
         $this->assertTrue(
-            $controller->isEndpointMethodHidden('getInformationEndpoint')
+            $controller->isMethodHidden('getInformationEndpoint')
         );
         $this->assertFalse(
-            $controller->isEndpointMethodHidden('getHiddenEndpoint')
+            $controller->isMethodHidden('getHiddenEndpoint')
         );
 
         $controller = new TestBrokenController();
         $this->assertFalse(
-            $controller->isEndpointMethodHidden('getInformationEndpoint')
+            $controller->isMethodHidden('getInformationEndpoint')
         );
 
-        $hideEndpointMethod = $this->getClassMethod($controller, 'hideEndpointMethod');
+        $hideEndpointMethod = $this->getClassMethod($controller, 'hideMethod');
         $hideEndpointMethod->invoke($controller, 'getInformationEndpoint');
 
         $this->assertTrue(
-            $controller->isEndpointMethodHidden('getInformationEndpoint')
+            $controller->isMethodHidden('getInformationEndpoint')
         );
     }
 
@@ -141,7 +141,7 @@ class ControllerTest extends TestCase
     public function testHideControllerException()
     {
         $controller = new TestController();
-        $hideControllerMethod = $this->getClassMethod($controller, 'hideControllerMethod');
+        $hideControllerMethod = $this->getClassMethod($controller, 'hideMethod');
         $hideControllerMethod->invoke($controller, 'fakeController');
     }
 
@@ -153,7 +153,7 @@ class ControllerTest extends TestCase
     public function testHideEndpointException()
     {
         $controller = new TestController();
-        $hideEndpointMethod = $this->getClassMethod($controller, 'hideEndpointMethod');
+        $hideEndpointMethod = $this->getClassMethod($controller, 'hideMethod');
         $hideEndpointMethod->invoke($controller, 'fakeEndpoint');
     }
 
@@ -165,7 +165,7 @@ class ControllerTest extends TestCase
     public function testIsControllerHiddenException()
     {
         $controller = new TestController();
-        $controller->isControllerMethodHidden('fakeController');
+        $controller->isMethodHidden('fakeController');
     }
 
     /**
@@ -176,7 +176,7 @@ class ControllerTest extends TestCase
     public function testIsEndpointHiddenException()
     {
         $controller = new TestController();
-        $controller->isEndpointMethodHidden('fakeEndpoint');
+        $controller->isMethodHidden('fakeEndpoint');
     }
 
     /**
@@ -187,7 +187,7 @@ class ControllerTest extends TestCase
     public function testShowControllerException()
     {
         $controller = new TestController();
-        $showControllerMethod = $this->getClassMethod($controller, 'showControllerMethod');
+        $showControllerMethod = $this->getClassMethod($controller, 'showMethod');
         $showControllerMethod->invoke($controller, 'fakeController');
     }
 
@@ -199,7 +199,7 @@ class ControllerTest extends TestCase
     public function testShowEndpointException()
     {
         $controller = new TestController();
-        $showEndpointMethod = $this->getClassMethod($controller, 'showEndpointMethod');
+        $showEndpointMethod = $this->getClassMethod($controller, 'showMethod');
         $showEndpointMethod->invoke($controller, 'fakeEndpoint');
     }
 }

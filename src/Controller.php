@@ -20,16 +20,8 @@ class Controller
      * Endpoints that should not be publicly listed
      * @var string[]
      */
-    private $hiddenEndpoints = [
+    private $hiddenMethods = [
         'getIndexEndpoint' => true, // Value not used
-    ];
-
-    /**
-     * Controllers that should not be publicly listed
-     * @var string
-     */
-    private $hiddenControllers = [
-
     ];
 
     /**
@@ -78,12 +70,12 @@ class Controller
      * @return $this
      * @throws Exception
      */
-    protected function hideEndpointMethod($methodName)
+    protected function hideMethod($methodName)
     {
         if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
         }
-        $this->hiddenEndpoints[$methodName] = true;
+        $this->hiddenMethods[$methodName] = true;
         return $this;
     }
 
@@ -93,13 +85,12 @@ class Controller
      * @return bool
      * @throws Exception
      */
-    public function isEndpointMethodHidden($methodName)
+    public function isMethodHidden($methodName)
     {
         if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
         }
-        return is_array($this->hiddenEndpoints)
-            && isset($this->hiddenEndpoints[$methodName]);
+        return isset($this->hiddenMethods[$methodName]);
     }
 
     /**
@@ -108,60 +99,13 @@ class Controller
      * @return $this
      * @throws Exception
      */
-    protected function showEndpointMethod($methodName)
+    protected function showMethod($methodName)
     {
         if (!method_exists($this, $methodName)) {
             throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
         }
-        if ($this->isEndpointMethodHidden($methodName)) {
-            unset($this->hiddenEndpoints[$methodName]);
-        }
-        return $this;
-    }
-
-    /**
-     * Hide a controller
-     * @param $methodName
-     * @return $this
-     * @throws Exception
-     */
-    protected function hideControllerMethod($methodName)
-    {
-        if (!method_exists($this, $methodName)) {
-            throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
-        }
-        $this->hiddenControllers[$methodName] = true;
-        return $this;
-    }
-
-    /**
-     * Is a controller currently hidden
-     * @param $methodName
-     * @return bool
-     * @throws Exception
-     */
-    public function isControllerMethodHidden($methodName)
-    {
-        if (!method_exists($this, $methodName)) {
-            throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
-        }
-        return is_array($this->hiddenControllers)
-            && isset($this->hiddenControllers[$methodName]);
-    }
-
-    /**
-     * Show a hidden controller
-     * @param $methodName
-     * @return $this
-     * @throws Exception
-     */
-    protected function showControllerMethod($methodName)
-    {
-        if (!method_exists($this, $methodName)) {
-            throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
-        }
-        if ($this->isControllerMethodHidden($methodName)) {
-            unset($this->hiddenControllers[$methodName]);
+        if ($this->isMethodHidden($methodName)) {
+            unset($this->hiddenMethods[$methodName]);
         }
         return $this;
     }

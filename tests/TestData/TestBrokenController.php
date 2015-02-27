@@ -13,9 +13,7 @@ class TestBrokenController extends Controller
 {
 
 
-    protected $hiddenEndpoints;
-
-    protected $hiddenControllers;
+    protected $hiddenMethods;
 
     /**
      * Gets some information

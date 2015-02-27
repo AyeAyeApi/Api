@@ -105,7 +105,7 @@ class Router
         $methods = get_class_methods($controller);
         foreach ($methods as $classMethod) {
             if (preg_match('/([a-z]+)([A-Z]\w+)Endpoint$/', $classMethod, $parts)) {
-                if (!$controller->isEndpointMethodHidden($classMethod)) {
+                if (!$controller->isMethodHidden($classMethod)) {
                     $method = strtolower($parts[1]);
                     $endpoint = $this->camelcaseToHyphenated($parts[2]);
                     if (!array_key_exists($method, $endpoints)) {
@@ -129,7 +129,7 @@ class Router
         $controllers = [];
         foreach ($methods as $method) {
             if (preg_match('/(\w+)Controller$/', $method, $parts)) {
-                if (!$controller->isControllerMethodHidden($method)) {
+                if (!$controller->isMethodHidden($method)) {
                     $controllers[] = $this->camelcaseToHyphenated($parts[1]);
                 }
             }

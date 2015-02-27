@@ -14,8 +14,8 @@ class TestController extends Controller
 
     public function __construct()
     {
-        $this->hideControllerMethod('hiddenChildController');
-        $this->hideEndpointMethod('getHiddenEndpoint');
+        $this->hideMethod('hiddenChildController');
+        $this->hideMethod('getHiddenEndpoint');
     }
 
     /**
