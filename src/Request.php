@@ -176,6 +176,25 @@ class Request implements \JsonSerializable
     }
 
     /**
+     * Turns a url string into an array of parameters
+     * @param string $url
+     * @return array
+     */
+    public function urlToParameters($url = null)
+    {
+        $urlParameters = [];
+        $url = is_null($url) ? parse_url(PHP_URL_PATH) : $url;
+        $urlParts = explode('/', $url);
+        reset($urlParts); // Note, the first entry will always be blank
+        $key = next($urlParts);
+        while(($value = next($urlParts)) !== false) {
+            $urlParameters[$key] = $value;
+            $key = $value;
+        }
+        return $urlParameters;
+    }
+
+    /**
      * Tries to turn a string of data into an object. Accepts json, xml or a php serialised object
      * Failing all else it will return a standard class with the string attached to data
      * eg. $this->stringObject('fail')->body == 'fail'

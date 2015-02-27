@@ -180,6 +180,72 @@ class RequestTest extends TestCase
         );
     }
 
+    public function testUrlToParameters()
+    {
+        $request = new Request();
+
+        $array = $request->urlToParameters('');
+        $this->assertCount(
+            0,
+            $array
+        );
+
+        $array = $request->urlToParameters('/');
+        $this->assertCount(
+            0,
+            $array
+        );
+
+        $array = $request->urlToParameters('/one');
+        $this->assertCount(
+            0,
+            $array
+        );
+
+        $array = $request->urlToParameters('/one/two');
+        $this->assertCount(
+            1,
+            $array
+        );
+
+        $array = $request->urlToParameters('/one/two/three');
+        $this->assertCount(
+            2,
+            $array
+        );
+
+        $array = $request->urlToParameters('/one/two/three/four');
+        $this->assertCount(
+            3,
+            $array
+        );
+        $this->assertArrayHasKey(
+            'one',
+            $array
+        );
+        $this->assertSame(
+            'two',
+            $array['one']
+        );
+        $this->assertArrayHasKey(
+            'two',
+            $array
+        );
+        $this->assertSame(
+            'three',
+            $array['two']
+        );
+        $this->assertArrayHasKey(
+            'three',
+            $array
+        );
+        $this->assertSame(
+            'four',
+            $array['three']
+        );
+
+    }
+
     public function testStringToStringObject()
     {
         $string = 'string';
