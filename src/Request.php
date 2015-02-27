@@ -136,6 +136,7 @@ class Request implements \JsonSerializable
      */
     protected function useActualParameters()
     {
+        $this->setParameters($this->urlToParameters());
         $this->setParameters($_REQUEST);
         $this->setParameters($this->parseHeader($_SERVER));
         $this->setParameters($this->stringToObject($this->readBody()));
