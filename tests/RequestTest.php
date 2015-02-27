@@ -33,20 +33,17 @@ class RequestTest extends TestCase
         $method = $request->getMethod();
         $this->assertSame(
             'GET',
-            $method,
-            'Method is not GET: ' . PHP_EOL . $method
+            $method
         );
 
         $this->assertCount(
             0,
-            $request->getParameters(),
-            'No Parameters should have been defined'
+            $request->getParameters()
         );
 
         $this->assertCount(
             0,
-            $request->getRequestChain(),
-            'There shouldn\'t be any elements in the request chain'
+            $request->getRequestChain()
         );
     }
 
@@ -60,8 +57,7 @@ class RequestTest extends TestCase
         $headersSize = count($request->parseHeader());
         $this->assertEquals(
             0,
-            $headersSize,
-            'There shouldn\'t be any headers'
+            $headersSize
         );
 
         $_SERVER['CONTENT_TYPE'] = 'application/json';
@@ -71,29 +67,24 @@ class RequestTest extends TestCase
 
         $request = new Request();
         $headers = $request->parseHeader($_SERVER);
-        $headersSize = count($headers);
-        $this->assertEquals(
+        $this->assertCount(
             3,
-            $headersSize,
-            'There should be 3 headers'
+            $headers
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             $headers['Content-Type'],
-            $_SERVER['CONTENT_TYPE'],
-            'Content-Type should have been set to application/json'
+            $_SERVER['CONTENT_TYPE']
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             $headers['Content-Length'],
-            $_SERVER['CONTENT_LENGTH'],
-            'Content-Length should have been set to application/json'
+            $_SERVER['CONTENT_LENGTH']
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             $headers['Not-A-Real-Header'],
-            $_SERVER['HTTP_NOT_A_REAL_HEADER'],
-            'Not-A-Real-Header should have been set to "Not a header"'
+            $_SERVER['HTTP_NOT_A_REAL_HEADER']
         );
     }
 
@@ -106,26 +97,22 @@ class RequestTest extends TestCase
 
         $this->assertCount(
             2,
-            $jsonObject->testArray,
-            'testArray should contain 2 elements'
+            $jsonObject->testArray
         );
 
         $this->assertSame(
             1,
-            $jsonObject->testArray[0],
-            'testArrays first element should be 1'
+            $jsonObject->testArray[0]
         );
 
         $this->assertSame(
             true,
-            $jsonObject->testArray[1],
-            'testArrays second element should be true'
+            $jsonObject->testArray[1]
         );
 
         $this->assertSame(
             'a string',
-            $jsonObject->testObject->string,
-            'testObject should contain the string "a string"'
+            $jsonObject->testObject->string
         );
     }
 
@@ -136,14 +123,12 @@ class RequestTest extends TestCase
         $xmlObject = $request->stringToObject($xml);
 
         $this->assertTrue(
-            is_object($xmlObject),
-            'testObject should be an object'
+            is_object($xmlObject)
         );
 
         $this->assertEquals(
             'a string',
-            $xmlObject->testObject->string,
-            'testObject should contain the string "a string"'
+            $xmlObject->testObject->string
         );
     }
 
@@ -157,26 +142,22 @@ class RequestTest extends TestCase
 
         $this->assertCount(
             2,
-            $phpObject->testArray,
-            'testArray should contain 2 elements'
+            $phpObject->testArray
         );
 
         $this->assertSame(
             1,
-            $phpObject->testArray[0],
-            'testArrays first element should be 1'
+            $phpObject->testArray[0]
         );
 
         $this->assertSame(
             true,
-            $phpObject->testArray[1],
-            'testArrays second element should be true'
+            $phpObject->testArray[1]
         );
 
         $this->assertSame(
             'a string',
-            $phpObject->testObject->string,
-            'testObject should contain the string "a string"'
+            $phpObject->testObject->string
         );
     }
 
@@ -255,8 +236,7 @@ class RequestTest extends TestCase
 
         $this->assertSame(
             $string,
-            $stringObject->text,
-            'String should have been "string"'
+            $stringObject->text
         );
     }
 
@@ -265,23 +245,20 @@ class RequestTest extends TestCase
         $request = new Request();
         $this->assertSame(
             Request::METHOD_GET,
-            $request->getMethod(),
-            'Default method should be GET'
+            $request->getMethod()
         );
 
         $_SERVER['REQUEST_METHOD'] = Request::METHOD_DELETE; // Tested later
         $request = new Request(Request::METHOD_POST);
         $this->assertSame(
             Request::METHOD_POST,
-            $request->getMethod(),
-            'Method should be set to POST by constructor'
+            $request->getMethod()
         );
 
         $request = new Request();
         $this->assertSame(
             Request::METHOD_DELETE,
-            $request->getMethod(),
-            'Method should be set to DELETE by $_SERVER'
+            $request->getMethod()
         );
     }
 
@@ -295,32 +272,27 @@ class RequestTest extends TestCase
         );
 
         $this->assertNull(
-            $request->getParameter('this-parameter-not-set'),
-            'The default value for an unknown value'
+            $request->getParameter('this-parameter-not-set')
         );
 
         $this->assertSame(
             true,
-            $request->getParameter('true'),
-            'Test parameter "true" should be true'
+            $request->getParameter('true')
         );
 
         $this->assertSame(
             false,
-            $request->getParameter('false'),
-            'Test parameter "false" should be false'
+            $request->getParameter('false')
         );
 
         $this->assertSame(
             'a string',
-            $request->getParameter('bodyString'),
-            'bodyString should be "a string"'
+            $request->getParameter('bodyString')
         );
 
 
         $this->assertNull(
-            $request->getParameter('this-parameter-not-set'),
-            'The default value for an unknown value'
+            $request->getParameter('this-parameter-not-set')
         );
 
     }
@@ -339,32 +311,27 @@ class RequestTest extends TestCase
 
         $this->assertSame(
             Request::METHOD_POST,
-            $jsonObject->method,
-            'Request method should be POST'
+            $jsonObject->method
         );
 
         $this->assertSame(
             '/test/path.xml',
-            $jsonObject->requestedUri,
-            'Requested URI should be /test/path.xml'
+            $jsonObject->requestedUri
         );
 
         $this->assertSame(
             Request::METHOD_POST,
-            $jsonObject->method,
-            'Request method should be POST'
+            $jsonObject->method
         );
 
         $this->assertSame(
             '1',
-            $jsonObject->parameters->firstParameter,
-            'First parameter should be 1'
+            $jsonObject->parameters->firstParameter
         );
 
         $this->assertSame(
             2,
-            $jsonObject->parameters->secondParameter,
-            'Second parameter should be 2'
+            $jsonObject->parameters->secondParameter
         );
 
         // Lets check the server variable is read too
@@ -374,8 +341,7 @@ class RequestTest extends TestCase
         $jsonObject = json_decode(json_encode($request));
         $this->assertSame(
             $_SERVER['REQUEST_URI'],
-            $jsonObject->requestedUri,
-            "Request URI should be {$_SERVER['REQUEST_URI']}"
+            $jsonObject->requestedUri
         );
 
     }
@@ -406,27 +372,23 @@ class RequestTest extends TestCase
     {
         $request = new Request();
         $this->assertTrue(
-            $request->setParameter('name', 'value'),
-            "Add parameter should have returned true, it didn't"
+            $request->setParameter('name', 'value')
         );
 
         $this->assertSame(
             'value',
-            $request->getParameter('name'),
-            "Parameter should have been 'value'"
+            $request->getParameter('name')
         );
     }
 
     public function testReadBodyDodgily()
     {
-
         require_once 'TestData/http_get_request_body.php';
 
         $request = new Request();
         $this->assertSame(
             true,
-            $request->getParameter('hackedJson'),
-            'Failed to utilise hacked http_get_request_body... I\'m not sure how I feel about that'
+            $request->getParameter('hackedJson')
         );
     }
 
@@ -437,22 +399,19 @@ class RequestTest extends TestCase
         $uri = '/test/file.php';
         $this->assertSame(
             'php',
-            $request->getFormatFromUri($uri),
-            'Format should be php'
+            $request->getFormatFromUri($uri)
         );
 
         $uri = '/test/file.json';
         $this->assertSame(
             'json',
-            $request->getFormatFromUri($uri),
-            'Format should be json'
+            $request->getFormatFromUri($uri)
         );
 
         $uri = '/test/file.json?parameters=true';
         $this->assertSame(
             'json',
-            $request->getFormatFromUri($uri),
-            'Format should be json'
+            $request->getFormatFromUri($uri)
         );
     }
 }
