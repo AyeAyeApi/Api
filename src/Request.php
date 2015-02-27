@@ -244,7 +244,7 @@ class Request implements \JsonSerializable
      */
     protected function flatten($name)
     {
-        return strtolower(preg_replace('/\W_/', '', $key));
+        return strtolower(preg_replace('/\W_/', '', $name));
     }
 
     /**
