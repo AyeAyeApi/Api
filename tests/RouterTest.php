@@ -81,9 +81,9 @@ class RouterTest extends TestCase
         $expectedEndpoint = 'getIndexEndpoint';
         $actualEndpoint = $parseEndpointName->invoke($router, $endpoint, $method);
 
-        $this->assertTrue(
-            $actualEndpoint === $expectedEndpoint,
-            "Expected $expectedEndpoint, is actually: " . PHP_EOL . $actualEndpoint
+        $this->assertSame(
+            $expectedEndpoint,
+            $actualEndpoint
         );
 
         $endpoint = 'a-longer-name';
@@ -91,9 +91,9 @@ class RouterTest extends TestCase
         $expectedEndpoint = 'postALongerNameEndpoint';
         $actualEndpoint = $parseEndpointName->invoke($router, $endpoint, $method);
 
-        $this->assertTrue(
-            $actualEndpoint === $expectedEndpoint,
-            "Expected $expectedEndpoint, is actually: " . PHP_EOL . $actualEndpoint
+        $this->assertSame(
+            $expectedEndpoint,
+            $actualEndpoint
         );
     }
 
@@ -107,23 +107,24 @@ class RouterTest extends TestCase
         $router = new Router();
         $controllers = $router->getControllers($controller);
 
-        $this->assertTrue(
-            count($controllers) === 2
+        $this->assertCount(
+            2,
+            $controllers
         );
 
-        $this->assertTrue(
-            in_array('child', $controllers),
-            'Controllers should have included child'
+        $this->assertContains(
+            'child',
+            $controllers
         );
 
-        $this->assertTrue(
-            in_array('me', $controllers),
-            'Controllers should have included me'
+        $this->assertContains(
+            'me',
+            $controllers
         );
 
-        $this->assertFalse(
-            in_array('hidden-child', $controllers),
-            'Controllers should have included me'
+        $this->assertNotContains(
+            'hidden-child',
+            $controllers
         );
     }
 
@@ -136,85 +137,84 @@ class RouterTest extends TestCase
         $router = new Router();
         $controller = new TestController();
         $result = $router->documentController($controller);
-//print_r($result); die;
+
         // Controllers
 
-        $this->assertTrue(
-            in_array('me', $result->controllers),
-            "Controllers should have contained 'me'"
+        $this->assertContains(
+            'me',
+            $result->controllers
         );
 
-        $this->assertTrue(
-            in_array('child', $result->controllers),
-            "Controllers should have contained 'me'"
+        $this->assertContains(
+            'child',
+            $result->controllers
         );
 
-        $this->assertFalse(
-            in_array('hiddenChild', $result->controllers),
-            "Controllers should have contained 'me'"
+        $this->assertNotContains(
+            'hiddenChild',
+            $result->controllers
         );
 
-        $this->assertTrue(
-            count($result->controllers) == 2,
-            "Controllers should have has 2 elements, it had: " . PHP_EOL . count($result->controllers)
+        $this->assertCount(
+            2,
+            $result->controllers
         );
 
         // Endpoints
 
-        $this->assertTrue(
-            count($result->endpoints['get']) == 2,
-            "There should have been 2 get endpoints, there were: " . PHP_EOL . count($result->endpoints['get'])
+        $this->assertCount(
+            2,
+            $result->endpoints['get']
         );
 
-        $this->assertTrue(
-            array_key_exists('information', $result->endpoints['get']),
-            "Get endpoints should have included 'information' it didn't"
+        $this->assertArrayHasKey(
+            'information',
+            $result->endpoints['get']
         );
 
-        $this->assertTrue(
-            $result->endpoints['get']['information']['description'] === 'Gets some information',
-            "Get Information description was wrong"
+        $this->assertSame(
+            'Gets some information',
+            $result->endpoints['get']['information']['description']
         );
 
-        $this->assertTrue(
-            count($result->endpoints['get']['information']['parameters']) === 0,
-            "Get Information description should not contain any parameters"
+        $this->assertCount(
+            0,
+            $result->endpoints['get']['information']['parameters']
         );
 
-        $this->assertTrue(
-            array_key_exists('more-information', $result->endpoints['get']),
-            "Get endpoints should have included 'more-information' it didn't"
+        $this->assertArrayHasKey(
+            'more-information',
+            $result->endpoints['get']
         );
 
-        $this->assertTrue(
-            $result->endpoints['get']['more-information']['description'] === 'Get some conditional information',
-            "Get More Information description was wrong"
+        $this->assertSame(
+            'Get some conditional information',
+            $result->endpoints['get']['more-information']['description']
         );
 
-        $this->assertTrue(
-            count($result->endpoints['get']['more-information']['parameters']) === 1,
-            "Get More Information description should not contain any parameters"
+        $this->assertCount(
+            1,
+            $result->endpoints['get']['more-information']['parameters']
         );
 
-        $this->assertTrue(
-            $result->endpoints['get']['more-information']['parameters']['condition']->type === 'string',
-            "Get More Information should take a string called condition"
+        $this->assertSame(
+            'string',
+            $result->endpoints['get']['more-information']['parameters']['condition']->type
         );
 
-        $this->assertTrue(
+        $this->assertSame(
+            'The condition for the information',
             $result->endpoints['get']['more-information']['parameters']['condition']->description
-            === 'The condition for the information',
-            "Get More Information parameter should be described as 'The condition for the information'"
         );
 
-        $this->assertTrue(
-            count($result->endpoints['put']) === 1,
-            "There should have been 1 get endpoints, there were: " . PHP_EOL . count($result->endpoints['put'])
+        $this->assertCount(
+            1,
+            $result->endpoints['put']
         );
 
-        $this->assertTrue(
-            array_key_exists('information', $result->endpoints['put']),
-            "Put endpoints should have included 'information' it didn't"
+        $this->assertArrayHasKey(
+            'information',
+            $result->endpoints['put']
         );
 
     }
@@ -231,9 +231,9 @@ class RouterTest extends TestCase
         $controller = new TestController();
         $result = $router->processRequest($request, $controller, []);
 
-        $this->assertTrue(
-            property_exists($result, 'endpoints'),
-            "Default index endpoint not hit"
+        $this->assertObjectHasAttribute(
+            'endpoints',
+            $result
         );
     }
 
@@ -267,9 +267,9 @@ class RouterTest extends TestCase
         $controller = new TestController();
         $result = $router->processRequest($request, $controller);
 
-        $this->assertTrue(
-            property_exists($result, 'endpoints'),
-            "Alternative index endpoint not hit"
+        $this->assertObjectHasAttribute(
+            'endpoints',
+            $result
         );
     }
 
@@ -311,10 +311,9 @@ class RouterTest extends TestCase
         $controller = new TestController();
         $result = $router->processRequest($request, $controller);
 
-        $this->assertEquals(
-            $result,
+        $this->assertSame(
             'information',
-            "Correct endpoint not hit"
+            $result
         );
     }
 
@@ -334,25 +333,21 @@ class RouterTest extends TestCase
         $controller = new TestController();
         $result = $router->processRequest($request, $controller);
 
-        $this->assertEquals(
-            $result->param1,
+        $this->assertSame(
             'string',
-            "Data not parsed correctly"
+            $result->param1
         );
-        $this->assertEquals(
-            $result->param2,
+        $this->assertSame(
             9001,
-            "Data not parsed correctly"
+            $result->param2
         );
-        $this->assertEquals(
-            $result->param3,
+        $this->assertSame(
             true,
-            "Data not parsed correctly"
+            $result->param3
         );
-        $this->assertEquals(
-            $result->param4,
+        $this->assertSame(
             false,
-            "Data not parsed correctly"
+            $result->param4
         );
     }
 }
