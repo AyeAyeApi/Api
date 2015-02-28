@@ -136,6 +136,7 @@ class Request implements \JsonSerializable
      */
     protected function useActualParameters()
     {
+        $this->setParameters($this->urlToParameters());
         $this->setParameters($_REQUEST);
         $this->setParameters($this->parseHeader($_SERVER));
         $this->setParameters($this->stringToObject($this->readBody()));
@@ -173,6 +174,31 @@ class Request implements \JsonSerializable
             return http_get_request_body();
         }
         return @file_get_contents('php://input');
+    }
+
+    /**
+     * Turns a url string into an array of parameters
+     * @param string $url
+     * @return array
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    public function urlToParameters($url = null)
+    {
+        $urlParameters = [];
+        if (is_null($url)) {
+            $url = array_key_exists('REQUEST_URI', $_SERVER)
+                ? $_SERVER['REQUEST_URI']
+                : '';
+        }
+        $url = is_null($url) ? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) : $url;
+        $urlParts = explode('/', $url);
+        reset($urlParts); // Note, the first entry will always be blank
+        $key = next($urlParts);
+        while (($value = next($urlParts)) !== false) {
+            $urlParameters[$key] = $value;
+            $key = $value;
+        }
+        return $urlParameters;
     }
 
     /**
@@ -227,7 +253,24 @@ class Request implements \JsonSerializable
         if (array_key_exists($key, $this->parameters)) {
             return $this->parameters[$key];
         }
+        // We can also flatten out the variable names to see if they exist
+        $flatKey = $this->flatten($key);
+        foreach ($this->parameters as $index => $value) {
+            if ($flatKey == $this->flatten($index)) {
+                return $value;
+            }
+        }
         return $default;
+    }
+
+    /**
+     * Flatten a variable name by removing all non alpha numeric characters and making it lower case
+     * @param $name
+     * @return string
+     */
+    protected function flatten($name)
+    {
+        return strtolower(preg_replace('/[\W_-]/', '', $name));
     }
 
     /**
