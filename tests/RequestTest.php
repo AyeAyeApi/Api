@@ -414,4 +414,15 @@ class RequestTest extends TestCase
             $request->getFormatFromUri($uri)
         );
     }
+
+    public function testVariableFlattening()
+    {
+        $parameters =
+            [ 'nAmE' => 'string'];
+        $request = new Request(null, null, $parameters);
+        $this->assertSame(
+            'string',
+            $request->getParameter('na-me')
+        );
+    }
 }
