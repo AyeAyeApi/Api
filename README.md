@@ -15,7 +15,7 @@ Travis CI: [![Build Status](https://travis-ci.org/AyeAyeApi/Api.svg?branch=maste
 Create a project and include Aye Aye
 
 ```bash
-composer init --require="ayeaye/api 0.13.*" -n
+composer init --require="ayeaye/api ^1.0.0@beta" -n
 composer install
 ```
 
