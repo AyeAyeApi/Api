@@ -180,15 +180,21 @@ class Request implements \JsonSerializable
      * Turns a url string into an array of parameters
      * @param string $url
      * @return array
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function urlToParameters($url = null)
     {
         $urlParameters = [];
-        $url = is_null($url) ? parse_url(PHP_URL_PATH) : $url;
+        if (is_null($url)) {
+            $url = array_key_exists('REQUEST_URI', $_SERVER)
+                ? $_SERVER['REQUEST_URI']
+                : '';
+        }
+        $url = is_null($url) ? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) : $url;
         $urlParts = explode('/', $url);
         reset($urlParts); // Note, the first entry will always be blank
         $key = next($urlParts);
-        while(($value = next($urlParts)) !== false) {
+        while (($value = next($urlParts)) !== false) {
             $urlParameters[$key] = $value;
             $key = $value;
         }
@@ -249,8 +255,8 @@ class Request implements \JsonSerializable
         }
         // We can also flatten out the variable names to see if they exist
         $flatKey = $this->flatten($key);
-        foreach($this->parameters as $index => $value) {
-            if($flatKey == $this->flatten($index)) {
+        foreach ($this->parameters as $index => $value) {
+            if ($flatKey == $this->flatten($index)) {
                 return $value;
             }
         }
@@ -264,7 +270,7 @@ class Request implements \JsonSerializable
      */
     protected function flatten($name)
     {
-        return strtolower(preg_replace('/\W_/', '', $name));
+        return strtolower(preg_replace('/[\W_-]/', '', $name));
     }
 
     /**

@@ -32,14 +32,14 @@ class StatusTest extends TestCase
         $status = new Status(418);
         $statusObject = json_decode(json_encode($status));
 
-        $this->assertTrue(
-            $statusObject->code === 418,
-            'Status code should be 418, is actually: ' . PHP_EOL . $statusObject->code
+        $this->assertSame(
+            418,
+            $statusObject->code
         );
 
-        $this->assertTrue(
-            $statusObject->message === 'I\'m a teapot',
-            'Status message should be I\'m a teapot, is actually: ' . PHP_EOL . $statusObject->message
+        $this->assertSame(
+            'I\'m a teapot',
+            $statusObject->message
         );
     }
 
@@ -58,10 +58,9 @@ class StatusTest extends TestCase
 
         $status = new Status(418);
         $header = $status->getHttpHeader();
-        $headers = headers_list();
-        $this->assertTrue(
-            'HTTP/1.1 418 I\'m a teapot' === $header,
-            '418 Header not correct'
+        $this->assertSame(
+            'HTTP/1.1 418 I\'m a teapot',
+            $header
         );
     }
 }

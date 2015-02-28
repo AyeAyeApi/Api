@@ -86,81 +86,67 @@ class ApiTest extends TestCase
 
         $this->assertContains(
             'me',
-            $output->data->controllers,
-            "Controllers should have contained 'me'"
+            $output->data->controllers
         );
 
         $this->assertContains(
             'child',
-            $output->data->controllers,
-            "Controllers should have contained 'child'"
+            $output->data->controllers
         );
 
         $this->assertNotContains(
             'hidden-child',
-            $output->data->controllers,
-            "Controllers should not have contained 'hidden-child'"
+            $output->data->controllers
         );
 
         $this->assertCount(
             2,
-            $output->data->controllers,
-            "Controllers should have has 2 elements"
+            $output->data->controllers
         );
 
         // Endpoints
 
         $this->assertObjectHasAttribute(
             'information',
-            $output->data->endpoints->get,
-            "Get endpoints should have included 'information' it didn't".print_r($output->data, true)
+            $output->data->endpoints->get
         );
 
         $this->assertSame(
             'Gets some information',
-            $output->data->endpoints->get->information->description,
-            "Get Information description was wrong"
+            $output->data->endpoints->get->information->description
         );
 
-        $this->assertCount(
-            0,
-            $output->data->endpoints->get->information->parameters,
-            "Get Information description should not contain any parameters"
+        $this->assertEmpty(
+            $output->data->endpoints->get->information->parameters
         );
 
         $this->assertObjectHasAttribute(
             'more-information',
-            $output->data->endpoints->get,
-            "Get endpoints should have included more-information it didn't"
+            $output->data->endpoints->get
         );
 
         $this->assertSame(
             'Get some conditional information',
-            $output->data->endpoints->get->{'more-information'}->description,
-            "Get More Information description was wrong"
+            $output->data->endpoints->get->{'more-information'}->description
         );
 
         $this->assertSame(
             'string',
-            $output->data->endpoints->get->{'more-information'}->parameters->condition->type,
-            "Get More Information should take a string called condition"
+            $output->data->endpoints->get->{'more-information'}->parameters->condition->type
         );
 
         $this->assertSame(
             'The condition for the information',
-            $output->data->endpoints->get->{'more-information'}->parameters->condition->description,
-            "Get More Information parameter should be described as 'The condition for the information'"
+            $output->data->endpoints->get->{'more-information'}->parameters->condition->description
         );
 
         $this->assertTrue(
-            count($output->data->endpoints->put) === 1,
-            "There should have been 1 get endpoints, there were: " . PHP_EOL . count($output->data->endpoints->put)
+            count($output->data->endpoints->put) === 1
         );
 
         $this->assertObjectHasAttribute(
             'information',
-            $output->data->endpoints->put,
-            "Put endpoints should have included 'information' it didn't"
+            $output->data->endpoints->put
         );
 
     }
@@ -190,14 +176,12 @@ class ApiTest extends TestCase
 
         $this->assertSame(
             $output->data,
-            "Could not find controller or endpoint matching 'not-a-real-endpoint'",
-            'Exception should have been caught and returned an appropriate error to the user'
+            "Could not find controller or endpoint matching 'not-a-real-endpoint'"
         );
 
         $this->assertSame(
             $response->getStatus()->getHttpHeader(),
-            'HTTP/1.1 404 Not Found',
-            'Incorrect header response, got '.$response->getStatus()->getHttpHeader()
+            'HTTP/1.1 404 Not Found'
         );
 
     }
@@ -221,10 +205,8 @@ class ApiTest extends TestCase
 
         $testRequest = $api->getRequest();
 
-        $this->assertSame(
-            $testRequest->getParameter('key'),
-            null,
-            "Request should not contain a parameter for 'key'"
+        $this->assertNull(
+            $testRequest->getParameter('key')
         );
 
         $api->setRequest($request);
@@ -233,8 +215,7 @@ class ApiTest extends TestCase
 
         $this->assertSame(
             $testRequest->getParameter('key'),
-            'value',
-            "Request should contain a parameter for 'key'"
+            'value'
         );
 
     }
@@ -255,10 +236,8 @@ class ApiTest extends TestCase
 
         $testResponse = $api->getResponse();
 
-        $this->assertSame(
-            $testResponse->getData(),
-            null,
-            "Response should not contain any data"
+        $this->assertNull(
+            $testResponse->getData()
         );
 
         $api->setResponse($response);
@@ -267,8 +246,7 @@ class ApiTest extends TestCase
 
         $this->assertSame(
             $testResponse->getData(),
-            'test-data',
-            "Request should contain test data"
+            'test-data'
         );
 
     }
@@ -290,18 +268,18 @@ class ApiTest extends TestCase
 
         $testFormatFactory = $api->getFormatFactory();
 
-        $this->assertTrue(
-            $testFormatFactory->getFormatterFor('xml') instanceof Xml,
-            "Response should not contain any data"
+        $this->assertInstanceOf(
+            'AyeAye\Formatter\Formats\Xml',
+            $testFormatFactory->getFormatterFor('xml')
         );
 
         $api->setFormatFactory($formatFactory);
 
         $testFormatFactory = $api->getFormatFactory();
 
-        $this->assertTrue(
-            $testFormatFactory->getFormatterFor('php') instanceof Php,
-            "Response should not contain any data"
+        $this->assertInstanceOf(
+            'AyeAye\Formatter\Formats\Php',
+            $testFormatFactory->getFormatterFor('php')
         );
 
     }
