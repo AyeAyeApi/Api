@@ -15,9 +15,14 @@ class TestLogger extends AbstractLogger
 {
     protected $logStorage= [];
 
+    public function countLogs()
+    {
+        return count($this->logStorage);
+    }
+
     public function log($level, $message, array $context = array())
     {
-        $storage[] = [
+        $this->logStorage[] = [
             'level' => $level,
             'message' => $message,
 //            'context' => $context
