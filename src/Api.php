@@ -181,10 +181,12 @@ class Api implements LoggerAwareInterface
     /**
      * Set the request object. Use for dependency injection
      * @param Request $request
+     * @return $this;
      */
     public function setRequest(Request $request)
     {
         $this->request = $request;
+        return $this;
     }
 
     /**
