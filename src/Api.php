@@ -10,12 +10,15 @@ namespace AyeAye\Api;
 use AyeAye\Formatter\FormatFactory;
 use AyeAye\Formatter\Formats\Json;
 use AyeAye\Formatter\Formats\Xml;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Used to wrap the other classes into easier to manage code
  * @package AyeAye\Api
  */
-class Api
+class Api implements LoggerAwareInterface
 {
 
     /**
@@ -49,12 +52,21 @@ class Api
     protected $formatFactory;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Initialise the API with a controller that forms the starting point of routing information
      * @param Router $router The router to power the api
      * @param Controller $initialController The starting point for the Api
+     * @param LoggerInterface $logger Provide a logger
      */
-    public function __construct(Controller $initialController, Router $router = null)
+    public function __construct(Controller $initialController, Router $router = null, LoggerInterface $logger = null)
     {
+        if($logger) {
+            $this->setLogger($logger);
+        }
         $this->setInitialController($initialController);
         if ($router) {
             $this->setRouter($router);
@@ -62,9 +74,32 @@ class Api
     }
 
     /**
+     * @param LoggerInterface $logger
+     * @return $this
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+        return $this;
+    }
+
+    /**
+     * Write to the pre-set logger
+     * @param $level
+     * @param $message
+     * @param array $context
+     */
+    protected function log($level, $message, array $context = array())
+    {
+        if($this->logger) {
+            $this->logger->log($level, $message, $context);
+        }
+    }
+
+    /**
      * Process the request, get a response and return it.
      * Exceptions thrown in most places will be handled here, though currently there's no way to handle exceptions
-     * int the Response object itself (eg, invalid formats)
+     * int the Response object itself (eg, invalid formats)e
      * Tip. You can ->respond() straight off this method
      * @return Response
      * @SuppressWarnings(PHPMD.ShortMethodName)
@@ -92,7 +127,13 @@ class Api
             );
             return $response;
         } catch (Exception $e) {
+            $this->log(LogLevel::ERROR, $e->getMessage(), ['exception' => $e]);
             $response->setData($e->getPublicMessage());
+            $response->setStatusCode($e->getCode());
+            return $response;
+        } catch (\Exception $e) {
+            $this->log(LogLevel::CRITICAL, $e->getMessage(), ['exception' => $e]);
+            $response->setData(Status::getMessageForCode(500));
             $response->setStatusCode($e->getCode());
             return $response;
         }
