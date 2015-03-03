@@ -127,6 +127,7 @@ class Api implements LoggerAwareInterface
             );
             return $response;
         } catch (Exception $e) {
+            $this->log(LogLevel::INFO, $e->getPublicMessage());
             $this->log(LogLevel::ERROR, $e->getMessage(), ['exception' => $e]);
             $response->setData($e->getPublicMessage());
             $response->setStatusCode($e->getCode());
