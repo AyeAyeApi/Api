@@ -17,6 +17,7 @@
     "require": {
         "php": "^5.4",
         "ayeaye/formatters": "^1.0.0@beta"
+        "psr/log": "^1.0.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.5",
