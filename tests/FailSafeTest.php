@@ -18,7 +18,8 @@ use AyeAye\Api\Tests\TestData\TestLogger;
 use AyeAye\Formatter\FormatFactory;
 use Psr\Log\LogLevel;
 
-class FailSafeTest extends TestCase {
+class FailSafeTest extends TestCase
+{
 
     public function testApiLog()
     {
@@ -95,5 +96,4 @@ class FailSafeTest extends TestCase {
             $logger->wasLogged(FailSafeController::SYSTEM_MESSAGE)
         );
     }
-
 }

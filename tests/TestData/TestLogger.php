@@ -8,7 +8,6 @@
 
 namespace AyeAye\Api\Tests\TestData;
 
-
 use Psr\Log\AbstractLogger;
 
 class TestLogger extends AbstractLogger
@@ -31,9 +30,9 @@ class TestLogger extends AbstractLogger
 
     public function wasLogged($message, $level = null)
     {
-        foreach($this->logStorage as $log) {
-            if($log['message'] == $message) {
-                if(is_null($level) || $log['level'] == $level) {
+        foreach ($this->logStorage as $log) {
+            if ($log['message'] == $message) {
+                if (is_null($level) || $log['level'] == $level) {
                     return true;
                 }
             }

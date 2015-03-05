@@ -157,7 +157,7 @@ class Response implements \JsonSerializable
      */
     public function prepareResponse()
     {
-        if(!$this->formatter) {
+        if (!$this->formatter) {
             $this->formatter = $this->formatFactory->getFormatterFor(
                 $this->request->getFormats()
             );
@@ -175,7 +175,7 @@ class Response implements \JsonSerializable
      */
     public function respond()
     {
-        if(is_null($this->preparedResponse)) {
+        if (is_null($this->preparedResponse)) {
             $this->prepareResponse();
         }
 

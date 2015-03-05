@@ -12,7 +12,8 @@ use AyeAye\Formatter\Formatter;
 
 class FailSafeFormatter extends Formatter
 {
-    public function format($data, $name = '') {
+    public function format($data, $name = '')
+    {
         throw new \Exception(FailSafeController::SYSTEM_MESSAGE);
     }
 }

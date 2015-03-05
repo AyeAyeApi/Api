@@ -11,7 +11,8 @@ namespace AyeAye\Api\Tests\TestData;
 use AyeAye\Api\Controller;
 use AyeAye\Api\Exception;
 
-class FailSafeController extends Controller {
+class FailSafeController extends Controller
+{
 
     const PUBLIC_MESSAGE = 'This is in the response';
     const SYSTEM_MESSAGE = 'This is not in the response';
@@ -25,5 +26,4 @@ class FailSafeController extends Controller {
     {
         throw new \Exception(static::SYSTEM_MESSAGE);
     }
-
 }
