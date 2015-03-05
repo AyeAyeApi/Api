@@ -125,19 +125,26 @@ class Api implements LoggerAwareInterface
             $response->setStatus(
                 $this->controller->getStatus()
             );
-            return $response;
         } catch (Exception $e) {
             $this->log(LogLevel::INFO, $e->getPublicMessage());
             $this->log(LogLevel::ERROR, $e->getMessage(), ['exception' => $e]);
             $response->setData($e->getPublicMessage());
             $response->setStatusCode($e->getCode());
-            return $response;
         } catch (\Exception $e) {
             $this->log(LogLevel::CRITICAL, $e->getMessage(), ['exception' => $e]);
             $response->setData(Status::getMessageForCode(500));
             $response->setStatusCode(500);
-            return $response;
         }
+
+        // Ultimate fail safe
+        try {
+            $response->prepareResponse();
+        } catch (\Exception $e) {
+            $this->log(LogLevel::CRITICAL, $e->getMessage(), ['exception' => $e]);
+            return $this->createFailSafeResponse();
+        }
+
+        return $response;
     }
 
     /**
@@ -252,5 +259,20 @@ class Api implements LoggerAwareInterface
             ]);
         }
         return $this->formatFactory;
+    }
+
+    /**
+     * In the event of a catastrophic failure, this response can be used to return JSON
+     * @return Response
+     */
+    protected function createFailSafeResponse()
+    {
+        $status = new Status(500);
+        $response = new Response();
+        $response->setRequest(new Request());
+        $response->setFormatter(new Json());
+        $response->setStatus($status);
+        $response->setData($status->getMessage());
+        return $response;
     }
 }
