@@ -12,8 +12,10 @@ use AyeAye\Api\Api;
 use AyeAye\Api\Request;
 use AyeAye\Api\Status;
 use AyeAye\Api\Tests\TestData\FailSafeController;
+use AyeAye\Api\Tests\TestData\FailSafeFormatter;
 use AyeAye\Api\Tests\TestData\TestController;
 use AyeAye\Api\Tests\TestData\TestLogger;
+use AyeAye\Formatter\FormatFactory;
 use Psr\Log\LogLevel;
 
 class FailSafeTest extends TestCase {
@@ -61,6 +63,32 @@ class FailSafeTest extends TestCase {
         $this->assertSame(
             Status::getMessageForCode(500),
             $response->getData()
+        );
+
+        $this->assertTrue(
+            $logger->wasLogged(FailSafeController::SYSTEM_MESSAGE)
+        );
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testDuffFormatter()
+    {
+        $logger = new TestLogger();
+        $controller = new TestController();
+        $api = new Api($controller, null, $logger);
+        $formatFactory = new FormatFactory(['json' => new FailSafeFormatter()]);
+        $api->setFormatFactory($formatFactory);
+
+        ob_start();
+        $api->go()->respond();
+        $result = ob_get_contents();
+        ob_end_clean();
+
+
+        $this->assertNotFalse(
+            strpos($result, Status::getMessageForCode(500))
         );
 
         $this->assertTrue(
