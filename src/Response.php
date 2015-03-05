@@ -54,6 +54,11 @@ class Response implements \JsonSerializable
     protected $data;
 
     /**
+     * @var string
+     */
+    protected $preparedResponse;
+
+    /**
      * Get the Status object assigned to the response
      * @return \AyeAye\Api\Status
      */
@@ -145,23 +150,42 @@ class Response implements \JsonSerializable
         $this->formatter = $formatter;
         return $this;
     }
+
+    /**
+     * Format and prepare the response and save it for later
+     * @return $this
+     */
+    public function prepareResponse()
+    {
+        if(!$this->formatter) {
+            $this->formatter = $this->formatFactory->getFormatterFor(
+                $this->request->getFormats()
+            );
+        }
+        $this->preparedResponse =
+            $this->formatter->getHeader()
+            . $this->formatter->format($this->jsonSerialize(), $this->responseName)
+            . $this->formatter->getFooter();
+        return $this;
+    }
+
+    /**
      * Format the data and send as a response. Only one response can be sent
      * @return $this
      */
     public function respond()
     {
-        $format = $this->formatFactory->getFormatterFor(
-            $this->request->getFormats()
-        );
+        if(is_null($this->preparedResponse)) {
+            $this->prepareResponse();
+        }
 
         if ($this->status instanceof Status) {
             header($this->status->getHttpHeader());
         }
 
-        header("Content-Type: {$format->getContentType()}");
-        echo $format->getHeader();
-        echo $format->format($this->jsonSerialize(), $this->responseName);
-        echo $format->getFooter();
+        header("Content-Type: {$this->formatter->getContentType()}");
+        echo $this->preparedResponse;
+
         return $this;
     }
 
