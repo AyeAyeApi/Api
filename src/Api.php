@@ -64,7 +64,7 @@ class Api implements LoggerAwareInterface
      */
     public function __construct(Controller $initialController, Router $router = null, LoggerInterface $logger = null)
     {
-        if($logger) {
+        if ($logger) {
             $this->setLogger($logger);
         }
         $this->setInitialController($initialController);
@@ -91,7 +91,7 @@ class Api implements LoggerAwareInterface
      */
     protected function log($level, $message, array $context = array())
     {
-        if($this->logger) {
+        if ($this->logger) {
             $this->logger->log($level, $message, $context);
         }
     }
