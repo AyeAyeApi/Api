@@ -30,10 +30,10 @@ class Response implements \JsonSerializable
     protected $formatFactory;
 
     /**
-     * The format object used to format this response
-     * @var string
+     * The formatter object used to format this response
+     * @var Formatter
      */
-    protected $format;
+    protected $formatter;
 
     /**
      * The HTTP status of the response
@@ -136,6 +136,15 @@ class Response implements \JsonSerializable
     }
 
     /**
+     * This allows you to manually set the formatter, however it is advisable to use setFormatFactor instead
+     * @param Formatter $formatter
+     * @return $this
+     */
+    public function setFormatter(Formatter $formatter)
+    {
+        $this->formatter = $formatter;
+        return $this;
+    }
      * Format the data and send as a response. Only one response can be sent
      * @return $this
      */
