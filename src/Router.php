@@ -226,7 +226,7 @@ class Router
 
         // Parameters
         $parameters = array();
-        $nMatches = preg_match_all('/@param (\S+) \$?(\S+) ?([\S ]+)?/', $doc, $results);
+        $nMatches = preg_match_all('/@param\s+(\S+)\s+\$?(\S+)\s+([\S ]+)?/', $doc, $results);
         for ($i = 0; $i < $nMatches; $i++) {
             $parameterName = $this->camelcaseToHyphenated($results[2][$i]);
             $parameter = new \stdClass();
