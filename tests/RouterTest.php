@@ -163,7 +163,7 @@ class RouterTest extends TestCase
         // Endpoints
 
         $this->assertCount(
-            2,
+            3,
             $result->endpoints['get']
         );
 
@@ -348,6 +348,85 @@ class RouterTest extends TestCase
         $this->assertSame(
             false,
             $result->param4
+        );
+    }
+
+    public function testMethodDocumentationParsing()
+    {
+        $router = new Router();
+        $controller = new TestController;
+
+        $result = $router->getMethodDocumentation($controller, "getRandomIndentationEndpoint");
+
+        
+        $this->assertArrayHasKey(
+            'description',
+            $result
+        );
+
+        $this->assertArrayHasKey(
+            'parameters',
+            $result
+        );
+
+        $this->assertSame(
+                    'This is the endpoint where PHPDoc is indented randomly',
+                    $result["description"]
+                );
+
+        $parameters = $result["parameters"];
+
+        $this->assertArrayHasKey(
+            'first',
+            $parameters
+        );
+
+         $this->assertArrayHasKey(
+            'second',
+            $parameters
+        );
+
+        $first = $parameters["first"];
+        $second = $parameters["second"];
+
+        $this->assertObjectHasAttribute(
+            'type',
+            $first
+        );
+
+        $this->assertObjectHasAttribute(
+            'description',
+            $first
+        );
+
+        $this->assertObjectHasAttribute(
+            'type',
+            $second
+        );
+
+        $this->assertObjectHasAttribute(
+            'description',
+            $second
+        );
+
+        $this->assertSame(
+            'string',
+            $first->type
+        );
+
+        $this->assertSame(
+            'Some string',
+            $first->description
+        );
+
+        $this->assertSame(
+            'float',
+            $second->type
+        );
+
+        $this->assertSame(
+            'Parameter with different indentation',
+            $second->description
         );
     }
 }
