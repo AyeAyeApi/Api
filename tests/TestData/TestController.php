@@ -89,4 +89,17 @@ class TestController extends Controller
     {
         return 'You found me!';
     }
+
+    /**
+     * This is the endpoint where PHPDoc is indented randomly
+     * 
+     * @param string $first Some string
+     * @param    float     $second     Parameter with different indentation
+     *
+     * @return bool Always true
+     */
+    public function getRandomIndentationEndpoint($first, $second)
+    {
+        return true;
+    }
 }
