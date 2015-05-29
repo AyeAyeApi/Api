@@ -9,6 +9,7 @@
     <testsuites>
         <testsuite name="ApiTests">
             <directory>./tests</directory>
+            <directory>./tests_old</directory>
         </testsuite>
     </testsuites>
     <logging>

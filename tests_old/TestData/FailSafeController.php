@@ -6,7 +6,7 @@
  * Time: 20:27
  */
 
-namespace AyeAye\Api\Tests\TestData;
+namespace AyeAye\Api\TestsOld\TestData;
 
 use AyeAye\Api\Controller;
 use AyeAye\Api\Exception;

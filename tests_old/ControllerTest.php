@@ -5,13 +5,13 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace AyeAye\Api\Tests;
+namespace AyeAye\Api\TestsOld;
 
 use AyeAye\Api\Controller;
 use AyeAye\Api\Exception;
 use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\TestBrokenController;
-use AyeAye\Api\Tests\TestData\TestController;
+use AyeAye\Api\TestsOld\TestData\TestBrokenController;
+use AyeAye\Api\TestsOld\TestData\TestController;
 
 /**
  * Test for the Controller Class
@@ -135,7 +135,7 @@ class ControllerTest extends TestCase
 
     /**
      * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'fakeController' does not exist in AyeAye\Api\Tests\TestData\TestController
+     * @expectedExceptionMessage The method 'fakeController' does not exist in AyeAye\Api\TestsOld\TestData\TestController
      * @expectedExceptionCode    500
      */
     public function testHideControllerException()
@@ -147,7 +147,7 @@ class ControllerTest extends TestCase
 
     /**
      * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'fakeEndpoint' does not exist in AyeAye\Api\Tests\TestData\TestController
+     * @expectedExceptionMessage The method 'fakeEndpoint' does not exist in AyeAye\Api\TestsOld\TestData\TestController
      * @expectedExceptionCode    500
      */
     public function testHideEndpointException()
@@ -159,7 +159,7 @@ class ControllerTest extends TestCase
 
     /**
      * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'fakeController' does not exist in AyeAye\Api\Tests\TestData\TestController
+     * @expectedExceptionMessage The method 'fakeController' does not exist in AyeAye\Api\TestsOld\TestData\TestController
      * @expectedExceptionCode    500
      */
     public function testIsControllerHiddenException()
@@ -170,7 +170,7 @@ class ControllerTest extends TestCase
 
     /**
      * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'fakeEndpoint' does not exist in AyeAye\Api\Tests\TestData\TestController
+     * @expectedExceptionMessage The method 'fakeEndpoint' does not exist in AyeAye\Api\TestsOld\TestData\TestController
      * @expectedExceptionCode    500
      */
     public function testIsEndpointHiddenException()
@@ -181,7 +181,7 @@ class ControllerTest extends TestCase
 
     /**
      * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'fakeController' does not exist in AyeAye\Api\Tests\TestData\TestController
+     * @expectedExceptionMessage The method 'fakeController' does not exist in AyeAye\Api\TestsOld\TestData\TestController
      * @expectedExceptionCode    500
      */
     public function testShowControllerException()
@@ -193,7 +193,7 @@ class ControllerTest extends TestCase
 
     /**
      * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'fakeEndpoint' does not exist in AyeAye\Api\Tests\TestData\TestController
+     * @expectedExceptionMessage The method 'fakeEndpoint' does not exist in AyeAye\Api\TestsOld\TestData\TestController
      * @expectedExceptionCode    500
      */
     public function testShowEndpointException()

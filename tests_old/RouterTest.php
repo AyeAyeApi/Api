@@ -5,13 +5,13 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace AyeAye\Api\Tests;
+namespace AyeAye\Api\TestsOld;
 
 use AyeAye\Api\Controller;
 use AyeAye\Api\Request;
 use AyeAye\Api\Router;
 use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\TestController;
+use AyeAye\Api\TestsOld\TestData\TestController;
 
 /**
  * Test for the Controller Class

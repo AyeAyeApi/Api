@@ -5,14 +5,14 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace AyeAye\Api\Tests;
+namespace AyeAye\Api\TestsOld;
 
 use AyeAye\Api\Api;
 use AyeAye\Api\Controller;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
-use AyeAye\Api\Tests\TestData\TestController;
-use AyeAye\Api\Tests\TestData\TestRouter;
+use AyeAye\Api\TestsOld\TestData\TestController;
+use AyeAye\Api\TestsOld\TestData\TestRouter;
 use AyeAye\Formatter\FormatFactory;
 use AyeAye\Formatter\Formats\Php;
 use AyeAye\Formatter\Formats\Xml;
@@ -34,7 +34,7 @@ class ApiTest extends TestCase
             $router
         );
         $this->assertNotInstanceOf(
-            '\AyeAye\Api\Tests\TestData\TestRouter',
+            '\AyeAye\Api\TestsOld\TestData\TestRouter',
             $router
         );
 
@@ -46,7 +46,7 @@ class ApiTest extends TestCase
             $router
         );
         $this->assertInstanceOf(
-            '\AyeAye\Api\Tests\TestData\TestRouter',
+            '\AyeAye\Api\TestsOld\TestData\TestRouter',
             $router
         );
 
@@ -59,7 +59,7 @@ class ApiTest extends TestCase
             $router
         );
         $this->assertInstanceOf(
-            '\AyeAye\Api\Tests\TestData\TestRouter',
+            '\AyeAye\Api\TestsOld\TestData\TestRouter',
             $router
         );
     }

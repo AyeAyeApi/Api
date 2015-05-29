@@ -5,7 +5,7 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace AyeAye\Api\Tests;
+namespace AyeAye\Api\TestsOld;
 
 use AyeAye\Api\Exception;
 

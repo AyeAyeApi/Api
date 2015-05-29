@@ -6,7 +6,7 @@
  * Time: 10:08
  */
 
-namespace AyeAye\Api\Tests\TestData;
+namespace AyeAye\Api\TestsOld\TestData;
 
 use AyeAye\Formatter\Formatter;
 

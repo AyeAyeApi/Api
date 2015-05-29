@@ -6,7 +6,7 @@
  * Time: 14:44
  */
 
-namespace AyeAye\Api\Tests\TestData;
+namespace AyeAye\Api\TestsOld\TestData;
 
 use Psr\Log\AbstractLogger;
 

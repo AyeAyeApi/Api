@@ -5,7 +5,7 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace AyeAye\Api\Tests\TestData;
+namespace AyeAye\Api\TestsOld\TestData;
 
 use AyeAye\Api\Router;
 

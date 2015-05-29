@@ -5,12 +5,12 @@
  * @copyright Daniel Mason, 2014
  */
 
-namespace AyeAye\Api\Tests;
+namespace AyeAye\Api\TestsOld;
 
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\TestGeneratorController;
+use AyeAye\Api\TestsOld\TestData\TestGeneratorController;
 use AyeAye\Formatter\Formats\Json;
 use AyeAye\Formatter\Formats\Xml;
 use AyeAye\Formatter\FormatFactory;

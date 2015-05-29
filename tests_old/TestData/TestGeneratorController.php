@@ -4,7 +4,7 @@
  * Package: Api
  */
 
-namespace AyeAye\Api\Tests\TestData;
+namespace AyeAye\Api\TestsOld\TestData;
 
 
 class TestGeneratorController {

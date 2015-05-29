@@ -6,15 +6,15 @@
  * Time: 20:12
  */
 
-namespace AyeAye\Api\Tests;
+namespace AyeAye\Api\TestsOld;
 
 use AyeAye\Api\Api;
 use AyeAye\Api\Request;
 use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\FailSafeController;
-use AyeAye\Api\Tests\TestData\FailSafeFormatter;
-use AyeAye\Api\Tests\TestData\TestController;
-use AyeAye\Api\Tests\TestData\TestLogger;
+use AyeAye\Api\TestsOld\TestData\FailSafeController;
+use AyeAye\Api\TestsOld\TestData\FailSafeFormatter;
+use AyeAye\Api\TestsOld\TestData\TestController;
+use AyeAye\Api\TestsOld\TestData\TestLogger;
 use AyeAye\Formatter\FormatFactory;
 use Psr\Log\LogLevel;
 
