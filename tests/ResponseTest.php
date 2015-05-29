@@ -10,6 +10,7 @@ namespace AyeAye\Api\Tests;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
+use AyeAye\Api\Tests\TestData\TestGeneratorController;
 use AyeAye\Formatter\Formats\Json;
 use AyeAye\Formatter\Formats\Xml;
 use AyeAye\Formatter\FormatFactory;
@@ -194,5 +195,31 @@ class ResponseTest extends TestCase
             $responseData,
             $expectedXml
         );
+    }
+
+    public function testGenerators()
+    {
+        if (version_compare(phpversion(), '5.5', '>')) {
+            $controller = new TestGeneratorController();
+            $response = new Response();
+            $response->setData($controller->getGeneratorEndpoint());
+
+            $this->assertArrayHasKey(
+                'data',
+                $response->getAllData()
+            );
+            $this->assertSame(
+                'Normal Data',
+                $response->getAllData()['data']
+            );
+            $this->assertArrayHasKey(
+                'extra',
+                $response->getAllData()
+            );
+            $this->assertSame(
+                'Further Information',
+                $response->getAllData()['extra']
+            );
+        }
     }
 }
