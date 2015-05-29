@@ -23,7 +23,7 @@ class StatusTest extends TestCase
      */
     public function testConstructThrowException()
     {
-        $status = new Status(9001);
+        new Status(9001);
     }
 
 
