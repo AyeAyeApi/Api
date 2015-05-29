@@ -131,9 +131,10 @@ class Api implements LoggerAwareInterface
             $response->setData($e->getPublicMessage());
             $response->setStatusCode($e->getCode());
         } catch (\Exception $e) {
+            $status = new Status(500);
             $this->log(LogLevel::CRITICAL, $e->getMessage(), ['exception' => $e]);
-            $response->setData(Status::getMessageForCode(500));
-            $response->setStatusCode(500);
+            $response->setData($status->getMessage());
+            $response->setStatusCode($status->getCode());
         }
 
         // Ultimate fail safe
