@@ -219,11 +219,11 @@ class Request implements \JsonSerializable
             return $jsonObject;
         }
         // Xml
-        if ($xmlObject = @simplexml_load_string($string)) {
+        if ($xmlObject = simplexml_load_string($string)) {
             return $xmlObject;
         }
         // Php
-        if ($phpObject = @unserialize($string)) {
+        if ($phpObject = unserialize($string)) {
             return $phpObject;
         }
 
