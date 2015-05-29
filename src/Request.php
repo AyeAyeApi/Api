@@ -173,7 +173,7 @@ class Request implements \JsonSerializable
         if (function_exists('http_get_request_body')) {
             return http_get_request_body();
         }
-        return @file_get_contents('php://input');
+        return file_get_contents('php://input');
     }
 
     /**
