@@ -92,7 +92,7 @@ class TestController extends Controller
 
     /**
      * This is the endpoint where PHPDoc is indented randomly
-     * 
+     *
      * @param string $first Some string
      * @param    float     $second     Parameter with different indentation
      *

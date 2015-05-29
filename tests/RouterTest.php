@@ -370,9 +370,9 @@ class RouterTest extends TestCase
         );
 
         $this->assertSame(
-                    'This is the endpoint where PHPDoc is indented randomly',
-                    $result["description"]
-                );
+            'This is the endpoint where PHPDoc is indented randomly',
+            $result["description"]
+        );
 
         $parameters = $result["parameters"];
 
@@ -382,51 +382,51 @@ class RouterTest extends TestCase
         );
 
          $this->assertArrayHasKey(
-            'second',
-            $parameters
-        );
+             'second',
+             $parameters
+         );
 
-        $first = $parameters["first"];
-        $second = $parameters["second"];
+         $first = $parameters["first"];
+         $second = $parameters["second"];
 
-        $this->assertObjectHasAttribute(
-            'type',
-            $first
-        );
+         $this->assertObjectHasAttribute(
+             'type',
+             $first
+         );
 
-        $this->assertObjectHasAttribute(
-            'description',
-            $first
-        );
+         $this->assertObjectHasAttribute(
+             'description',
+             $first
+         );
 
-        $this->assertObjectHasAttribute(
-            'type',
-            $second
-        );
+         $this->assertObjectHasAttribute(
+             'type',
+             $second
+         );
 
-        $this->assertObjectHasAttribute(
-            'description',
-            $second
-        );
+         $this->assertObjectHasAttribute(
+             'description',
+             $second
+         );
 
-        $this->assertSame(
-            'string',
-            $first->type
-        );
+         $this->assertSame(
+             'string',
+             $first->type
+         );
 
-        $this->assertSame(
-            'Some string',
-            $first->description
-        );
+         $this->assertSame(
+             'Some string',
+             $first->description
+         );
 
-        $this->assertSame(
-            'float',
-            $second->type
-        );
+         $this->assertSame(
+             'float',
+             $second->type
+         );
 
-        $this->assertSame(
-            'Parameter with different indentation',
-            $second->description
-        );
+         $this->assertSame(
+             'Parameter with different indentation',
+             $second->description
+         );
     }
 }

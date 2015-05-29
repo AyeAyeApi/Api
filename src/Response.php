@@ -115,7 +115,7 @@ class Response implements \JsonSerializable
      */
     public function getData()
     {
-        if(array_key_exists('data', $this->data)) {
+        if (array_key_exists('data', $this->data)) {
             return $this->data['data'];
         }
         return null;

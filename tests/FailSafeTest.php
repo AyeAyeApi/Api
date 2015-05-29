@@ -58,11 +58,12 @@ class FailSafeTest extends TestCase
     {
         $logger = new TestLogger();
         $controller = new FailSafeController();
+        $status = new Status(500);
         $api = new Api($controller, null, $logger);
         $request = new Request(Request::METHOD_GET, 'basic-exception');
         $response = $api->setRequest($request)->go();
         $this->assertSame(
-            Status::getMessageForCode(500),
+            $status->getMessage(),
             $response->getData()
         );
 
@@ -78,6 +79,7 @@ class FailSafeTest extends TestCase
     {
         $logger = new TestLogger();
         $controller = new TestController();
+        $status = new Status(500);
         $api = new Api($controller, null, $logger);
         $formatFactory = new FormatFactory(['json' => new FailSafeFormatter()]);
         $api->setFormatFactory($formatFactory);
@@ -89,7 +91,7 @@ class FailSafeTest extends TestCase
 
 
         $this->assertNotFalse(
-            strpos($result, Status::getMessageForCode(500))
+            strpos($result, $status->getMessage())
         );
 
         $this->assertTrue(
