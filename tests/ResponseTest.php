@@ -81,8 +81,7 @@ class ResponseTest extends TestCase
             Request::METHOD_POST,
             '/test/path',
             [
-                'testParameter' => 'value',
-                'debug' => true,
+                'testParameter' => 'value'
             ]
         );
 
@@ -99,126 +98,10 @@ class ResponseTest extends TestCase
         $responseObject = json_decode(json_encode($response));
 
         $this->assertSame(
-            '418',
-            $responseObject->status->code
-        );
-
-        $this->assertSame(
             'string',
             $responseObject->data->string
         );
 
-        $this->assertSame(
-            '/test/path',
-            $responseObject->request->requestedUri
-        );
-
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testDebugJsonRespond()
-    {
-        $complexObject = (object)[
-            'childObject' => (object)[
-                    'property' => 'value'
-                ],
-            'childArray' => [
-                'element1',
-                'element2'
-            ]
-        ];
-        $expectedXml =
-            '{'
-            . '"status":{"code":200,"message":"OK"},'
-            . '"request":{"method":"GET","requestedUri":"test.json","parameters":{"debug":true,"hackedJson":true}},'
-            . '"data":{"childObject":{"property":"value"},"childArray":["element1","element2"]}'
-            . '}';
-
-        $request = new Request(
-            Request::METHOD_GET,
-            'test.json',
-            ['debug' => true],
-            http_get_request_body()
-        );
-        $response = new Response();
-        $response->setFormatFactory(
-            new FormatFactory([
-                'json' => new Json()
-            ])
-        );
-        $response->setRequest($request);
-        $response->setStatus(new Status());
-        $response->setData($complexObject);
-
-        ob_start();
-        $response->respond();
-        $responseData = ob_get_contents();
-        ob_end_clean();
-
-        $this->assertSame(
-            $responseData,
-            $expectedXml
-        );
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testDebugXmlRespond()
-    {
-        $complexObject = (object)[
-            'childObject' => (object)[
-                    'property' => 'value'
-                ],
-            'childArray' => [
-                'element1',
-                'element2'
-            ]
-        ];
-        $expectedXml =
-            '<?xml version="1.0" encoding="UTF-8" ?>'
-            . '<response>'
-            . '<status><array><code>200</code><message>OK</message></array></status>'
-            . '<request>'
-            . '<array>'
-            . '<method>GET</method>'
-            . '<requestedUri>test.xml</requestedUri>'
-            . '<parameters><debug>true</debug><hackedJson>true</hackedJson></parameters>'
-            . '</array>'
-            . '</request>'
-            . '<data>'
-            . '<childObject><property>value</property></childObject>'
-            . '<childArray><_0>element1</_0><_1>element2</_1></childArray>'
-            . '</data>'
-            . '</response>';
-
-        $request = new Request(
-            Request::METHOD_GET,
-            'test.xml',
-            ['debug' => true],
-            http_get_request_body()
-        );
-        $response = new Response();
-        $response->setFormatFactory(
-            new FormatFactory([
-                'xml' => new Xml()
-            ])
-        );
-        $response->setRequest($request);
-        $response->setStatus(new Status());
-        $response->setData($complexObject);
-
-        ob_start();
-        $response->respond();
-        $responseData = ob_get_contents();
-        ob_end_clean();
-
-        $this->assertSame(
-            $responseData,
-            $expectedXml
-        );
     }
 
     /**
