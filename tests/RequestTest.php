@@ -132,35 +132,6 @@ class RequestTest extends TestCase
         );
     }
 
-    public function testStringToObjectPhp()
-    {
-
-        $php = 'O:8:"stdClass":2:{s:9:"testArray";a:2:{i:0;i:1;i:1;b:1;}s:10:"testObject";O:8:"stdClass":1:'
-            .'{s:6:"string";s:8:"a string";}}';
-        $request = new Request();
-        $phpObject = $request->stringToObject($php);
-
-        $this->assertCount(
-            2,
-            $phpObject->testArray
-        );
-
-        $this->assertSame(
-            1,
-            $phpObject->testArray[0]
-        );
-
-        $this->assertSame(
-            true,
-            $phpObject->testArray[1]
-        );
-
-        $this->assertSame(
-            'a string',
-            $phpObject->testObject->string
-        );
-    }
-
     public function testUrlToParameters()
     {
         $request = new Request();

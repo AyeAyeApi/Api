@@ -214,17 +214,19 @@ class Request implements \JsonSerializable
         if (!$string) {
             return new \stdClass();
         }
+
         // Json
-        if ($jsonObject = json_decode($string)) {
+        $jsonObject = json_decode($string);
+        if ($jsonObject) {
             return $jsonObject;
         }
+
         // Xml
-        if ($xmlObject = simplexml_load_string($string)) {
+        libxml_use_internal_errors();
+        $xmlObject = simplexml_load_string($string);
+        libxml_use_internal_errors(true);
+        if ($xmlObject) {
             return $xmlObject;
-        }
-        // Php
-        if ($phpObject = unserialize($string)) {
-            return $phpObject;
         }
 
         $object = new \stdClass();
