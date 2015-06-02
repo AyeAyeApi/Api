@@ -226,13 +226,15 @@ class Router
 
         // Parameters
         $parameters = array();
-        $nMatches = preg_match_all('/@param\s+(\S+)\s+\$?(\S+)\s+([\S ]+)?/', $doc, $results);
+        $nMatches = preg_match_all('/@param(\h+(\S+))?\h+\$?(\S+)(\h+([\S ]+))?/', $doc, $results);
         for ($i = 0; $i < $nMatches; $i++) {
-            $parameterName = $this->camelcaseToHyphenated($results[2][$i]);
+            $parameterName = $this->camelcaseToHyphenated($results[3][$i]);
             $parameter = new \stdClass();
-            $parameter->type = $results[1][$i];
-            if ($results[3][$i]) {
-                $parameter->description = $results[3][$i];
+            if($results[2][$i]) {
+                $parameter->type = $results[2][$i];
+            }
+            if ($results[5][$i]) {
+                $parameter->description = $results[5][$i];
             }
             $parameters[$parameterName] = $parameter;
         }
