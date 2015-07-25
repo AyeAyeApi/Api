@@ -10,6 +10,11 @@ use AyeAye\Api\Router;
 use AyeAye\Api\Status;
 use AyeAye\Api\Tests\TestData\DocumentedController;
 
+/**
+ * Class RouterTest
+ * @package AyeAye\Api\Tests
+ * @coversDefaultClass AyeAye\Api\Router
+ */
 class RouterTest extends TestCase
 {
 
@@ -23,14 +28,43 @@ class RouterTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     * @covers ::parseControllerName
+     */
     public function testParseControllerName()
     {
         $router = new Router();
         $parseControllerName = $this->getObjectMethod($router, 'parseControllerName');
 
+        $this->assertSame(
+            'Controller',
+            $parseControllerName('')
+        );
+
+        $this->assertSame(
+            'camelCaseController',
+            $parseControllerName('camel-case')
+        );
+
+        $this->assertSame(
+            'camelCaseController',
+            $parseControllerName('camel%20case')
+        );
+
+        $this->assertSame(
+            'camelCaseController',
+            $parseControllerName('camel+case')
+        );
     }
 
-    public function testStatus()
+    /**
+     * @test
+     * @covers ::getStatus
+     * @uses AyeAye\Api\Status
+     * @uses AyeAye\Api\Router::setStatus
+     */
+    public function testGetStatus()
     {
         $router = new Router();
 
@@ -56,6 +90,11 @@ class RouterTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     * @covers ::getMethodDocumentation
+     * @uses AyeAye\Api\Router::camelcaseToHyphenated
+     */
     public function testGetMethodDocumentation()
     {
         $router = new Router();
