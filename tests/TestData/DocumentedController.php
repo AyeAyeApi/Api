@@ -16,10 +16,11 @@ class DocumentedController extends Controller {
      * @param $incomplete
      * @param int    $int    Test integer
      * @param string $string Test string
+     * @return string
      */
     public function getDocumentedEndpoint($incomplete, $int, $string)
     {
-
+        return "information";
     }
 
 }
