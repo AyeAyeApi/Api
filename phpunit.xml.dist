@@ -4,12 +4,13 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
+         strict="true"
          verbose="true"
         >
     <testsuites>
         <testsuite name="ApiTests">
             <directory>./tests</directory>
-            <directory>./tests_old</directory>
+            <!--<directory>./tests_old</directory>-->
         </testsuite>
     </testsuites>
     <logging>
@@ -18,4 +19,9 @@
         <log type="coverage-crap4j" target="reports/logs/crap4j.xml"/>
         <log type="junit" target="reports/logs/junit.xml" logIncompleteSkipped="false"/>
     </logging>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
 </phpunit>
