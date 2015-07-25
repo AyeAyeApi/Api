@@ -9,10 +9,17 @@ namespace AyeAye\Api\Tests;
 
 use AyeAye\Api\Status;
 
+/**
+ * Class StatusTest
+ * @package AyeAye\Api\Tests
+ * @coversDefaultClass AyeAye\Api\Status
+ */
 class StatusTest extends TestCase
 {
 
     /**
+     * @test
+     * @covers ::__construct
      * @expectedException        \Exception
      * @expectedExceptionMessage Status '9001' does not exist
      */
@@ -21,15 +28,32 @@ class StatusTest extends TestCase
         new Status(9001);
     }
 
-//    /**
-//     * @expectedException        \Exception
-//     * @expectedExceptionMessage Status '9001' does not exist
-//     */
-//    public function testInvalidMessageCode()
-//    {
-//        Status::getMessageForCode(9001);
-//    }
+    /**
+     * @test
+     * @covers ::__construct
+     * @uses AyeAye\Api\Status::getCode
+     * @uses AyeAye\Api\Status::getMessage
+     * @uses AyeAye\Api\Status::getMessageForCode
+     */
+    public function testConstruct()
+    {
+        $status = new Status();
+        $this->assertSame(
+            200,
+            $status->getCode()
+        );
+        $this->assertSame(
+            'OK',
+            $status->getMessage()
+        );
+    }
 
+    /**
+     * @test
+     * @covers ::getCode
+     * @uses AyeAye\Api\Status::__construct
+     * @uses AyeAye\Api\Status::getMessageForCode
+     */
     public function testGetCode()
     {
         $status = new Status();
@@ -45,6 +69,12 @@ class StatusTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     * @covers ::getMessage
+     * @uses AyeAye\Api\Status::__construct
+     * @uses AyeAye\Api\Status::getMessageForCode
+     */
     public function testGetMessage()
     {
         $status = new Status();
@@ -60,9 +90,13 @@ class StatusTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     * @covers ::getMessageForCode
+     * @uses AyeAye\Api\Status::__construct
+     */
     public function testGetMessageForCode()
     {
-
         $this->assertSame(
             'OK',
             Status::getMessageForCode(200)
@@ -72,8 +106,19 @@ class StatusTest extends TestCase
             'Internal Server Error',
             Status::getMessageForCode(500)
         );
+
+        $this->assertNull(
+            Status::getMessageForCode(9001)
+        );
     }
 
+    /**
+     * @test
+     * @covers ::getHttpHeader
+     * @uses AyeAye\Api\Status::getCode
+     * @uses AyeAye\Api\Status::__construct
+     * @uses AyeAye\Api\Status::getMessageForCode
+     */
     public function testGetHttpHeader()
     {
         $status = new Status();
@@ -89,6 +134,14 @@ class StatusTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     * @covers ::jsonSerialize
+     * @uses AyeAye\Api\Status::__construct
+     * @uses AyeAye\Api\Status::getMessageForCode
+     * @uses AyeAye\Api\Status::getCode
+     * @uses AyeAye\Api\Status::getMessage
+     */
     public function testJsonSerialize()
     {
         $status = new Status();
