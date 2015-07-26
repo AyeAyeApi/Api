@@ -10,6 +10,7 @@ use AyeAye\Api\Request;
 use AyeAye\Api\Router;
 use AyeAye\Api\Status;
 use AyeAye\Api\Tests\TestData\DocumentedController;
+use AyeAye\Api\Tests\TestData\IndexedController;
 
 /**
  * Class RouterTest
@@ -75,6 +76,36 @@ class RouterTest extends TestCase
 
     }
 
+    /**
+     * @test
+     * @covers ::processRequest
+     * @uses AyeAye\Api\Request
+     * @uses AyeAye\Api\Status
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Router::parseEndpointName
+     * @uses AyeAye\Api\Router::parseControllerName
+     * @uses AyeAye\Api\Router::getParametersFromRequest
+     * @uses AyeAye\Api\Router::setStatus
+     */
+    public function testProcessRequestIndexedController()
+    {
+        $controller = new IndexedController();
+
+        $request = new Request('GET', '');
+        $router = new Router();
+        $this->assertSame(
+            'Got Index',
+            $router->processRequest($request, $controller, null)
+        );
+
+        $request = new Request('PUT', '');
+        $router = new Router();
+        $this->assertSame(
+            'Put Index',
+            $router->processRequest($request, $controller, null)
+        );
+
+    }
 
     /**
      * @test
