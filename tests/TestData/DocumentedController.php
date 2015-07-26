@@ -23,4 +23,13 @@ class DocumentedController extends Controller {
         return "information";
     }
 
+    /**
+     * Recursive self reference controller
+     * @return $this
+     */
+    public function selfReferenceController()
+    {
+        return $this;
+    }
+
 }

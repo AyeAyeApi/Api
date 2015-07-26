@@ -75,6 +75,31 @@ class RouterTest extends TestCase
 
     }
 
+
+    /**
+     * @test
+     * @covers ::processRequest
+     * @uses AyeAye\Api\Request
+     * @uses AyeAye\Api\Status
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Router::parseEndpointName
+     * @uses AyeAye\Api\Router::parseControllerName
+     * @uses AyeAye\Api\Router::getParametersFromRequest
+     * @uses AyeAye\Api\Router::setStatus
+     */
+    public function testProcessRequestControllerToEndpoint()
+    {
+        $controller = new DocumentedController();
+        $request = new Request('GET', 'self-reference/documented');
+
+        $router = new Router();
+        $this->assertSame(
+            'information',
+            $router->processRequest($request, $controller, null)
+        );
+
+    }
+
     /**
      * @test
      * @covers ::camelcaseToHyphenated
