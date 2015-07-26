@@ -169,6 +169,36 @@ class RouterTest extends TestCase
 
     /**
      * @test
+     * @covers ::parseEndpointName
+     */
+    public function testParseEndpointName()
+    {
+        $router = new Router();
+        $parseEndpointName = $this->getObjectMethod($router, 'parseEndpointName');
+
+        $this->assertSame(
+            'getTestEndpoint',
+            $parseEndpointName('test')
+        );
+
+        $this->assertSame(
+            'putCamelCaseEndpoint',
+            $parseEndpointName('camel-case', 'put')
+        );
+
+        $this->assertSame(
+            'postCamelCaseEndpoint',
+            $parseEndpointName('camel+case', 'POST')
+        );
+
+        $this->assertSame(
+            'optionsCamelCaseEndpoint',
+            $parseEndpointName('camel%20case', 'oPtIoNs')
+        );
+    }
+
+    /**
+     * @test
      * @covers ::parseControllerName
      */
     public function testParseControllerName()
