@@ -55,11 +55,14 @@ class RouterTest extends TestCase
      * @test
      * @covers ::processRequest
      * @uses AyeAye\Api\Request
+     * @uses AyeAye\Api\Status
+     * @uses AyeAye\Api\Controller
      * @uses AyeAye\Api\Router::parseEndpointName
      * @uses AyeAye\Api\Router::parseControllerName
      * @uses AyeAye\Api\Router::getParametersFromRequest
+     * @uses AyeAye\Api\Router::setStatus
      */
-    public function testProcessRequestEndPointOnly()
+    public function testProcessRequestEndpointOnly()
     {
         $controller = new DocumentedController();
         $request = new Request('GET', 'documented');
