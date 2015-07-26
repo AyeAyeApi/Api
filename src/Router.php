@@ -44,17 +44,17 @@ class Router
             if (method_exists($controller, $potentialController)) {
                 /** @var Controller $nextController */
                 $nextController = $controller->$potentialController();
-                $data = $this->processRequest($request, $nextController, $requestChain);
-                $this->setStatus($controller->getStatus());
-                return $data;
+                return $this->processRequest($request, $nextController, $requestChain);;
             }
 
             $potentialEndpoint = $this->parseEndpointName($nextLink, $request->getMethod());
             if (method_exists($controller, $potentialEndpoint)) {
-                return call_user_func_array(
+                $data = call_user_func_array(
                     [$controller, $potentialEndpoint],
                     $this->getParametersFromRequest($request, $controller, $potentialEndpoint)
                 );
+                $this->setStatus($controller->getStatus());
+                return $data;
             }
 
             $message = "Could not find controller or endpoint matching '$nextLink'";
