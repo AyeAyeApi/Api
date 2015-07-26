@@ -51,7 +51,6 @@ class RouterTest extends TestCase
 
     }
 
-
     /**
      * @test
      * @covers ::processRequest
@@ -206,6 +205,7 @@ class RouterTest extends TestCase
         $router = new Router();
         $parseControllerName = $this->getObjectMethod($router, 'parseControllerName');
 
+        // ToDo: Should this be an error?
         $this->assertSame(
             'Controller',
             $parseControllerName('')
@@ -247,7 +247,8 @@ class RouterTest extends TestCase
         );
 
         $status = new Status(500);
-        $router->setStatus($status);
+        $setStatus = $this->getObjectMethod($router, 'setStatus');
+        $setStatus($status);
 
         $this->assertSame(
             500,
@@ -270,7 +271,8 @@ class RouterTest extends TestCase
         $status = new Status(418);
         $router = new Router();
 
-        $router->setStatus($status);
+        $setStatus = $this->getObjectMethod($router, 'setStatus');
+        $setStatus($status);
         $this->assertSame(
             $status,
             $router->getStatus()
@@ -286,7 +288,7 @@ class RouterTest extends TestCase
     {
         $router = new Router();
         $controller = new DocumentedController();
-        // ToDo: This should be private
+        
         $getMethodDocumentation = $this->getObjectMethod($router, 'getMethodDocumentation');
         $documentation = $getMethodDocumentation($controller, 'getDocumentedEndpoint');
 

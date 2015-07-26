@@ -75,7 +75,7 @@ class Router
      * @param Controller $controller
      * @return \stdClass
      */
-    public function documentController(Controller $controller)
+    protected function documentController(Controller $controller)
     {
         $data = new \stdClass();
         $data->controllers = $this->getControllers($controller);
@@ -98,7 +98,7 @@ class Router
      * @param Controller $controller
      * @return array
      */
-    public function getEndpoints(Controller $controller)
+    protected function getEndpoints(Controller $controller)
     {
         $endpoints = [];
         $parts = [];
@@ -123,7 +123,7 @@ class Router
      * @param Controller $controller
      * @return array
      */
-    public function getControllers(Controller $controller)
+    protected function getControllers(Controller $controller)
     {
         $methods = get_class_methods($controller);
         $controllers = [];
@@ -200,7 +200,7 @@ class Router
      * @param Status $status
      * @return $this
      */
-    public function setStatus(Status $status)
+    protected function setStatus(Status $status)
     {
         $this->status = $status;
         return $this;
@@ -212,7 +212,7 @@ class Router
      * @param $method
      * @return array
      */
-    public function getMethodDocumentation(Controller $controller, $method)
+    protected function getMethodDocumentation(Controller $controller, $method)
     {
         $reflectionMethod = new \ReflectionMethod($controller, $method);
         $doc = $reflectionMethod->getDocComment();
