@@ -133,6 +133,28 @@ class RouterTest extends TestCase
 
     /**
      * @test
+     * @expectedException        \AyeAye\Api\Exception
+     * @expectedExceptionCode    404
+     * @expectedExceptionMessage Could not find controller or endpoint matching 'nonsense'
+     * @covers ::processRequest
+     * @uses AyeAye\Api\Exception
+     * @uses AyeAye\Api\Request
+     * @uses AyeAye\Api\Status
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Router::parseEndpointName
+     * @uses AyeAye\Api\Router::parseControllerName
+     */
+    public function testProcessRequestNotFound()
+    {
+        $controller = new DocumentedController();
+        $request = new Request('GET', 'nonsense');
+        $router = new Router();
+        $router->processRequest($request, $controller, null);
+
+    }
+
+    /**
+     * @test
      * @covers ::camelcaseToHyphenated
      */
     public function testCamelcaseToHyphenated() {
