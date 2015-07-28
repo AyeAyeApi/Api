@@ -11,14 +11,15 @@ use AyeAye\Api\Controller;
 class DocumentedController extends Controller {
 
     /**
-     * Test Summary
+     * Test Summary.
      * Test Description.
-     * @param $incomplete
-     * @param int    $int    Test integer
-     * @param string $string Test string
+     * @param        $incomplete
+     * @param int    $integer    Test integer
+     * @param string $string     Test string
+     * Second line
      * @return string
      */
-    public function getDocumentedEndpoint($incomplete, $int, $string)
+    public function getDocumentedEndpoint($incomplete, $integer, $string)
     {
         return "information";
     }
