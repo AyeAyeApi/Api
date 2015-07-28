@@ -12,14 +12,48 @@ namespace AyeAye\Api\Tests;
 use AyeAye\Api\Documentor;
 use AyeAye\Api\Tests\TestData\DocumentedController;
 
+/**
+ * Class DocumentorTest
+ * @package AyeAye\Api\Tests
+ * @coversDefaultClass AyeAye\Api\Documentor
+ */
 class DocumentorTest extends TestCase
 {
 
-    public function testGetParameters()
+    /**
+     * @test
+     * @covers ::getMethodSummary
+     */
+    public function testGetMethodSummary()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
-        $getParameters = $this->getObjectMethod($documentor, 'getParameters');
+        $getMethodSummary = $this->getObjectMethod($documentor, 'getMethodSummary');
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
+
+        $this->assertSame(
+            "Test Summary\non two lines.",
+            $getMethodSummary($reflectionMethod)
+        );
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
+
+        $this->assertSame(
+            "This is a\nthree line summary\nwith a break",
+            $getMethodSummary($reflectionMethod)
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getMethodParameters
+     */
+    public function testGetMethodParameters()
+    {
+        $controller = new DocumentedController();
+        $documentor = new Documentor();
+        $getMethodParameters = $this->getObjectMethod($documentor, 'getMethodParameters');
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
 
@@ -40,7 +74,7 @@ class DocumentorTest extends TestCase
 
         $this->assertSame(
             $expected,
-            $getParameters($reflectionMethod)
+            $getMethodParameters($reflectionMethod)
         );
     }
 

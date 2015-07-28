@@ -11,8 +11,11 @@ use AyeAye\Api\Controller;
 class DocumentedController extends Controller {
 
     /**
-     * Test Summary.
-     * Test Description.
+     * Test Summary
+     * on two lines.
+     * Test Description
+     * on
+     * three lines.
      * @param        $incomplete
      * @param int    $integer    Test integer
      * @param string $string     Test string
@@ -25,7 +28,11 @@ class DocumentedController extends Controller {
     }
 
     /**
-     * Recursive self reference controller
+     * This is a
+     * three line summary
+     * with a break
+     *
+     * This is a one line description
      * @return $this
      */
     public function selfReferenceController()

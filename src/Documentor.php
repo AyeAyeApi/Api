@@ -13,10 +13,51 @@ class Documentor
 {
 
     /**
+     * Gets the summary of a method.
+     * Looks at the main comment of a docblock, and returns the string up to the first full stop at a line ending or
+     * double line break.
+     * @param \ReflectionMethod $method
+     * @return string
+     */
+    protected function getMethodSummary(\ReflectionMethod $method)
+    {$lines = preg_split("/((\r?\n)|(\r\n?))/", $method->getDocComment());
+
+        $summary = '';
+        foreach($lines as $i => $line) {
+            $line = preg_replace('/^\s*(\/\*\*|\*\/?)\s*/', '', $line);
+            $line = trim($line);
+
+            // Check for blank line
+            if(!$line) {
+                // If summary exists break out
+                if($summary) {
+                    break;
+                }
+                continue;
+            }
+
+            // Check for tag
+            if($line[0] == '@') {
+                break;
+            }
+
+            // Otherwise we're good for summary
+            $summary .= $line."\n";
+            if(substr($line, -1) == '.') {
+                break;
+            }
+        }
+
+        return trim($summary);
+    }
+
+    /**
+     * Gets the parameters of a method.
+     * Returns a keyed array with parameter name as the key, containing another array with 'type' and 'description'.
      * @param \ReflectionMethod $method The method you wish to
      * @return array
      */
-    protected function getParameters(\ReflectionMethod $method)
+    protected function getMethodParameters(\ReflectionMethod $method)
     {
         $comment = $method->getDocComment();
         preg_match_all('/@param\s([\s\S]+?(?=\* @|\*\/))/', $comment, $paramsDoc);
