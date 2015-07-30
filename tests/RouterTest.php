@@ -23,6 +23,7 @@ class RouterTest extends TestCase
     /**
      * @test
      * @covers ::processRequest
+     * @uses AyeAye\Api\Documentor
      * @uses AyeAye\Api\Request
      * @uses AyeAye\Api\Controller
      * @uses AyeAye\Api\Router::parseEndpointName
@@ -31,7 +32,6 @@ class RouterTest extends TestCase
      * @uses AyeAye\Api\Router::camelcaseToHyphenated
      * @uses AyeAye\Api\Router::documentController
      * @uses AyeAye\Api\Router::getParametersFromRequest
-     * @uses AyeAye\Api\Router::getMethodDocumentation
      */
     public function testProcessRequestSelfDocumented()
     {
@@ -47,6 +47,35 @@ class RouterTest extends TestCase
         $this->assertObjectHasAttribute(
             'endpoints',
             $response
+        );
+
+    }
+
+
+    /**
+     * @test
+     * @covers ::documentController
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Documentor
+     * @uses AyeAye\Api\Router::parseEndpointName
+     * @uses AyeAye\Api\Router::getEndpoints
+     * @uses AyeAye\Api\Router::getControllers
+     * @uses AyeAye\Api\Router::camelcaseToHyphenated
+     */
+    public function testDocumentController()
+    {
+        $controller = new DocumentedController();
+        $router = new Router();
+
+        $documentController = $this->getObjectMethod($router, 'documentController');
+        $documentation = $documentController($controller);
+        $this->assertObjectHasAttribute(
+            'controllers',
+            $documentation
+        );
+        $this->assertObjectHasAttribute(
+            'endpoints',
+            $documentation
         );
 
     }

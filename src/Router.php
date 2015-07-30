@@ -100,6 +100,7 @@ class Router
      */
     protected function getEndpoints(Controller $controller)
     {
+        $documentor = new Documentor();
         $endpoints = [];
         $parts = [];
         $methods = get_class_methods($controller);
@@ -111,7 +112,9 @@ class Router
                     if (!array_key_exists($method, $endpoints)) {
                         $endpoints[$method] = array();
                     }
-                    $endpoints[$method][$endpoint] = $this->getMethodDocumentation($controller, $classMethod);
+                    $endpoints[$method][$endpoint] = $documentor->getMethodDocumentation(
+                        new \ReflectionMethod($controller, $classMethod)
+                    );
                 }
             }
         }
@@ -204,42 +207,5 @@ class Router
     {
         $this->status = $status;
         return $this;
-    }
-
-    /**
-     * Looks at the PHPDoc for the given method and returns an array of information it
-     * @param Controller $controller
-     * @param $method
-     * @return array
-     */
-    protected function getMethodDocumentation(Controller $controller, $method)
-    {
-        $reflectionMethod = new \ReflectionMethod($controller, $method);
-        $doc = $reflectionMethod->getDocComment();
-
-        // Description
-        $description = '';
-        preg_match_all('/\*\s+(\w[^@^\n^\r]+)/', $doc, $results);
-        if (array_key_exists(1, $results)) {
-            $description = implode(' ', $results[1]);
-        }
-
-        // Parameters
-        $parameters = array();
-        $nMatches = preg_match_all('/@param\s+(\S+)\s+\$?(\S+)\s+([\S ]+)?/', $doc, $results);
-        for ($i = 0; $i < $nMatches; $i++) {
-            $parameterName = $this->camelcaseToHyphenated($results[2][$i]);
-            $parameter = new \stdClass();
-            $parameter->type = $results[1][$i];
-            if ($results[3][$i]) {
-                $parameter->description = $results[3][$i];
-            }
-            $parameters[$parameterName] = $parameter;
-        }
-
-        return [
-            'description' => $description,
-            'parameters' => $parameters,
-        ];
     }
 }
