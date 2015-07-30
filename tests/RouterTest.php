@@ -279,28 +279,4 @@ class RouterTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @covers ::getMethodDocumentation
-     * @uses AyeAye\Api\Router::camelcaseToHyphenated
-     */
-    public function testGetMethodDocumentation()
-    {
-        $router = new Router();
-        $controller = new DocumentedController();
-        
-        $getMethodDocumentation = $this->getObjectMethod($router, 'getMethodDocumentation');
-        $documentation = $getMethodDocumentation($controller, 'getDocumentedEndpoint');
-
-        $this->assertArrayHasKey(
-            'description',
-            $documentation
-        );
-
-        $this->assertSame(
-            'Test Summary Test Description.',
-            $documentation['description']
-        );
-    }
-
 }
