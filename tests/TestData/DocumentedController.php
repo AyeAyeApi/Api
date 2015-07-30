@@ -12,24 +12,47 @@ class DocumentedController extends Controller {
 
     /**
      * Test Summary
-     * Test Description.
-     * @param $incomplete
-     * @param int    $int    Test integer
-     * @param string $string Test string
+     * on two lines.
+     * Test Description
+     * on
+     * three lines.
+     * @param        $incomplete
+     * @param int    $integer    Test integer
+     * @param string $string     Test string
+     * Second line
      * @return string
      */
-    public function getDocumentedEndpoint($incomplete, $int, $string)
+    public function getDocumentedEndpoint($incomplete, $integer, $string)
     {
         return "information";
     }
 
     /**
-     * Recursive self reference controller
+     *
+     * This is a
+     * three line summary
+     * with a break
+     *
+     * This is a one line description
      * @return $this
      */
     public function selfReferenceController()
     {
         return $this;
+    }
+
+    /**
+     * This is a summary. There is no description
+     * @return null|mixed
+     */
+    public function getNullEndpoint()
+    {
+        return null;
+    }
+
+    public function noDocumentation()
+    {
+        return;
     }
 
 }
