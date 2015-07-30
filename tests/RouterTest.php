@@ -51,35 +51,6 @@ class RouterTest extends TestCase
 
     }
 
-
-    /**
-     * @test
-     * @covers ::documentController
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Documentor
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::getEndpoints
-     * @uses AyeAye\Api\Router::getControllers
-     * @uses AyeAye\Api\Router::camelcaseToHyphenated
-     */
-    public function testDocumentController()
-    {
-        $controller = new DocumentedController();
-        $router = new Router();
-
-        $documentController = $this->getObjectMethod($router, 'documentController');
-        $documentation = $documentController($controller);
-        $this->assertObjectHasAttribute(
-            'controllers',
-            $documentation
-        );
-        $this->assertObjectHasAttribute(
-            'endpoints',
-            $documentation
-        );
-
-    }
-
     /**
      * @test
      * @covers ::processRequest
@@ -181,17 +152,101 @@ class RouterTest extends TestCase
 
     }
 
+
+    /**
+     * @test
+     * @covers ::documentController
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Documentor
+     * @uses AyeAye\Api\Router::parseEndpointName
+     * @uses AyeAye\Api\Router::getEndpoints
+     * @uses AyeAye\Api\Router::getControllers
+     * @uses AyeAye\Api\Router::camelcaseToHyphenated
+     */
+    public function testDocumentController()
+    {
+        $controller = new DocumentedController();
+        $router = new Router();
+
+        $documentController = $this->getObjectMethod($router, 'documentController');
+        $documentation = $documentController($controller);
+        $this->assertObjectHasAttribute(
+            'controllers',
+            $documentation
+        );
+        $this->assertObjectHasAttribute(
+            'endpoints',
+            $documentation
+        );
+
+    }
+
     /**
      * @test
      * @covers ::camelcaseToHyphenated
      */
-    public function testCamelcaseToHyphenated() {
+    public function testCamelcaseToHyphenated()
+    {
         $router = new Router();
         $camelcaseToHyphenated = $this->getObjectMethod($router, 'camelcaseToHyphenated');
 
         $this->assertSame(
             'camelcase-to-hyphenated',
             $camelcaseToHyphenated('camelcaseToHyphenated')
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getEndpoints
+     * @uses AyeAye\Api\Documentor
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Router::camelcaseToHyphenated
+     */
+    public function testGetEndpoints()
+    {
+        $router = new Router();
+        $getEndpoints = $this->getObjectMethod($router, 'getEndpoints');
+
+        $controller = new DocumentedController();
+        $endpoints = $getEndpoints($controller);
+        $this->assertArrayHasKey(
+            'get',
+            $endpoints
+        );
+        $this->assertArrayNotHasKey(
+            'put',
+            $endpoints
+        );
+
+        $controller = new IndexedController();
+        $endpoints = $getEndpoints($controller);
+        $this->assertArrayHasKey(
+            'get',
+            $endpoints
+        );
+        $this->assertArrayHasKey(
+            'put',
+            $endpoints
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getControllers
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Router::camelcaseToHyphenated
+     */
+    public function testGetControllers()
+    {
+        $router = new Router();
+        $getControllers = $this->getObjectMethod($router, 'getControllers');
+
+        $controller = new DocumentedController();
+        $controllers = $getControllers($controller);
+        $this->assertContains(
+            'self-reference',
+            $controllers
         );
     }
 
@@ -253,6 +308,36 @@ class RouterTest extends TestCase
         $this->assertSame(
             'camelCaseController',
             $parseControllerName('camel+case')
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getParametersFromRequest
+     * @uses AyeAye\Api\Request
+     */
+    public function testGetParametersFromRequest()
+    {
+        $router = new Router();
+        $request = new Request();
+        $controller = new DocumentedController();
+        $method = 'getDocumentedEndpoint';
+
+        $request->setParameters([
+            'integer' => 20,
+            'string' => false,
+            'not-used' => 'anything',
+        ]);
+
+        $getParametersFromRequest = $this->getObjectMethod($router, 'getParametersFromRequest');
+
+        $this->assertSame(
+            [
+                'incomplete' => null,
+                'integer' => 20,
+                'string' => false,
+            ],
+            $getParametersFromRequest($request, $controller, $method)
         );
     }
 

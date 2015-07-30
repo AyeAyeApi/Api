@@ -29,4 +29,20 @@ class IndexedController extends Controller {
         return 'Put Index';
     }
 
+    /**
+     * @return string
+     */
+    public function getHelloWorldEndpoint()
+    {
+        return 'Hello World';
+    }
+
+    /**
+     * @return string
+     */
+    public function putHelloWorldEndpoint()
+    {
+        return 'Hello to you too';
+    }
+
 }
