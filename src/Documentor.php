@@ -12,6 +12,36 @@ namespace AyeAye\Api;
 class Documentor
 {
 
+    /**
+     * Breaks the doc block of the given method into its component parts
+     * @param \ReflectionMethod $method
+     * @return array
+     */
+    public function getMethodDocumentation(\ReflectionMethod $method)
+    {
+        $comment = $this->getMethodComment($method);
+
+        $summary     = $this->getSummary($comment);
+        $parameters  = $this->getParameters($comment);
+        $returnType  = $this->getReturnType($comment);
+
+        $documentation = [];
+        if($summary) {
+            $documentation['summary'] = $summary;
+            // If there is no Summary, there CAN NOT be a Description
+            $description = $this->getDescription($comment);
+            if($description) {
+                $documentation['description'] = $description;
+            }
+        }
+
+        // These should always show even if they're empty
+        $documentation['parameters'] = $parameters;
+        $documentation['returnType'] = $returnType;
+
+        return $documentation;
+    }
+
     protected function getMethodComment(\ReflectionMethod $method)
     {
         $lines = preg_split("/((\r?\n)|(\r\n?))/", $method->getDocComment());

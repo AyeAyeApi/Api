@@ -22,9 +22,83 @@ class DocumentorTest extends TestCase
 
     /**
      * @test
+     * @covers ::getMethodDocumentation
+     * @uses \AyeAye\Api\Documentor
+     */
+    public function testGetMethodDocumentation()
+    {
+        $controller = new DocumentedController();
+        $documentor = new Documentor();
+
+        $method = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
+        $expected = [
+            'summary' => "Test Summary\non two lines.",
+            'description' => "Test Description\non\nthree lines.",
+            'parameters' => [
+                'incomplete' => [
+                    'type' => '',
+                    'description' => '',
+                ],
+                'integer' => [
+                    'type' => 'int',
+                    'description' => 'Test integer',
+                ],
+                'string' => [
+                    'type' => 'string',
+                    'description' => "Test string\nSecond line",
+                ],
+            ],
+            'returnType' => ['string']
+
+        ];
+        $this->assertSame(
+            $expected,
+            $documentor->getMethodDocumentation($method)
+        );
+
+        $method = new \ReflectionMethod($controller, 'selfReferenceController');
+        $expected = [
+            'summary' => "This is a\nthree line summary\nwith a break",
+            'description' => "This is a one line description",
+            'parameters' => [],
+            'returnType' => ['self']
+
+        ];
+        $this->assertSame(
+            $expected,
+            $documentor->getMethodDocumentation($method)
+        );
+
+        $method = new \ReflectionMethod($controller, 'getNullEndpoint');
+        $expected = [
+            'summary' => "This is a summary. There is no description",
+            'parameters' => [],
+            'returnType' => ['null', 'mixed']
+
+        ];
+        $this->assertSame(
+            $expected,
+            $documentor->getMethodDocumentation($method)
+        );
+
+        $method = new \ReflectionMethod($controller, 'noDocumentation');
+        $expected = [
+            'parameters' => [],
+            'returnType' => []
+
+        ];
+        $this->assertSame(
+            $expected,
+            $documentor->getMethodDocumentation($method)
+        );
+    }
+
+    /**
+     * @test
      * @covers ::getMethodComment
      */
-    public function testGetMethodComment()
+    public
+    function testGetMethodComment()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
@@ -86,7 +160,8 @@ class DocumentorTest extends TestCase
      * @covers ::getSummary
      * @uses \AyeAye\Api\Documentor::getMethodComment
      */
-    public function testgetSummary()
+    public
+    function testgetSummary()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
@@ -128,7 +203,8 @@ class DocumentorTest extends TestCase
      * @covers ::getDescription
      * @uses \AyeAye\Api\Documentor::getMethodComment
      */
-    public function testGetDescription()
+    public
+    function testGetDescription()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
@@ -171,7 +247,8 @@ class DocumentorTest extends TestCase
      * @covers ::getParameters
      * @uses \AyeAye\Api\Documentor::getMethodComment
      */
-    public function testGetParameters()
+    public
+    function testGetParameters()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
@@ -227,7 +304,8 @@ class DocumentorTest extends TestCase
      * @covers ::getReturnType()
      * @uses \AyeAye\Api\Documentor::getMethodComment
      */
-    public function testGetReturnType()
+    public
+    function testGetReturnType()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
