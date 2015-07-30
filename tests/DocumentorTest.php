@@ -28,7 +28,9 @@ class DocumentorTest extends TestCase
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
+        $getMethodComment = $this->getObjectMethod($documentor, 'getMethodComment');
 
+        $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
         $expected = [
             'Test Summary',
             'on two lines.',
@@ -41,10 +43,38 @@ class DocumentorTest extends TestCase
             'Second line',
             '@return string'
         ];
+        $this->assertSame(
+            $expected,
+            $getMethodComment($reflectionMethod)
+        );
 
-        $getMethodComment = $this->getObjectMethod($documentor, 'getMethodComment');
-        $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
+        $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
+        $expected = [
+            '',
+            'This is a',
+            'three line summary',
+            'with a break',
+            '',
+            'This is a one line description',
+            '@return $this'
+        ];
+        $this->assertSame(
+            $expected,
+            $getMethodComment($reflectionMethod)
+        );
 
+        $reflectionMethod = new \ReflectionMethod($controller, 'getNullEndpoint');
+        $expected = [
+            'This is a summary. There is no description',
+            '@return null|mixed',
+        ];
+        $this->assertSame(
+            $expected,
+            $getMethodComment($reflectionMethod)
+        );
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'noDocumentation');
+        $expected = [];
         $this->assertSame(
             $expected,
             $getMethodComment($reflectionMethod)
@@ -65,7 +95,6 @@ class DocumentorTest extends TestCase
         $getSummary = $this->getObjectMethod($documentor, 'getSummary');
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
-
         $comment = $getMethodComment($reflectionMethod);
         $this->assertSame(
             "Test Summary\non two lines.",
@@ -73,7 +102,6 @@ class DocumentorTest extends TestCase
         );
 
         $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
-
         $comment = $getMethodComment($reflectionMethod);
         $this->assertSame(
             "This is a\nthree line summary\nwith a break",
@@ -81,10 +109,16 @@ class DocumentorTest extends TestCase
         );
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getNullEndpoint');
-
         $comment = $getMethodComment($reflectionMethod);
         $this->assertSame(
-            "This is a summary. There is no description",
+            'This is a summary. There is no description',
+            $getSummary($comment)
+        );
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'noDocumentation');
+        $comment = $getMethodComment($reflectionMethod);
+        $this->assertSame(
+            '',
             $getSummary($comment)
         );
     }
@@ -111,18 +145,23 @@ class DocumentorTest extends TestCase
         );
 
         $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
-
         $comment = $getMethodComment($reflectionMethod);
         $this->assertSame(
-            "This is a one line description",
+            'This is a one line description',
             $getDescription($comment)
         );
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getNullEndpoint');
-
         $comment = $getMethodComment($reflectionMethod);
         $this->assertSame(
-            "",
+            '',
+            $getDescription($comment)
+        );
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'noDocumentation');
+        $comment = $getMethodComment($reflectionMethod);
+        $this->assertSame(
+            '',
             $getDescription($comment)
         );
     }
@@ -141,7 +180,6 @@ class DocumentorTest extends TestCase
         $getParameters = $this->getObjectMethod($documentor, 'getParameters');
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
-
         $expected = [
             'incomplete' => [
                 'type' => '',
@@ -156,10 +194,30 @@ class DocumentorTest extends TestCase
                 'description' => "Test string\nSecond line",
             ],
         ];
-
         $comment = $getMethodComment($reflectionMethod);
         $this->assertSame(
             $expected,
+            $getParameters($comment)
+        );
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
+        $comment = $getMethodComment($reflectionMethod);
+        $this->assertSame(
+            [],
+            $getParameters($comment)
+        );
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'getNullEndpoint');
+        $comment = $getMethodComment($reflectionMethod);
+        $this->assertSame(
+            [],
+            $getParameters($comment)
+        );
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'noDocumentation');
+        $comment = $getMethodComment($reflectionMethod);
+        $this->assertSame(
+            [],
             $getParameters($comment)
         );
     }
