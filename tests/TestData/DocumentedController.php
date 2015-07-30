@@ -43,11 +43,16 @@ class DocumentedController extends Controller {
 
     /**
      * This is a summary. There is no description
-     * @return null
+     * @return null|mixed
      */
     public function getNullEndpoint()
     {
         return null;
+    }
+
+    public function noDocumentation()
+    {
+        return;
     }
 
 }

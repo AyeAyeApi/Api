@@ -164,5 +164,47 @@ class DocumentorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     * @covers ::getReturnType()
+     * @uses \AyeAye\Api\Documentor::getMethodComment
+     */
+    public function testGetReturnType()
+    {
+        $controller = new DocumentedController();
+        $documentor = new Documentor();
+
+        $getMethodComment = $this->getObjectMethod($documentor, 'getMethodComment');
+        $getReturnType = $this->getObjectMethod($documentor, 'getReturnType');
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
+        $comment = $getMethodComment($reflectionMethod);
+
+        $this->assertSame(
+            ['string'],
+            $getReturnType($comment, $reflectionMethod->getDeclaringClass())
+        );
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
+        $comment = $getMethodComment($reflectionMethod);
+        $this->assertSame(
+            ['self'],
+            $getReturnType($comment, $reflectionMethod->getDeclaringClass())
+        );
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'getNullEndpoint');
+        $comment = $getMethodComment($reflectionMethod);
+        $this->assertSame(
+            ['null', 'mixed'],
+            $getReturnType($comment)
+        );
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'noDocumentation');
+        $comment = $getMethodComment($reflectionMethod);
+        $this->assertSame(
+            [],
+            $getReturnType($comment)
+        );
+    }
 
 }

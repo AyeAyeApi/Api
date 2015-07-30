@@ -144,4 +144,25 @@ class Documentor
         return $params;
     }
 
+    /**
+     * Gets the return types from a method or function's comment.
+     * This method assumes multiple possible return types split with | so returns an array.
+     * It will also replace '$this' with 'self' to (somewhat) hide internals
+     * Todo: It would be cool if this method could lookup classes and find out more on what the data would look like.
+     * @param array $lines
+     * @return string[]
+     */
+    protected function getReturnType(array $lines)
+    {
+        foreach($lines as $line) {
+            if(strpos($line, '@return') === 0) {
+                $type = trim(str_replace('@return', '', $line));
+                $type = str_replace('$this', 'self', $type);
+                $type = explode('|', $type);
+                return $type;
+            }
+        }
+        return [];
+    }
+
 }
