@@ -22,9 +22,9 @@ class DocumentorTest extends TestCase
 
     /**
      * @test
-     * @covers ::getDocComment
+     * @covers ::getMethodComment
      */
-    public function testGetDocComment()
+    public function testGetMethodComment()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
@@ -42,65 +42,103 @@ class DocumentorTest extends TestCase
             '@return string'
         ];
 
-        $getDocComment = $this->getObjectMethod($documentor, 'getDocComment');
+        $getMethodComment = $this->getObjectMethod($documentor, 'getMethodComment');
         $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
 
         $this->assertSame(
             $expected,
-            $getDocComment($reflectionMethod)
+            $getMethodComment($reflectionMethod)
         );
     }
 
     /**
      * @test
-     * @covers ::getMethodSummary
-     * @uses \AyeAye\Api\Documentor::getDocComment
+     * @covers ::getSummary
+     * @uses \AyeAye\Api\Documentor::getMethodComment
      */
-    public function testGetMethodSummary()
+    public function testgetSummary()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
 
-        $getDocComment = $this->getObjectMethod($documentor, 'getDocComment');
-        $getMethodSummary = $this->getObjectMethod($documentor, 'getMethodSummary');
+        $getMethodComment = $this->getObjectMethod($documentor, 'getMethodComment');
+        $getSummary = $this->getObjectMethod($documentor, 'getSummary');
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
 
-        $comment = $getDocComment($reflectionMethod);
+        $comment = $getMethodComment($reflectionMethod);
         $this->assertSame(
             "Test Summary\non two lines.",
-            $getMethodSummary($comment)
+            $getSummary($comment)
         );
 
         $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
 
-        $comment = $getDocComment($reflectionMethod);
+        $comment = $getMethodComment($reflectionMethod);
         $this->assertSame(
             "This is a\nthree line summary\nwith a break",
-            $getMethodSummary($comment)
+            $getSummary($comment)
         );
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getNullEndpoint');
 
-        $comment = $getDocComment($reflectionMethod);
+        $comment = $getMethodComment($reflectionMethod);
         $this->assertSame(
             "This is a summary. There is no description",
-            $getMethodSummary($comment)
+            $getSummary($comment)
         );
     }
 
     /**
      * @test
-     * @covers ::getMethodParameters
-     * @uses \AyeAye\Api\Documentor::getDocComment
+     * @covers ::getDescription
+     * @uses \AyeAye\Api\Documentor::getMethodComment
      */
-    public function testGetMethodParameters()
+    public function testGetDescription()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
 
-        $getDocComment = $this->getObjectMethod($documentor, 'getDocComment');
-        $getMethodParameters = $this->getObjectMethod($documentor, 'getMethodParameters');
+        $getMethodComment = $this->getObjectMethod($documentor, 'getMethodComment');
+        $getDescription = $this->getObjectMethod($documentor, 'getDescription');
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
+
+        $comment = $getMethodComment($reflectionMethod);
+        $this->assertSame(
+            "Test Description\non\nthree lines.",
+            $getDescription($comment)
+        );
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
+
+        $comment = $getMethodComment($reflectionMethod);
+        $this->assertSame(
+            "This is a one line description",
+            $getDescription($comment)
+        );
+
+        $reflectionMethod = new \ReflectionMethod($controller, 'getNullEndpoint');
+
+        $comment = $getMethodComment($reflectionMethod);
+        $this->assertSame(
+            "",
+            $getDescription($comment)
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getParameters
+     * @uses \AyeAye\Api\Documentor::getMethodComment
+     */
+    public function testGetParameters()
+    {
+        $controller = new DocumentedController();
+        $documentor = new Documentor();
+
+        $getMethodComment = $this->getObjectMethod($documentor, 'getMethodComment');
+        $getParameters = $this->getObjectMethod($documentor, 'getParameters');
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
 
@@ -119,11 +157,12 @@ class DocumentorTest extends TestCase
             ],
         ];
 
-        $comment = $getDocComment($reflectionMethod);
+        $comment = $getMethodComment($reflectionMethod);
         $this->assertSame(
             $expected,
-            $getMethodParameters($comment)
+            $getParameters($comment)
         );
     }
+
 
 }

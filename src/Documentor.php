@@ -12,7 +12,7 @@ namespace AyeAye\Api;
 class Documentor
 {
 
-    protected function getDocComment(\ReflectionMethod $method)
+    protected function getMethodComment(\ReflectionMethod $method)
     {
         $lines = preg_split("/((\r?\n)|(\r\n?))/", $method->getDocComment());
         $count = count($lines);
@@ -36,7 +36,7 @@ class Documentor
      * @param string[] $lines
      * @return string
      */
-    protected function getMethodSummary(array $lines)
+    protected function getSummary(array $lines)
     {
         $summary = '';
         foreach($lines as $i => $line) {
@@ -65,12 +65,46 @@ class Documentor
     }
 
     /**
+     * Gets a methods description.
+     * This is an example of a description. In PSR-5 it follows the summary.
+     * @param string[] $lines
+     * @return string
+     */
+    protected function getDescription(array $lines)
+    {
+        $description = '';
+        $summaryFound = false;
+        $summaryPassed = false;
+
+        foreach($lines as $line) {
+            if($line && !$summaryPassed) {
+                $summaryFound = true;
+                if(substr(trim($line), -1) == '.') {
+                    $summaryPassed = true;
+                }
+                continue;
+            }
+            if(!$line && $summaryFound && !$summaryPassed) {
+                $summaryPassed = true;
+                continue;
+            }
+            if($line && $line[0] == '@') {
+                break;
+            }
+            if($line && $summaryPassed) {
+                $description .= $line."\n";
+            }
+        }
+        return trim($description);
+    }
+
+    /**
      * Gets the parameters of a method.
      * Returns a keyed array with parameter name as the key, containing another array with 'type' and 'description'.
      * @param string[] $lines
      * @return array
      */
-    protected function getMethodParameters(array $lines)
+    protected function getParameters(array $lines)
     {
         $comment = implode("\n", $lines);
         preg_match_all('/@param\s([\s\S]+?(?=@))/', $comment, $paramsDoc);
