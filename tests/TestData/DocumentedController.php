@@ -28,6 +28,7 @@ class DocumentedController extends Controller {
     }
 
     /**
+     *
      * This is a
      * three line summary
      * with a break
@@ -38,6 +39,15 @@ class DocumentedController extends Controller {
     public function selfReferenceController()
     {
         return $this;
+    }
+
+    /**
+     * This is a summary. There is no description
+     * @return null
+     */
+    public function getNullEndpoint()
+    {
+        return null;
     }
 
 }

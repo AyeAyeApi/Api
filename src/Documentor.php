@@ -12,21 +12,34 @@ namespace AyeAye\Api;
 class Documentor
 {
 
+    protected function getDocComment(\ReflectionMethod $method)
+    {
+        $lines = preg_split("/((\r?\n)|(\r\n?))/", $method->getDocComment());
+        $count = count($lines);
+        foreach($lines as $i => $line) {
+            $line = preg_replace('/^\s*(\/\*\*|\*\/?)\s*/', '', $line);
+            $line = trim($line);
+            $lines[$i] = $line;
+            if(!$line && (!$i || $i == $count-1)) { // If first or last lines are blank
+                unset($lines[$i]);
+            }
+        }
+
+        return array_values($lines);
+
+    }
+
     /**
      * Gets the summary of a method.
      * Looks at the main comment of a docblock, and returns the string up to the first full stop at a line ending or
      * double line break.
-     * @param \ReflectionMethod $method
+     * @param string[] $lines
      * @return string
      */
-    protected function getMethodSummary(\ReflectionMethod $method)
-    {$lines = preg_split("/((\r?\n)|(\r\n?))/", $method->getDocComment());
-
+    protected function getMethodSummary(array $lines)
+    {
         $summary = '';
         foreach($lines as $i => $line) {
-            $line = preg_replace('/^\s*(\/\*\*|\*\/?)\s*/', '', $line);
-            $line = trim($line);
-
             // Check for blank line
             if(!$line) {
                 // If summary exists break out
@@ -54,13 +67,13 @@ class Documentor
     /**
      * Gets the parameters of a method.
      * Returns a keyed array with parameter name as the key, containing another array with 'type' and 'description'.
-     * @param \ReflectionMethod $method The method you wish to
+     * @param string[] $lines
      * @return array
      */
-    protected function getMethodParameters(\ReflectionMethod $method)
+    protected function getMethodParameters(array $lines)
     {
-        $comment = $method->getDocComment();
-        preg_match_all('/@param\s([\s\S]+?(?=\* @|\*\/))/', $comment, $paramsDoc);
+        $comment = implode("\n", $lines);
+        preg_match_all('/@param\s([\s\S]+?(?=@))/', $comment, $paramsDoc);
 
         $params = [];
         if(isset($paramsDoc[1])) {
