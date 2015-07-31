@@ -232,7 +232,7 @@ class ApiTest extends TestCase
         $api = new Api($initialController);
 
         $response = new Response();
-        $response->setData('test-data');
+        $response->setBodyData('test-data');
 
         $testResponse = $api->getResponse();
 

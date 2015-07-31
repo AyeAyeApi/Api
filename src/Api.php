@@ -116,7 +116,7 @@ class Api implements LoggerAwareInterface
             $response->setRequest(
                 $request
             );
-            $response->setData(
+            $response->setBodyData(
                 $this->getRouter()->processRequest(
                     $this->getRequest(),
                     $this->getInitialController()
@@ -128,12 +128,12 @@ class Api implements LoggerAwareInterface
         } catch (Exception $e) {
             $this->log(LogLevel::INFO, $e->getPublicMessage());
             $this->log(LogLevel::ERROR, $e->getMessage(), ['exception' => $e]);
-            $response->setData($e->getPublicMessage());
+            $response->setBodyData($e->getPublicMessage());
             $response->setStatusCode($e->getCode());
         } catch (\Exception $e) {
             $status = new Status(500);
             $this->log(LogLevel::CRITICAL, $e->getMessage(), ['exception' => $e]);
-            $response->setData($status->getMessage());
+            $response->setBodyData($status->getMessage());
             $response->setStatusCode($status->getCode());
         }
 
@@ -273,7 +273,7 @@ class Api implements LoggerAwareInterface
         $response->setRequest(new Request());
         $response->setFormatter(new Json());
         $response->setStatus($status);
-        $response->setData($status->getMessage());
+        $response->setBodyData($status->getMessage());
         return $response;
     }
 }

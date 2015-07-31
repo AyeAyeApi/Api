@@ -22,7 +22,7 @@ class ResponseTest extends TestCase
     {
         $testData = 'TestData';
         $response = new Response();
-        $response->setData($testData);
+        $response->setBodyData($testData);
 
         $this->assertSame(
             $testData,
@@ -92,7 +92,7 @@ class ResponseTest extends TestCase
                 'json' => new Json()
             ])
         );
-        $response->setData($testData);
+        $response->setBodyData($testData);
         $response->setStatusCode($testStatusCode);
         $response->setRequest($testRequest);
 
@@ -140,7 +140,7 @@ class ResponseTest extends TestCase
         );
         $response->setRequest($request);
         $response->setStatus(new Status());
-        $response->setData($complexObject);
+        $response->setBodyData($complexObject);
 
         ob_start();
         $response->respond();
@@ -184,7 +184,7 @@ class ResponseTest extends TestCase
         );
         $response->setRequest($request);
         $response->setStatus(new Status());
-        $response->setData($complexObject);
+        $response->setBodyData($complexObject);
 
         ob_start();
         $response->respond();
@@ -202,23 +202,23 @@ class ResponseTest extends TestCase
         if (version_compare(phpversion(), '5.5', '>')) {
             $controller = new TestGeneratorController();
             $response = new Response();
-            $response->setData($controller->getGeneratorEndpoint());
+            $response->setBodyData($controller->getGeneratorEndpoint());
 
             $this->assertArrayHasKey(
                 'data',
-                $response->getAllData()
+                $response->getBody()
             );
             $this->assertSame(
                 'Normal Data',
-                $response->getAllData()['data']
+                $response->getBody()['data']
             );
             $this->assertArrayHasKey(
                 'extra',
-                $response->getAllData()
+                $response->getBody()
             );
             $this->assertSame(
                 'Further Information',
-                $response->getAllData()['extra']
+                $response->getBody()['extra']
             );
         }
     }

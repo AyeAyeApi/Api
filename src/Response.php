@@ -51,7 +51,7 @@ class Response implements \JsonSerializable
      * The data you wish to return in the response
      * @var mixed
      */
-    protected $data = [];
+    protected $body = [];
 
     /**
      * @var string
@@ -115,8 +115,8 @@ class Response implements \JsonSerializable
      */
     public function getData()
     {
-        if (array_key_exists('data', $this->data)) {
-            return $this->data['data'];
+        if (array_key_exists('data', $this->body)) {
+            return $this->body['data'];
         }
         return null;
     }
@@ -125,9 +125,9 @@ class Response implements \JsonSerializable
      * Get all data that is being returned
      * @return mixed
      */
-    public function getAllData()
+    public function getBody()
     {
-        return $this->data;
+        return $this->body;
     }
 
     /**
@@ -135,16 +135,16 @@ class Response implements \JsonSerializable
      * @param $data
      * @return $this
      */
-    public function setData($data)
+    public function setBodyData($data)
     {
         if ($data instanceof \Generator) {
             foreach ($data as $key => $value) {
                 $actualKey = $key ?: 'data';
-                $this->data[$actualKey] = $value;
+                $this->body[$actualKey] = $value;
             }
             return $this;
         }
-        $this->data['data'] = $data;
+        $this->body['data'] = $data;
         return $this;
     }
 
@@ -214,6 +214,6 @@ class Response implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return $this->getAllData();
+        return $this->getBody();
     }
 }
