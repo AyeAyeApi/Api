@@ -88,12 +88,14 @@ class Api implements LoggerAwareInterface
      * @param $level
      * @param $message
      * @param array $context
+     * @return $this
      */
     protected function log($level, $message, array $context = array())
     {
         if ($this->logger) {
             $this->logger->log($level, $message, $context);
         }
+        return $this;
     }
 
     /**
@@ -151,10 +153,12 @@ class Api implements LoggerAwareInterface
     /**
      * Set the router to be used when go is called
      * @param Router $router
+     * @return $this;
      */
     public function setRouter(Router $router)
     {
         $this->router = $router;
+        return $this;
     }
 
     /**
@@ -172,10 +176,12 @@ class Api implements LoggerAwareInterface
     /**
      * Set the initial controller that the api will begin with
      * @param Controller $controller
+     * @returns $this
      */
     public function setInitialController(Controller $controller)
     {
         $this->controller = $controller;
+        return $this;
     }
 
     /**
@@ -213,10 +219,12 @@ class Api implements LoggerAwareInterface
     /**
      * Set the response object. Use for dependency injection
      * @param Response $response
+     * @returns $this
      */
     public function setResponse(Response $response)
     {
         $this->response = $response;
+        return $this;
     }
 
     /**
@@ -234,10 +242,12 @@ class Api implements LoggerAwareInterface
     /**
      * Sets the format factory. Use for dependency injection, or additional formatters
      * @param FormatFactory $formatFactory
+     * @returns $this
      */
     public function setFormatFactory(FormatFactory $formatFactory)
     {
         $this->formatFactory = $formatFactory;
+        return $this;
     }
 
     /**
