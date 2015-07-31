@@ -6,7 +6,6 @@
 
 namespace AyeAye\Api\Tests;
 
-
 use AyeAye\Api\Status;
 
 /**

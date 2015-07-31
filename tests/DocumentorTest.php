@@ -8,7 +8,6 @@
 
 namespace AyeAye\Api\Tests;
 
-
 use AyeAye\Api\Documentor;
 use AyeAye\Api\Tests\TestData\DocumentedController;
 

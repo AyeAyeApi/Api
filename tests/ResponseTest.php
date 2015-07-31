@@ -8,7 +8,6 @@
 
 namespace AyeAye\Api\Tests;
 
-
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;

@@ -7,6 +7,11 @@
 
 namespace AyeAye\Api\Tests;
 
+/**
+ * Class TestCase
+ * @abstract
+ * @package AyeAye\Api\Tests
+ */
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
     /**

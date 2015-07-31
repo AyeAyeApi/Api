@@ -8,9 +8,7 @@
 
 namespace AyeAye\Api\Tests;
 
-
 use AyeAye\Api\Exception;
-use AyeAye\Api\Tests\TestData\DocumentedController;
 
 /**
  * Class ExceptionTest
