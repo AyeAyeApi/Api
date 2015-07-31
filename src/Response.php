@@ -14,7 +14,7 @@ use AyeAye\Formatter\Formatter;
  * Describes response to client
  * @package AyeAye\Api
  */
-class Response implements \JsonSerializable
+class Response
 {
 
     /**
@@ -183,7 +183,7 @@ class Response implements \JsonSerializable
         }
         $this->preparedResponse =
             $this->formatter->getHeader()
-            . $this->formatter->format($this->jsonSerialize(), $this->responseName)
+            . $this->formatter->format($this->getBody(), $this->responseName)
             . $this->formatter->getFooter();
         return $this;
     }
@@ -206,14 +206,5 @@ class Response implements \JsonSerializable
         echo $this->preparedResponse;
 
         return $this;
-    }
-
-    /**
-     * Used by PHP to get json object
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return $this->getBody();
     }
 }
