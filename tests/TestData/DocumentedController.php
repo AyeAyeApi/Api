@@ -8,7 +8,8 @@ namespace AyeAye\Api\Tests\TestData;
 
 use AyeAye\Api\Controller;
 
-class DocumentedController extends Controller {
+class DocumentedController extends Controller
+{
 
     /**
      * Test Summary
@@ -54,16 +55,4 @@ class DocumentedController extends Controller {
     {
         return;
     }
-
-    /**
-     * For testing the generator aspect of Aye Aye
-     * @return \Generator
-     */
-    public function getGeneratorEndpoint()
-    {
-        yield 'data';
-        yield 'string' => 'string';
-        yield 'integer' => 42;
-    }
-
 }

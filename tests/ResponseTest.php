@@ -12,6 +12,7 @@ use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
 use AyeAye\Api\Tests\TestData\DocumentedController;
+use AyeAye\Api\Tests\TestData\GeneratorController;
 use AyeAye\Formatter\FormatFactory;
 use AyeAye\Formatter\Formats\Json;
 
@@ -160,7 +161,7 @@ class ResponseTest extends TestCase
      */
     public function testBodyGenerator()
     {
-        $controller = new DocumentedController();
+        $controller = new GeneratorController();
         $response = new Response();
 
         $this->assertSame(
