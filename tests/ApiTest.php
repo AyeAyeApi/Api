@@ -14,6 +14,7 @@ use AyeAye\Api\Controller;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Router;
+use AyeAye\Api\Tests\TestData\ExceptionController;
 use AyeAye\Formatter\FormatFactory;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
@@ -135,6 +136,154 @@ class ApiTest extends TestCase
         $this->assertSame(
             $api,
             $log($level, $message)
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::go
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::getInitialController
+     * @uses \AyeAye\Api\Api::getRouter
+     * @uses \AyeAye\Api\Api::getRequest
+     * @uses \AyeAye\Api\Api::getResponse
+     * @uses \AyeAye\Api\Api::getFormatFactory
+     * @uses \AyeAye\Api\Controller
+     * @uses \AyeAye\Api\Request
+     * @uses \AyeAye\Api\Response
+     * @uses \AyeAye\Api\Router
+     * @uses \AyeAye\Api\Status
+     */
+    public function testGo()
+    {
+        $controller = new Controller();
+        $api = new Api($controller);
+        $response = $api->go();
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Response',
+            $response
+        );
+        $this->assertSame(
+            200,
+            $response->getStatus()->getCode()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::go
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::getInitialController
+     * @uses \AyeAye\Api\Api::getRouter
+     * @uses \AyeAye\Api\Api::getRequest
+     * @uses \AyeAye\Api\Api::setRequest
+     * @uses \AyeAye\Api\Api::getResponse
+     * @uses \AyeAye\Api\Api::getFormatFactory
+     * @uses \AyeAye\Api\Api::log
+     * @uses \AyeAye\Api\Controller
+     * @uses \AyeAye\Api\Request
+     * @uses \AyeAye\Api\Response
+     * @uses \AyeAye\Api\Router
+     * @uses \AyeAye\Api\Status
+     */
+    public function testGoException()
+    {
+        $controller = new ExceptionController();
+        $api = new Api($controller);
+        $request = new Request(
+            Request::METHOD_GET,
+            'exception'
+        );
+        $api->setRequest($request);
+        $response = $api->go();
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Response',
+            $response
+        );
+        $this->assertSame(
+            500,
+            $response->getStatus()->getCode()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::go
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::getInitialController
+     * @uses \AyeAye\Api\Api::getRouter
+     * @uses \AyeAye\Api\Api::getRequest
+     * @uses \AyeAye\Api\Api::setRequest
+     * @uses \AyeAye\Api\Api::getResponse
+     * @uses \AyeAye\Api\Api::getFormatFactory
+     * @uses \AyeAye\Api\Api::log
+     * @uses \AyeAye\Api\Controller
+     * @uses \AyeAye\Api\Exception
+     * @uses \AyeAye\Api\Request
+     * @uses \AyeAye\Api\Response
+     * @uses \AyeAye\Api\Router
+     * @uses \AyeAye\Api\Status
+     */
+    public function testGoAyeAyeException()
+    {
+        $controller = new ExceptionController();
+        $api = new Api($controller);
+        $request = new Request(
+            Request::METHOD_GET,
+            'aye-aye-exception'
+        );
+        $api->setRequest($request);
+        $response = $api->go();
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Response',
+            $response
+        );
+        $this->assertSame(
+            418,
+            $response->getStatus()->getCode()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::go
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::getInitialController
+     * @uses \AyeAye\Api\Api::getRouter
+     * @uses \AyeAye\Api\Api::getRequest
+     * @uses \AyeAye\Api\Api::getResponse
+     * @uses \AyeAye\Api\Api::setResponse
+     * @uses \AyeAye\Api\Api::getFormatFactory
+     * @uses \AyeAye\Api\Api::createFailSafeResponse
+     * @uses \AyeAye\Api\Api::log
+     * @uses \AyeAye\Api\Controller
+     * @uses \AyeAye\Api\Request
+     * @uses \AyeAye\Api\Response
+     * @uses \AyeAye\Api\Router
+     * @uses \AyeAye\Api\Status
+     */
+    public function testGoResponseException()
+    {
+        $responseBase = $this->getMock('\AyeAye\Api\Response');
+        $responseBase->expects($this->once())
+            ->method('prepareResponse')
+            ->with()
+            ->will($this->throwException(new \Exception()));
+        $controller = new Controller();
+        $api = new Api($controller);
+        $api->setResponse($responseBase);
+        $response = $api->go();
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Response',
+            $response
+        );
+        $this->assertSame(
+            500,
+            $response->getStatus()->getCode()
         );
     }
 
