@@ -222,11 +222,16 @@ class Request implements \JsonSerializable
         }
 
         // Xml
-        libxml_use_internal_errors();
-        $xmlObject = simplexml_load_string($string);
-        libxml_use_internal_errors(true);
-        if ($xmlObject) {
-            return $xmlObject;
+        try {
+            libxml_use_internal_errors();
+            $xmlObject = simplexml_load_string($string);
+            libxml_use_internal_errors(true);
+            if ($xmlObject) {
+                return $xmlObject;
+            }
+        }
+        catch(\Exception $e) {
+            // Do nothing
         }
 
         $object = new \stdClass();
