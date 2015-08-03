@@ -319,15 +319,13 @@ class RouterTest extends TestCase
     public function testGetParametersFromRequest()
     {
         $router = new Router();
-        $request = new Request();
-        $controller = new DocumentedController();
-        $method = 'getDocumentedEndpoint';
-
-        $request->setParameters([
+        $request = new Request(null, null, [
             'integer' => 20,
             'string' => false,
             'not-used' => 'anything',
         ]);
+        $controller = new DocumentedController();
+        $method = 'getDocumentedEndpoint';
 
         $getParametersFromRequest = $this->getObjectMethod($router, 'getParametersFromRequest');
 
