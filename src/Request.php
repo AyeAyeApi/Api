@@ -148,7 +148,7 @@ class Request implements \JsonSerializable
      * @param string[] $headers
      * @return string
      */
-    public function parseHeader(array $headers = [])
+    protected function parseHeader(array $headers = [])
     {
         $processedHeaders = array();
         foreach ($headers as $key => $value) {
@@ -182,7 +182,7 @@ class Request implements \JsonSerializable
      * @return array
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function urlToParameters($url = null)
+    protected function urlToParameters($url = null)
     {
         $urlParameters = [];
         if (is_null($url)) {
@@ -209,7 +209,7 @@ class Request implements \JsonSerializable
      * @throws \Exception
      * @return \stdClass
      */
-    public function stringToObject($string)
+    protected function stringToObject($string)
     {
         if (!$string) {
             return new \stdClass();
@@ -332,7 +332,7 @@ class Request implements \JsonSerializable
      * @param $requestedUri
      * @return string|null
      */
-    public function getFormatFromUri($requestedUri)
+    protected function getFormatFromUri($requestedUri)
     {
         $uriParts = explode('?', $requestedUri, 2);
         $uriWithoutGet = reset($uriParts);
@@ -369,7 +369,7 @@ class Request implements \JsonSerializable
      * @throws \Exception
      * @returns $this
      */
-    public function setParameters($newParameters)
+    protected function setParameters($newParameters)
     {
         if (is_scalar($newParameters)) {
             if (!is_string($newParameters)) {
@@ -390,7 +390,7 @@ class Request implements \JsonSerializable
      * @return bool Returns true of value was set
      * @throws \Exception
      */
-    public function setParameter($name, $value)
+    protected function setParameter($name, $value)
     {
         if (!is_scalar($name)) {
             throw new \Exception('Add parameter: parameter name must be scalar');
