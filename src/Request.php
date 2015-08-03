@@ -120,13 +120,12 @@ class Request implements \JsonSerializable
      */
     protected function getRequestedUri($override = null)
     {
-        $requestedUri = '';
         if ($override) {
-            $requestedUri = $override;
+            return $override;
         } elseif (array_key_exists('REQUEST_URI', $_SERVER)) {
-            $requestedUri = $_SERVER['REQUEST_URI'];
+            return $_SERVER['REQUEST_URI'];
         }
-        return $requestedUri;
+        return '';
     }
 
     /**
@@ -137,7 +136,7 @@ class Request implements \JsonSerializable
      */
     protected function useActualParameters()
     {
-        $this->setParameters($this->urlToParameters());
+        $this->setParameters($this->urlToParameters($this->getRequestedUri()));
         $this->setParameters($_REQUEST);
         $this->setParameters($this->parseHeader($_SERVER));
         $this->setParameters($this->stringToObject($this->readBody()));
@@ -171,9 +170,6 @@ class Request implements \JsonSerializable
      */
     protected function readBody()
     {
-        if (function_exists('http_get_request_body')) {
-            return http_get_request_body();
-        }
         return file_get_contents('php://input');
     }
 
@@ -183,15 +179,10 @@ class Request implements \JsonSerializable
      * @return array
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function urlToParameters($url = null)
+    protected function urlToParameters($url)
     {
         $urlParameters = [];
-        if (is_null($url)) {
-            $url = array_key_exists('REQUEST_URI', $_SERVER)
-                ? $_SERVER['REQUEST_URI']
-                : '';
-        }
-        $url = is_null($url) ? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) : $url;
+        $url = parse_url($url, PHP_URL_PATH);
         $urlParts = explode('/', $url);
         reset($urlParts); // Note, the first entry will always be blank
         $key = next($urlParts);
