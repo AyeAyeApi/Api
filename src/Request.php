@@ -195,10 +195,9 @@ class Request implements \JsonSerializable
 
     /**
      * Tries to turn a string of data into an object. Accepts json, xml or a php serialised object
-     * Failing all else it will return a standard class with the string attached to data
+     * Failing all else, if there was a string it will return a standard class with it attached to a 'text' attribute
      * eg. $this->stringObject('fail')->body == 'fail'
      * @param string $string a string of data
-     * @throws \Exception
      * @return \stdClass
      */
     protected function stringToObject($string)
