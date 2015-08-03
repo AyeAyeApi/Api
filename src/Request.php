@@ -350,7 +350,7 @@ class Request implements \JsonSerializable
             unset($requestChain[0]);
         }
 
-        return $requestChain;
+        return array_values($requestChain);
     }
 
     /**
