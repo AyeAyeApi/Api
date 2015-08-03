@@ -78,7 +78,7 @@ class Request implements \JsonSerializable
         $requestedMethod = null,
         $requestedUri = null
     ) {
-        $parameters =  array_slice(func_get_args(), 2);
+        $parameters = array_slice(func_get_args(), 2);
         foreach ($parameters as $parameterGroup) {
             $this->setParameters($parameterGroup);
         }
@@ -102,7 +102,8 @@ class Request implements \JsonSerializable
         $requestMethod = $this->requestMethod;
         if ($override && in_array($override, $this->allowedMethods)) {
             $requestMethod = $override;
-        } elseif (array_key_exists('REQUEST_METHOD', $_SERVER)
+        } elseif (
+            array_key_exists('REQUEST_METHOD', $_SERVER)
             && in_array($_SERVER['REQUEST_METHOD'], $this->allowedMethods)
         ) {
             $requestMethod = $_SERVER['REQUEST_METHOD'];
@@ -229,8 +230,7 @@ class Request implements \JsonSerializable
             if ($xmlObject) {
                 return $xmlObject;
             }
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             // Do nothing
         }
 
