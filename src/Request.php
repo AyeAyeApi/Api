@@ -48,7 +48,7 @@ class Request implements \JsonSerializable
      * The method of request
      * @var string
      */
-    protected $requestMethod = self::METHOD_GET;
+    protected $requestMethod = null;
 
     /**
      * @var string
@@ -83,8 +83,8 @@ class Request implements \JsonSerializable
             $this->setParameters($parameterGroup);
         }
 
-        $this->requestMethod = $this->getRequestMethod($requestedMethod);
-        $this->requestedUri = $this->getRequestedUri($requestedUri);
+        $this->requestMethod = $requestedMethod ?: $this->getRequestMethod();
+        $this->requestedUri  = $requestedUri    ?: $this->getRequestedUri();
         if (!$this->parameters) {
             $this->parameters = $this->useActualParameters();
         }
@@ -93,36 +93,32 @@ class Request implements \JsonSerializable
     /**
      * Get the HTTP verb for this request
      * Checks it's one the API allows for. Can be overridden with override.
-     * @param string|null $override
      * @return string
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getRequestMethod($override = null)
+    protected function getRequestMethod()
     {
-        $requestMethod = $this->requestMethod;
-        if ($override && in_array($override, $this->allowedMethods)) {
-            $requestMethod = $override;
-        } elseif (
-            array_key_exists('REQUEST_METHOD', $_SERVER)
-            && in_array($_SERVER['REQUEST_METHOD'], $this->allowedMethods)
-        ) {
-            $requestMethod = $_SERVER['REQUEST_METHOD'];
+        if($this->requestMethod) {
+            return $this->requestMethod;
         }
-        return $requestMethod;
+        if (array_key_exists('REQUEST_METHOD', $_SERVER)) {
+            return $_SERVER['REQUEST_METHOD'];
+        }
+        return static::METHOD_GET;
     }
 
     /**
      * Get the requested uri.
      * Can be overridden with override.
-     * @param string|null $override
      * @return string
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getRequestedUri($override = null)
+    protected function getRequestedUri()
     {
-        if ($override) {
-            return $override;
-        } elseif (array_key_exists('REQUEST_URI', $_SERVER)) {
+        if($this->requestedUri) {
+            return $this->requestedUri;
+        }
+        if(array_key_exists('REQUEST_URI', $_SERVER)) {
             return $_SERVER['REQUEST_URI'];
         }
         return '';
@@ -153,7 +149,7 @@ class Request implements \JsonSerializable
         $processedHeaders = array();
         foreach ($headers as $key => $value) {
             if (substr($key, 0, 5) == 'HTTP_') {
-                $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
+                $name = lcfirst(str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5))))));
                 $processedHeaders[$name] = $value;
             } elseif ($key == 'CONTENT_TYPE') {
                 $processedHeaders['Content-Type'] = $value;
