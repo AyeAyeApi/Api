@@ -149,7 +149,7 @@ class Request implements \JsonSerializable
         $processedHeaders = array();
         foreach ($headers as $key => $value) {
             if (substr($key, 0, 5) == 'HTTP_') {
-                $name = lcfirst(str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5))))));
+                $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
                 $processedHeaders[$name] = $value;
             } elseif ($key == 'CONTENT_TYPE') {
                 $processedHeaders['Content-Type'] = $value;
