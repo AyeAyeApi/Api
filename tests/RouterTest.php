@@ -390,5 +390,4 @@ class RouterTest extends TestCase
             $router->getStatus()
         );
     }
-
 }

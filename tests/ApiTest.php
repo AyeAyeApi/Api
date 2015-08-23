@@ -8,7 +8,6 @@
 
 namespace AyeAye\Api\Tests;
 
-
 use AyeAye\Api\Api;
 use AyeAye\Api\Controller;
 use AyeAye\Api\Request;
@@ -601,5 +600,4 @@ class ApiTest extends TestCase
             $this->getObjectAttribute($response, 'formatter')
         );
     }
-
 }

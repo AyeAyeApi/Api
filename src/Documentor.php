@@ -8,7 +8,6 @@
 
 namespace AyeAye\Api;
 
-
 class Documentor
 {
 
@@ -26,11 +25,11 @@ class Documentor
         $returnType  = $this->getReturnType($comment);
 
         $documentation = [];
-        if($summary) {
+        if ($summary) {
             $documentation['summary'] = $summary;
             // If there is no Summary, there CAN NOT be a Description
             $description = $this->getDescription($comment);
-            if($description) {
+            if ($description) {
                 $documentation['description'] = $description;
             }
         }
@@ -46,11 +45,11 @@ class Documentor
     {
         $lines = preg_split("/((\r?\n)|(\r\n?))/", $method->getDocComment());
         $count = count($lines);
-        foreach($lines as $i => $line) {
+        foreach ($lines as $i => $line) {
             $line = preg_replace('/^\s*(\/\*\*|\*\/?)\s*/', '', $line);
             $line = trim($line);
             $lines[$i] = $line;
-            if(!$line && (!$i || $i == $count-1)) { // If first or last lines are blank
+            if (!$line && (!$i || $i == $count-1)) { // If first or last lines are blank
                 unset($lines[$i]);
             }
         }
@@ -69,24 +68,24 @@ class Documentor
     protected function getSummary(array $lines)
     {
         $summary = '';
-        foreach($lines as $i => $line) {
+        foreach ($lines as $i => $line) {
             // Check for blank line
-            if(!$line) {
+            if (!$line) {
                 // If summary exists break out
-                if($summary) {
+                if ($summary) {
                     break;
                 }
                 continue;
             }
 
             // Check for tag
-            if($line[0] == '@') {
+            if ($line[0] == '@') {
                 break;
             }
 
             // Otherwise we're good for summary
             $summary .= $line."\n";
-            if(substr($line, -1) == '.') {
+            if (substr($line, -1) == '.') {
                 break;
             }
         }
@@ -106,22 +105,22 @@ class Documentor
         $summaryFound = false;
         $summaryPassed = false;
 
-        foreach($lines as $line) {
-            if($line && !$summaryPassed) {
+        foreach ($lines as $line) {
+            if ($line && !$summaryPassed) {
                 $summaryFound = true;
-                if(substr(trim($line), -1) == '.') {
+                if (substr(trim($line), -1) == '.') {
                     $summaryPassed = true;
                 }
                 continue;
             }
-            if(!$line && $summaryFound && !$summaryPassed) {
+            if (!$line && $summaryFound && !$summaryPassed) {
                 $summaryPassed = true;
                 continue;
             }
-            if($line && $line[0] == '@') {
+            if ($line && $line[0] == '@') {
                 break;
             }
-            if($line && $summaryPassed) {
+            if ($line && $summaryPassed) {
                 $description .= $line."\n";
             }
         }
@@ -140,8 +139,8 @@ class Documentor
         preg_match_all('/@param\s([\s\S]+?(?=@))/', $comment, $paramsDoc);
 
         $params = [];
-        if(isset($paramsDoc[1])) {
-            foreach($paramsDoc[1] as $paramDoc) {
+        if (isset($paramsDoc[1])) {
+            foreach ($paramsDoc[1] as $paramDoc) {
                 // Break up the documentation into 3 parts:
                 // @param type $name description
                 // 1. The type
@@ -155,7 +154,7 @@ class Documentor
                 // Clean up description
                 // ToDo: Got to be a better way than this
                 $lines = preg_split("/((\r?\n)|(\r\n?))/", $description);
-                foreach($lines as $key => $value) {
+                foreach ($lines as $key => $value) {
                     $value = preg_replace('/\r/', '', $value);
                     $value = preg_replace('/^\s+\*/', '', $value);
                     $value = trim($value);
@@ -184,8 +183,8 @@ class Documentor
      */
     protected function getReturnType(array $lines)
     {
-        foreach($lines as $line) {
-            if(strpos($line, '@return') === 0) {
+        foreach ($lines as $line) {
+            if (strpos($line, '@return') === 0) {
                 $type = trim(str_replace('@return', '', $line));
                 $type = str_replace('$this', 'self', $type);
                 $type = explode('|', $type);
@@ -194,5 +193,4 @@ class Documentor
         }
         return [];
     }
-
 }

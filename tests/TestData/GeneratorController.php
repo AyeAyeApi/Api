@@ -21,5 +21,4 @@ class GeneratorController extends Controller
         yield 'string' => 'string';
         yield 'integer' => 42;
     }
-
 }

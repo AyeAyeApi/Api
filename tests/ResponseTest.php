@@ -298,5 +298,4 @@ class ResponseTest extends TestCase
         );
 
     }
-
 }

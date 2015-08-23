@@ -98,7 +98,7 @@ class Request implements \JsonSerializable
      */
     protected function getRequestMethod()
     {
-        if($this->requestMethod) {
+        if ($this->requestMethod) {
             return $this->requestMethod;
         }
         if (array_key_exists('REQUEST_METHOD', $_SERVER)) {
@@ -115,10 +115,10 @@ class Request implements \JsonSerializable
      */
     protected function getRequestedUri()
     {
-        if($this->requestedUri) {
+        if ($this->requestedUri) {
             return $this->requestedUri;
         }
-        if(array_key_exists('REQUEST_URI', $_SERVER)) {
+        if (array_key_exists('REQUEST_URI', $_SERVER)) {
             return $_SERVER['REQUEST_URI'];
         }
         return '';

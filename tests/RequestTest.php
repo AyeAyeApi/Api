@@ -10,7 +10,6 @@ namespace AyeAye\Api\Tests;
 
 use AyeAye\Api\Request;
 
-
 /**
  * Class ControllerTest
  * @package AyeAye\Api\Tests
@@ -557,5 +556,4 @@ class RequestTest extends TestCase
 
         $setParameter([], 'value')->getParameters();
     }
-
 }

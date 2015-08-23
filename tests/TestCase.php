@@ -24,7 +24,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         $method = new \ReflectionMethod($object, $methodName);
         $method->setAccessible(true);
-        $callable = function() use ($object, $method) {
+        $callable = function () use ($object, $method) {
             $arguments = func_get_args();
             array_unshift($arguments, $object);
             return call_user_func_array([$method, 'invoke'], $arguments);

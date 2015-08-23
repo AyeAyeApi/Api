@@ -96,8 +96,7 @@ class DocumentorTest extends TestCase
      * @test
      * @covers ::getMethodComment
      */
-    public
-    function testGetMethodComment()
+    public function testGetMethodComment()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
@@ -159,8 +158,7 @@ class DocumentorTest extends TestCase
      * @covers ::getSummary
      * @uses \AyeAye\Api\Documentor::getMethodComment
      */
-    public
-    function testgetSummary()
+    public function testgetSummary()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
@@ -202,8 +200,7 @@ class DocumentorTest extends TestCase
      * @covers ::getDescription
      * @uses \AyeAye\Api\Documentor::getMethodComment
      */
-    public
-    function testGetDescription()
+    public function testGetDescription()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
@@ -246,8 +243,7 @@ class DocumentorTest extends TestCase
      * @covers ::getParameters
      * @uses \AyeAye\Api\Documentor::getMethodComment
      */
-    public
-    function testGetParameters()
+    public function testGetParameters()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
@@ -303,8 +299,7 @@ class DocumentorTest extends TestCase
      * @covers ::getReturnType()
      * @uses \AyeAye\Api\Documentor::getMethodComment
      */
-    public
-    function testGetReturnType()
+    public function testGetReturnType()
     {
         $controller = new DocumentedController();
         $documentor = new Documentor();
@@ -341,5 +336,4 @@ class DocumentorTest extends TestCase
             $getReturnType($comment)
         );
     }
-
 }

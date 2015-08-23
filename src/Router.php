@@ -44,7 +44,7 @@ class Router
             if (method_exists($controller, $potentialController)) {
                 /** @var Controller $nextController */
                 $nextController = $controller->$potentialController();
-                return $this->processRequest($request, $nextController, $requestChain);;
+                return $this->processRequest($request, $nextController, $requestChain);
             }
 
             $potentialEndpoint = $this->parseEndpointName($nextLink, $request->getMethod());
@@ -233,7 +233,7 @@ class Router
         for ($i = 0; $i < $nMatches; $i++) {
             $parameterName = $this->camelcaseToHyphenated($results[3][$i]);
             $parameter = new \stdClass();
-            if($results[2][$i]) {
+            if ($results[2][$i]) {
                 $parameter->type = $results[2][$i];
             }
             if ($results[5][$i]) {

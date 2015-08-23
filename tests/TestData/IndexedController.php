@@ -8,7 +8,8 @@ namespace AyeAye\Api\Tests\TestData;
 
 use AyeAye\Api\Controller;
 
-class IndexedController extends Controller {
+class IndexedController extends Controller
+{
 
 
     /**
@@ -44,5 +45,4 @@ class IndexedController extends Controller {
     {
         return 'Hello to you too';
     }
-
 }

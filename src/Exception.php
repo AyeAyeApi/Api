@@ -86,7 +86,9 @@ class Exception extends \Exception implements \JsonSerializable
             'code' => $this->getCode(),
         ];
         if ($this->getPrevious() instanceof $this) {
-            $serialized['previous'] = $this->getPrevious()->jsonSerialize();
+            /** @var static $previous */
+            $previous = $this->getPrevious();
+            $serialized['previous'] = $previous->jsonSerialize();
         }
         return $serialized;
     }

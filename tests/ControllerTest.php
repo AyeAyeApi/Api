@@ -11,7 +11,6 @@ namespace AyeAye\Api\Tests;
 use AyeAye\Api\Controller;
 use AyeAye\Api\Status;
 
-
 /**
  * Class ControllerTest
  * @package AyeAye\Api\Tests
@@ -166,5 +165,4 @@ class ControllerTest extends TestCase
         $showMethod = $this->getObjectMethod($controller, 'showMethod');
         $showMethod('nonexistentMethod');
     }
-
 }

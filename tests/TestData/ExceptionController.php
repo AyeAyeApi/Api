@@ -29,5 +29,4 @@ class ExceptionController extends Controller
     {
         throw new Exception(418);
     }
-
 }
