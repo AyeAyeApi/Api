@@ -1,205 +1,170 @@
 <?php
 /**
- * Tests the controller class
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Created by PhpStorm.
+ * User: daniel
+ * Date: 27/07/15
+ * Time: 08:23
  */
 
 namespace AyeAye\Api\Tests;
 
 use AyeAye\Api\Controller;
-use AyeAye\Api\Exception;
 use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\TestBrokenController;
-use AyeAye\Api\Tests\TestData\TestController;
+
 
 /**
- * Test for the Controller Class
+ * Class ControllerTest
  * @package AyeAye\Api\Tests
+ * @coversDefaultClass \AyeAye\Api\Controller
  */
 class ControllerTest extends TestCase
 {
 
-    public function testStatusCode()
+    /**
+     * @test
+     * @covers ::getStatus
+     * @covers ::setStatus
+     * @uses \AyeAye\Api\Status
+     */
+    public function testStatus()
     {
-        $router = new Controller();
-        $status = $router->getStatus();
+        $controller = new Controller();
+        $status = new Status();
 
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Status',
+            $controller->getStatus()
+        );
         $this->assertSame(
             200,
-            $status->getCode()
+            $controller->getStatus()->getCode()
         );
 
+        $setStatus = $this->getObjectMethod($controller, 'setStatus');
         $this->assertSame(
-            'OK',
-            $status->getMessage()
+            $controller,
+            $setStatus($status)
         );
-
-        $setStatus = $this->getClassMethod($router, 'setStatus');
-        $setStatus->invoke($router, new Status(500));
-        $status = $router->getStatus();
-
         $this->assertSame(
-            500,
-            $status->getCode()
+            $status,
+            $controller->getStatus()
         );
+    }
 
+    /**
+     * @test
+     * @covers ::setStatusCode
+     * @uses \AyeAye\Api\Status
+     * @uses \AyeAye\Api\Controller::setStatus
+     * @uses \AyeAye\Api\Controller::getStatus
+     */
+    public function testStatusCode()
+    {
+        $code = 418;
+        $controller = new Controller();
+
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Status',
+            $controller->getStatus()
+        );
         $this->assertSame(
-            'Internal Server Error',
-            $status->getMessage()
+            200,
+            $controller->getStatus()->getCode()
         );
 
-        $router = new TestController();
-        $setStatusCode = $this->getClassMethod($router, 'setStatusCode');
-        $setStatusCode->invoke($router, 418);
-        $status = $router->getStatus();
-
+        $setStatusCode = $this->getObjectMethod($controller, 'setStatusCode');
         $this->assertSame(
-            418,
-            $status->getCode()
+            $controller,
+            $setStatusCode(418)
         );
-
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Status',
+            $controller->getStatus()
+        );
         $this->assertSame(
-            'I\'m a teapot',
-            $status->getMessage()
-        );
-    }
-
-    public function testHiddenEndpoints()
-    {
-        $controller = new TestController();
-        $this->assertTrue(
-            $controller->isMethodHidden('hiddenChildController')
-        );
-        $this->assertFalse(
-            $controller->isMethodHidden('childController')
-        );
-
-        $hideControllerMethod = $this->getClassMethod($controller, 'hideMethod');
-        $hideControllerMethod->invoke($controller, 'childController');
-        $showControllerMethod = $this->getClassMethod($controller, 'showMethod');
-        $showControllerMethod->invoke($controller, 'hiddenChildController');
-
-        $this->assertTrue(
-            $controller->isMethodHidden('childController')
-        );
-        $this->assertFalse(
-            $controller->isMethodHidden('hiddenChildController')
-        );
-
-        $controller = new TestBrokenController();
-        $this->assertFalse(
-            $controller->isMethodHidden('childController')
-        );
-        $hideControllerMethod = $this->getClassMethod($controller, 'hideMethod');
-        $hideControllerMethod->invoke($controller, 'childController');
-        $this->assertTrue(
-            $controller->isMethodHidden('childController')
-        );
-    }
-
-    public function testHiddenControllers()
-    {
-        $controller = new TestController();
-        $this->assertTrue(
-            $controller->isMethodHidden('getHiddenEndpoint')
-        );
-        $this->assertFalse(
-            $controller->isMethodHidden('getInformationEndpoint')
-        );
-
-        $hideEndpointMethod = $this->getClassMethod($controller, 'hideMethod');
-        $hideEndpointMethod->invoke($controller, 'getInformationEndpoint');
-        $showEndpointMethod = $this->getClassMethod($controller, 'showMethod');
-        $showEndpointMethod->invoke($controller, 'getHiddenEndpoint');
-
-        $this->assertTrue(
-            $controller->isMethodHidden('getInformationEndpoint')
-        );
-        $this->assertFalse(
-            $controller->isMethodHidden('getHiddenEndpoint')
-        );
-
-        $controller = new TestBrokenController();
-        $this->assertFalse(
-            $controller->isMethodHidden('getInformationEndpoint')
-        );
-
-        $hideEndpointMethod = $this->getClassMethod($controller, 'hideMethod');
-        $hideEndpointMethod->invoke($controller, 'getInformationEndpoint');
-
-        $this->assertTrue(
-            $controller->isMethodHidden('getInformationEndpoint')
+            $code,
+            $controller->getStatus()->getCode()
         );
     }
 
     /**
-     * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'fakeController' does not exist in AyeAye\Api\Tests\TestData\TestController
-     * @expectedExceptionCode    500
+     * @test
+     * @covers ::hideMethod
+     * @covers ::isMethodHidden
+     * @covers ::showMethod
      */
-    public function testHideControllerException()
+    public function testHideMethod()
     {
-        $controller = new TestController();
-        $hideControllerMethod = $this->getClassMethod($controller, 'hideMethod');
-        $hideControllerMethod->invoke($controller, 'fakeController');
+        $controller = new Controller();
+        $hideMethod = $this->getObjectMethod($controller, 'hideMethod');
+        $showMethod = $this->getObjectMethod($controller, 'showMethod');
+        $methodName = 'getStatus';
+
+        $this->assertFalse(
+            $controller->isMethodHidden($methodName)
+        );
+        $this->assertSame(
+            $controller,
+            $hideMethod($methodName)
+        );
+        $this->assertTrue(
+            $controller->isMethodHidden($methodName)
+        );
+        $this->assertSame(
+            $controller,
+            $showMethod($methodName)
+        );
+        $this->assertFalse(
+            $controller->isMethodHidden($methodName)
+        );
     }
 
     /**
-     * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'fakeEndpoint' does not exist in AyeAye\Api\Tests\TestData\TestController
-     * @expectedExceptionCode    500
+     * @test
+     * @covers ::hideMethod
+     * @uses \AyeAye\Api\Exception
+     * @uses \AyeAye\Api\Status
+     * @expectedException \AyeAye\Api\Exception
+     * @expectedExceptionCode 500
+     * @expectedExceptionMessageRegExp /^The method \'\w+\' does not exist in \S+$/
      */
-    public function testHideEndpointException()
+    public function testHideMethodException()
     {
-        $controller = new TestController();
-        $hideEndpointMethod = $this->getClassMethod($controller, 'hideMethod');
-        $hideEndpointMethod->invoke($controller, 'fakeEndpoint');
+        $controller = new Controller();
+        $hideMethod = $this->getObjectMethod($controller, 'hideMethod');
+        $hideMethod('nonexistentMethod');
     }
 
     /**
-     * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'fakeController' does not exist in AyeAye\Api\Tests\TestData\TestController
-     * @expectedExceptionCode    500
+     * @test
+     * @covers ::isMethodHidden
+     * @uses \AyeAye\Api\Exception
+     * @uses \AyeAye\Api\Status
+     * @expectedException \AyeAye\Api\Exception
+     * @expectedExceptionCode 500
+     * @expectedExceptionMessageRegExp /^The method \'\w+\' does not exist in \S+$/
      */
-    public function testIsControllerHiddenException()
+    public function testIsMethodHiddenException()
     {
-        $controller = new TestController();
-        $controller->isMethodHidden('fakeController');
+        $controller = new Controller();
+        $isMethodHidden = $this->getObjectMethod($controller, 'isMethodHidden');
+        $isMethodHidden('nonexistentMethod');
     }
 
     /**
-     * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'fakeEndpoint' does not exist in AyeAye\Api\Tests\TestData\TestController
-     * @expectedExceptionCode    500
+     * @test
+     * @covers ::showMethod
+     * @uses \AyeAye\Api\Exception
+     * @uses \AyeAye\Api\Status
+     * @expectedException \AyeAye\Api\Exception
+     * @expectedExceptionCode 500
+     * @expectedExceptionMessageRegExp /^The method \'\w+\' does not exist in \S+$/
      */
-    public function testIsEndpointHiddenException()
+    public function testShowMethodException()
     {
-        $controller = new TestController();
-        $controller->isMethodHidden('fakeEndpoint');
+        $controller = new Controller();
+        $showMethod = $this->getObjectMethod($controller, 'showMethod');
+        $showMethod('nonexistentMethod');
     }
 
-    /**
-     * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'fakeController' does not exist in AyeAye\Api\Tests\TestData\TestController
-     * @expectedExceptionCode    500
-     */
-    public function testShowControllerException()
-    {
-        $controller = new TestController();
-        $showControllerMethod = $this->getClassMethod($controller, 'showMethod');
-        $showControllerMethod->invoke($controller, 'fakeController');
-    }
-
-    /**
-     * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionMessage The method 'fakeEndpoint' does not exist in AyeAye\Api\Tests\TestData\TestController
-     * @expectedExceptionCode    500
-     */
-    public function testShowEndpointException()
-    {
-        $controller = new TestController();
-        $showEndpointMethod = $this->getClassMethod($controller, 'showMethod');
-        $showEndpointMethod->invoke($controller, 'fakeEndpoint');
-    }
 }

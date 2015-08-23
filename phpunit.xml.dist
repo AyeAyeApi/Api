@@ -4,6 +4,11 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         checkForUnintentionallyCoveredCode="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTestSize="true"
+         beStrictAboutChangesToGlobalState="true"
          verbose="true"
         >
     <testsuites>
@@ -17,4 +22,9 @@
         <log type="coverage-crap4j" target="reports/logs/crap4j.xml"/>
         <log type="junit" target="reports/logs/junit.xml" logIncompleteSkipped="false"/>
     </logging>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
 </phpunit>

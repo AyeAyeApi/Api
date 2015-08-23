@@ -44,17 +44,17 @@ class Router
             if (method_exists($controller, $potentialController)) {
                 /** @var Controller $nextController */
                 $nextController = $controller->$potentialController();
-                $data = $this->processRequest($request, $nextController, $requestChain);
-                $this->setStatus($controller->getStatus());
-                return $data;
+                return $this->processRequest($request, $nextController, $requestChain);;
             }
 
             $potentialEndpoint = $this->parseEndpointName($nextLink, $request->getMethod());
             if (method_exists($controller, $potentialEndpoint)) {
-                return call_user_func_array(
+                $data = call_user_func_array(
                     [$controller, $potentialEndpoint],
                     $this->getParametersFromRequest($request, $controller, $potentialEndpoint)
                 );
+                $this->setStatus($controller->getStatus());
+                return $data;
             }
 
             $message = "Could not find controller or endpoint matching '$nextLink'";
@@ -75,7 +75,7 @@ class Router
      * @param Controller $controller
      * @return \stdClass
      */
-    public function documentController(Controller $controller)
+    protected function documentController(Controller $controller)
     {
         $data = new \stdClass();
         $data->controllers = $this->getControllers($controller);
@@ -98,8 +98,9 @@ class Router
      * @param Controller $controller
      * @return array
      */
-    public function getEndpoints(Controller $controller)
+    protected function getEndpoints(Controller $controller)
     {
+        $documentor = new Documentor();
         $endpoints = [];
         $parts = [];
         $methods = get_class_methods($controller);
@@ -111,7 +112,9 @@ class Router
                     if (!array_key_exists($method, $endpoints)) {
                         $endpoints[$method] = array();
                     }
-                    $endpoints[$method][$endpoint] = $this->getMethodDocumentation($controller, $classMethod);
+                    $endpoints[$method][$endpoint] = $documentor->getMethodDocumentation(
+                        new \ReflectionMethod($controller, $classMethod)
+                    );
                 }
             }
         }
@@ -123,7 +126,7 @@ class Router
      * @param Controller $controller
      * @return array
      */
-    public function getControllers(Controller $controller)
+    protected function getControllers(Controller $controller)
     {
         $methods = get_class_methods($controller);
         $controllers = [];
@@ -200,7 +203,7 @@ class Router
      * @param Status $status
      * @return $this
      */
-    public function setStatus(Status $status)
+    protected function setStatus(Status $status)
     {
         $this->status = $status;
         return $this;

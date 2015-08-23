@@ -1,432 +1,394 @@
 <?php
 /**
- * Tests the controller class
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Author: Daniel Mason
+ * Package: Api
  */
 
 namespace AyeAye\Api\Tests;
 
-use AyeAye\Api\Controller;
 use AyeAye\Api\Request;
 use AyeAye\Api\Router;
 use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\TestController;
+use AyeAye\Api\Tests\TestData\DocumentedController;
+use AyeAye\Api\Tests\TestData\IndexedController;
 
 /**
- * Test for the Controller Class
+ * Class RouterTest
  * @package AyeAye\Api\Tests
+ * @coversDefaultClass AyeAye\Api\Router
  */
 class RouterTest extends TestCase
 {
 
-    public function testStatusCode()
+    /**
+     * @test
+     * @covers ::processRequest
+     * @uses AyeAye\Api\Documentor
+     * @uses AyeAye\Api\Request
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Router::parseEndpointName
+     * @uses AyeAye\Api\Router::getEndpoints
+     * @uses AyeAye\Api\Router::getControllers
+     * @uses AyeAye\Api\Router::camelcaseToHyphenated
+     * @uses AyeAye\Api\Router::documentController
+     * @uses AyeAye\Api\Router::getParametersFromRequest
+     */
+    public function testProcessRequestSelfDocumented()
+    {
+        $controller = new DocumentedController();
+        $request = new Request();
+
+        $router = new Router();
+        $response = $router->processRequest($request, $controller);
+        $this->assertObjectHasAttribute(
+            'controllers',
+            $response
+        );
+        $this->assertObjectHasAttribute(
+            'endpoints',
+            $response
+        );
+
+    }
+
+    /**
+     * @test
+     * @covers ::processRequest
+     * @uses AyeAye\Api\Request
+     * @uses AyeAye\Api\Status
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Router::parseEndpointName
+     * @uses AyeAye\Api\Router::parseControllerName
+     * @uses AyeAye\Api\Router::getParametersFromRequest
+     * @uses AyeAye\Api\Router::setStatus
+     */
+    public function testProcessRequestEndpointOnly()
+    {
+        $controller = new DocumentedController();
+        $request = new Request('GET', 'documented');
+
+        $router = new Router();
+        $this->assertSame(
+            'information',
+            $router->processRequest($request, $controller, null)
+        );
+
+    }
+
+    /**
+     * @test
+     * @covers ::processRequest
+     * @uses AyeAye\Api\Request
+     * @uses AyeAye\Api\Status
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Router::parseEndpointName
+     * @uses AyeAye\Api\Router::parseControllerName
+     * @uses AyeAye\Api\Router::getParametersFromRequest
+     * @uses AyeAye\Api\Router::setStatus
+     */
+    public function testProcessRequestIndexedController()
+    {
+        $controller = new IndexedController();
+
+        $request = new Request('GET', '');
+        $router = new Router();
+        $this->assertSame(
+            'Got Index',
+            $router->processRequest($request, $controller, null)
+        );
+
+        $request = new Request('PUT', '');
+        $router = new Router();
+        $this->assertSame(
+            'Put Index',
+            $router->processRequest($request, $controller, null)
+        );
+
+    }
+
+    /**
+     * @test
+     * @covers ::processRequest
+     * @uses AyeAye\Api\Request
+     * @uses AyeAye\Api\Status
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Router::parseEndpointName
+     * @uses AyeAye\Api\Router::parseControllerName
+     * @uses AyeAye\Api\Router::getParametersFromRequest
+     * @uses AyeAye\Api\Router::setStatus
+     */
+    public function testProcessRequestControllerToEndpoint()
+    {
+        $controller = new DocumentedController();
+        $request = new Request('GET', 'self-reference/documented');
+
+        $router = new Router();
+        $this->assertSame(
+            'information',
+            $router->processRequest($request, $controller, null)
+        );
+
+    }
+
+    /**
+     * @test
+     * @expectedException        \AyeAye\Api\Exception
+     * @expectedExceptionCode    404
+     * @expectedExceptionMessage Could not find controller or endpoint matching 'nonsense'
+     * @covers ::processRequest
+     * @uses AyeAye\Api\Exception
+     * @uses AyeAye\Api\Request
+     * @uses AyeAye\Api\Status
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Router::parseEndpointName
+     * @uses AyeAye\Api\Router::parseControllerName
+     */
+    public function testProcessRequestNotFound()
+    {
+        $controller = new DocumentedController();
+        $request = new Request('GET', 'nonsense');
+        $router = new Router();
+        $router->processRequest($request, $controller, null);
+
+    }
+
+
+    /**
+     * @test
+     * @covers ::documentController
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Documentor
+     * @uses AyeAye\Api\Router::parseEndpointName
+     * @uses AyeAye\Api\Router::getEndpoints
+     * @uses AyeAye\Api\Router::getControllers
+     * @uses AyeAye\Api\Router::camelcaseToHyphenated
+     */
+    public function testDocumentController()
+    {
+        $controller = new DocumentedController();
+        $router = new Router();
+
+        $documentController = $this->getObjectMethod($router, 'documentController');
+        $documentation = $documentController($controller);
+        $this->assertObjectHasAttribute(
+            'controllers',
+            $documentation
+        );
+        $this->assertObjectHasAttribute(
+            'endpoints',
+            $documentation
+        );
+
+    }
+
+    /**
+     * @test
+     * @covers ::camelcaseToHyphenated
+     */
+    public function testCamelcaseToHyphenated()
     {
         $router = new Router();
-        $status = $router->getStatus();
+        $camelcaseToHyphenated = $this->getObjectMethod($router, 'camelcaseToHyphenated');
 
         $this->assertSame(
-            200,
-            $status->getCode()
-        );
-
-        $this->assertSame(
-            'OK',
-            $status->getMessage()
-        );
-
-        $setStatus = $this->getClassMethod($router, 'setStatus');
-        $setStatus->invoke($router, new Status(500));
-        $status = $router->getStatus();
-
-        $this->assertSame(
-            500,
-            $status->getCode()
-        );
-
-        $this->assertSame(
-            'Internal Server Error',
-            $status->getMessage()
-        );
-
-        $router = new TestController();
-        $setStatusCode = $this->getClassMethod($router, 'setStatusCode');
-        $setStatusCode->invoke($router, 418);
-        $status = $router->getStatus();
-
-        $this->assertSame(
-            418,
-            $status->getCode()
-        );
-
-        $this->assertSame(
-            'I\'m a teapot',
-            $status->getMessage()
+            'camelcase-to-hyphenated',
+            $camelcaseToHyphenated('camelcaseToHyphenated')
         );
     }
 
     /**
-     * Test the parse endpoint method
-     * Checks simple and long names
-     * @see Controller
+     * @test
+     * @covers ::getEndpoints
+     * @uses AyeAye\Api\Documentor
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Router::camelcaseToHyphenated
+     */
+    public function testGetEndpoints()
+    {
+        $router = new Router();
+        $getEndpoints = $this->getObjectMethod($router, 'getEndpoints');
+
+        $controller = new DocumentedController();
+        $endpoints = $getEndpoints($controller);
+        $this->assertArrayHasKey(
+            'get',
+            $endpoints
+        );
+        $this->assertArrayNotHasKey(
+            'put',
+            $endpoints
+        );
+
+        $controller = new IndexedController();
+        $endpoints = $getEndpoints($controller);
+        $this->assertArrayHasKey(
+            'get',
+            $endpoints
+        );
+        $this->assertArrayHasKey(
+            'put',
+            $endpoints
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getControllers
+     * @uses AyeAye\Api\Controller
+     * @uses AyeAye\Api\Router::camelcaseToHyphenated
+     */
+    public function testGetControllers()
+    {
+        $router = new Router();
+        $getControllers = $this->getObjectMethod($router, 'getControllers');
+
+        $controller = new DocumentedController();
+        $controllers = $getControllers($controller);
+        $this->assertContains(
+            'self-reference',
+            $controllers
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::parseEndpointName
      */
     public function testParseEndpointName()
     {
         $router = new Router();
-
-        $parseEndpointName = $this->getClassMethod($router, 'parseEndpointName');
-
-        $endpoint = 'index';
-        $method = Request::METHOD_GET;
-        $expectedEndpoint = 'getIndexEndpoint';
-        $actualEndpoint = $parseEndpointName->invoke($router, $endpoint, $method);
+        $parseEndpointName = $this->getObjectMethod($router, 'parseEndpointName');
 
         $this->assertSame(
-            $expectedEndpoint,
-            $actualEndpoint
+            'getTestEndpoint',
+            $parseEndpointName('test')
         );
 
-        $endpoint = 'a-longer-name';
-        $method = Request::METHOD_POST;
-        $expectedEndpoint = 'postALongerNameEndpoint';
-        $actualEndpoint = $parseEndpointName->invoke($router, $endpoint, $method);
+        $this->assertSame(
+            'putCamelCaseEndpoint',
+            $parseEndpointName('camel-case', 'put')
+        );
 
         $this->assertSame(
-            $expectedEndpoint,
-            $actualEndpoint
+            'postCamelCaseEndpoint',
+            $parseEndpointName('camel+case', 'POST')
+        );
+
+        $this->assertSame(
+            'optionsCamelCaseEndpoint',
+            $parseEndpointName('camel%20case', 'oPtIoNs')
         );
     }
 
     /**
-     * Tests controller returns all relevant controllers, including ignored
-     * @see TestController
+     * @test
+     * @covers ::parseControllerName
      */
-    public function testGetControllers()
+    public function testParseControllerName()
     {
-        $controller = new TestController();
         $router = new Router();
-        $controllers = $router->getControllers($controller);
+        $parseControllerName = $this->getObjectMethod($router, 'parseControllerName');
 
-        $this->assertCount(
-            2,
-            $controllers
+        // ToDo: Should this be an error?
+        $this->assertSame(
+            'Controller',
+            $parseControllerName('')
         );
 
-        $this->assertContains(
-            'child',
-            $controllers
+        $this->assertSame(
+            'camelCaseController',
+            $parseControllerName('camel-case')
         );
 
-        $this->assertContains(
-            'me',
-            $controllers
+        $this->assertSame(
+            'camelCaseController',
+            $parseControllerName('camel%20case')
         );
 
-        $this->assertNotContains(
-            'hidden-child',
-            $controllers
+        $this->assertSame(
+            'camelCaseController',
+            $parseControllerName('camel+case')
         );
     }
 
     /**
-     * Tests the correct data is returned for the index endpoint
-     * @see TestController
+     * @test
+     * @covers ::getParametersFromRequest
+     * @uses AyeAye\Api\Request
      */
-    public function testDocumentController()
+    public function testGetParametersFromRequest()
     {
         $router = new Router();
-        $controller = new TestController();
-        $result = $router->documentController($controller);
+        $request = new Request(null, null, [
+            'integer' => 20,
+            'string' => false,
+            'not-used' => 'anything',
+        ]);
+        $controller = new DocumentedController();
+        $method = 'getDocumentedEndpoint';
 
-        // Controllers
-
-        $this->assertContains(
-            'me',
-            $result->controllers
-        );
-
-        $this->assertContains(
-            'child',
-            $result->controllers
-        );
-
-        $this->assertNotContains(
-            'hiddenChild',
-            $result->controllers
-        );
-
-        $this->assertCount(
-            2,
-            $result->controllers
-        );
-
-        // Endpoints
-
-        $this->assertCount(
-            3,
-            $result->endpoints['get']
-        );
-
-        $this->assertArrayHasKey(
-            'information',
-            $result->endpoints['get']
-        );
+        $getParametersFromRequest = $this->getObjectMethod($router, 'getParametersFromRequest');
 
         $this->assertSame(
-            'Gets some information',
-            $result->endpoints['get']['information']['description']
-        );
-
-        $this->assertCount(
-            0,
-            $result->endpoints['get']['information']['parameters']
-        );
-
-        $this->assertArrayHasKey(
-            'more-information',
-            $result->endpoints['get']
-        );
-
-        $this->assertSame(
-            'Get some conditional information',
-            $result->endpoints['get']['more-information']['description']
-        );
-
-        $this->assertCount(
-            1,
-            $result->endpoints['get']['more-information']['parameters']
-        );
-
-        $this->assertSame(
-            'string',
-            $result->endpoints['get']['more-information']['parameters']['condition']->type
-        );
-
-        $this->assertSame(
-            'The condition for the information',
-            $result->endpoints['get']['more-information']['parameters']['condition']->description
-        );
-
-        $this->assertCount(
-            1,
-            $result->endpoints['put']
-        );
-
-        $this->assertArrayHasKey(
-            'information',
-            $result->endpoints['put']
-        );
-
-    }
-
-    /**
-     * Tests routing with empty request chain
-     * @see Request
-     * @see TestController
-     */
-    public function testDefaultIndexRoute()
-    {
-        $request = new Request();
-        $router = new Router();
-        $controller = new TestController();
-        $result = $router->processRequest($request, $controller, []);
-
-        $this->assertObjectHasAttribute(
-            'endpoints',
-            $result
-        );
-    }
-
-    /**
-     * Tests routing with a post request that goes no where
-     * @see Request
-     * @see TestController
-     */
-    public function testPostIndexRoute()
-    {
-        $request = new Request(Request::METHOD_POST);
-        $router = new Router();
-        $controller = new TestController();
-        $result = $router->processRequest($request, $controller, []);
-
-        $this->assertSame(
-            'Why are you posting to the index?',
-            $result
-        );
-    }
-
-    /**
-     * Tests process request method works without giving a request chain, taking it from Request object
-     * @see Request
-     * @see TestController
-     */
-    public function testAlternativeIndexRoute()
-    {
-        $request = new Request(Request::METHOD_PUT);
-        $router = new Router();
-        $controller = new TestController();
-        $result = $router->processRequest($request, $controller);
-
-        $this->assertObjectHasAttribute(
-            'endpoints',
-            $result
-        );
-    }
-
-    /**
-     * Tests an incorrect route returns a 404
-     * @see Request
-     * @see TestController
-     * @expectedException        \Exception
-     * @expectedExceptionMessage Could not find controller or endpoint matching
-     * @expectedExceptionCode    404
-     */
-    public function testEndpointNotFound()
-    {
-        $request = new Request(
-            Request::METHOD_GET,
-            'not-a-real-endpoint.json'
-        );
-        $router = new Router();
-        $controller = new TestController();
-        $router->processRequest(
-            $request,
-            $controller,
-            $request->getRequestChain()
-        );
-    }
-
-    /**
-     * Tests that a given request chain is routed correctly using only the Request object
-     * @see Request
-     * @see TestController
-     */
-    public function testKnownRoute()
-    {
-        $request = new Request(
-            Request::METHOD_GET,
-            'information'
-        );
-        $router = new Router();
-        $controller = new TestController();
-        $result = $router->processRequest($request, $controller);
-
-        $this->assertSame(
-            'information',
-            $result
-        );
-    }
-
-    public function testParametersFromRequest()
-    {
-        $request = new Request(
-            Request::METHOD_POST,
-            'child/complex-data',
             [
-                'param1' => 'string',
-                'param2' => 9001,
-                'param3' => true,
-                'param4' => false,
-            ]
-        );
-        $router = new Router();
-        $controller = new TestController();
-        $result = $router->processRequest($request, $controller);
-
-        $this->assertSame(
-            'string',
-            $result->param1
-        );
-        $this->assertSame(
-            9001,
-            $result->param2
-        );
-        $this->assertSame(
-            true,
-            $result->param3
-        );
-        $this->assertSame(
-            false,
-            $result->param4
+                'incomplete' => null,
+                'integer' => 20,
+                'string' => false,
+            ],
+            $getParametersFromRequest($request, $controller, $method)
         );
     }
 
-    public function testMethodDocumentationParsing()
+    /**
+     * @test
+     * @covers ::getStatus
+     * @uses AyeAye\Api\Status
+     * @uses AyeAye\Api\Router::setStatus
+     */
+    public function testGetStatus()
     {
         $router = new Router();
-        $controller = new TestController;
-
-        $result = $router->getMethodDocumentation($controller, "getRandomIndentationEndpoint");
-
-        
-        $this->assertArrayHasKey(
-            'description',
-            $result
-        );
-
-        $this->assertArrayHasKey(
-            'parameters',
-            $result
-        );
 
         $this->assertSame(
-            'This is the endpoint where PHPDoc is indented randomly',
-            $result["description"]
+            200,
+            $router->getStatus()->getCode()
+        );
+        $this->assertSame(
+            'OK',
+            $router->getStatus()->getMessage()
         );
 
-        $parameters = $result["parameters"];
+        $status = new Status(500);
+        $setStatus = $this->getObjectMethod($router, 'setStatus');
+        $setStatus($status);
 
-        $this->assertArrayHasKey(
-            'first',
-            $parameters
+        $this->assertSame(
+            500,
+            $router->getStatus()->getCode()
         );
-
-         $this->assertArrayHasKey(
-             'second',
-             $parameters
-         );
-
-         $first = $parameters["first"];
-         $second = $parameters["second"];
-
-         $this->assertObjectHasAttribute(
-             'type',
-             $first
-         );
-
-         $this->assertObjectHasAttribute(
-             'description',
-             $first
-         );
-
-         $this->assertObjectHasAttribute(
-             'type',
-             $second
-         );
-
-         $this->assertObjectHasAttribute(
-             'description',
-             $second
-         );
-
-         $this->assertSame(
-             'string',
-             $first->type
-         );
-
-         $this->assertSame(
-             'Some string',
-             $first->description
-         );
-
-         $this->assertSame(
-             'float',
-             $second->type
-         );
-
-         $this->assertSame(
-             'Parameter with different indentation',
-             $second->description
-         );
+        $this->assertSame(
+            'Internal Server Error',
+            $router->getStatus()->getMessage()
+        );
     }
+
+    /**
+     * @test
+     * @covers ::setStatus
+     * @uses AyeAye\Api\Status
+     * @uses AyeAye\Api\Router::getStatus
+     */
+    public function testSetStatus()
+    {
+        $status = new Status(418);
+        $router = new Router();
+
+        $setStatus = $this->getObjectMethod($router, 'setStatus');
+        $setStatus($status);
+        $this->assertSame(
+            $status,
+            $router->getStatus()
+        );
+    }
+
 }
