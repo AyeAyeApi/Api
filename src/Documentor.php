@@ -68,7 +68,7 @@ class Documentor
     protected function getSummary(array $lines)
     {
         $summary = '';
-        foreach ($lines as $i => $line) {
+        foreach ($lines as $line) {
             // Check for blank line
             if (!$line) {
                 // If summary exists break out
