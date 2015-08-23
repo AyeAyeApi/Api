@@ -359,7 +359,7 @@ class Request implements \JsonSerializable
     {
         if (is_scalar($newParameters)) {
             if (!is_string($newParameters)) {
-                throw new \Exception('Add parameters parameter newParameters can not be scalar');
+                throw new \Exception('newParameters can not be scalar');
             }
             $newParameters = $this->stringToObject($newParameters);
         }
@@ -379,9 +379,9 @@ class Request implements \JsonSerializable
     protected function setParameter($name, $value)
     {
         if (!is_scalar($name)) {
-            throw new \Exception('Add parameter: parameter name must be scalar');
+            throw new \Exception('Parameter name must be scalar');
         }
         $this->parameters[$name] = $value;
-        return true;
+        return $this;
     }
 }
