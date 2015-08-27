@@ -12,3 +12,6 @@ matrix:
 
 before_script:
   composer install
+
+notifications:
+  slack: danielmason:mwiobPacEYneLE6a9iBAZvVB
