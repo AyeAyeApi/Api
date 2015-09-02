@@ -10,7 +10,11 @@ Development Build Status:
 Travis CI: [![Build Status](https://travis-ci.org/AyeAyeApi/Api.svg?branch=master)](https://travis-ci.org/AyeAyeApi/Api)
 [Report](https://travis-ci.org/AyeAyeApi/Api)
 
-## Super Turbo Quick Start Guide
+SL Insight: 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/a3c4a2b4-c143-49cf-ab0a-2ea649f9d7ea/mini.png)]
+(https://insight.sensiolabs.com/projects/a3c4a2b4-c143-49cf-ab0a-2ea649f9d7ea)
+
+## Quick Start Guide
 
 Create a project and include Aye Aye
 
@@ -31,12 +35,12 @@ class HelloWorldController extends Controller
 {
     /**
      * Says hello
-     * @param string $name Optional, defaults to 'World'
+     * @param string $name Optional, defaults to 'Captain'
      * @returns string
      */
-    public function getHelloEndpoint($name = 'World')
+    public function getHelloEndpoint($name = 'Captain')
     {
-        return "Hello $name";
+        return "Aye Aye $name";
     }
 }
 ```
@@ -63,7 +67,7 @@ Enjoy
 ```bash
 $ php -S localhost:8000 index.php &
 $ curl localhost:8000/hello
-$ curl localhost:8000/hello?name=Aye%20Aye
+$ curl localhost:8000/hello?name=Sandwiches
 $ curl localhost:8000
 ```
 
@@ -143,19 +147,19 @@ class HelloWorldController extends Controller
 {
     /**
      * Says hello
-     * @param string $name Optional, defaults to 'World'
+     * @param string $name Optional, defaults to 'Captain'
      * @returns string
      */
-    public function getHelloEndpoint($name = 'World')
+    public function getHelloEndpoint($name = 'Captain')
     {
-        return "Hello $name";
+        return "Aye Aye $name";
     }
 }
 ```
 
 The one method in this controller tells you everything you need to know.
  * It will respond to a GET request send to the hello endpoint. 
- * It takes one parameter, 'name', which will default to World
+ * It takes one parameter, 'name', which will default to Captain
  * It returns a string
  
 So how did we go from that, to sending and receiving the data with curl?
@@ -189,12 +193,12 @@ class HelloWorldController extends Controller
 {
     /**
      * Says hello
-     * @param string $name Optional, defaults to 'World'
+     * @param string $name Optional, defaults to 'Captain'
      * @returns string
      */
-    public function getHelloEndpoint($name = 'World')
+    public function getHelloEndpoint($name = 'Captain')
     {
-        return "Hello $name";
+        return "Aye Aye $name";
     }
     
     /**

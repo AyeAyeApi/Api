@@ -206,7 +206,7 @@ class Status implements \JsonSerializable
             throw new \Exception("Status '$code' does not exist");
         }
         $this->code = $code;
-        $this->message = static::$statusCodes[$code];
+        $this->message = static::getMessageForCode($code);
     }
 
     /**

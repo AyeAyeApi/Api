@@ -7,6 +7,7 @@
  */
 
 namespace AyeAye\Api;
+use AyeAye\Formatter\Deserializable;
 
 /**
  * Describes end points and controllers
@@ -44,17 +45,17 @@ class Router
             if (method_exists($controller, $potentialController)) {
                 /** @var Controller $nextController */
                 $nextController = $controller->$potentialController();
-                $data = $this->processRequest($request, $nextController, $requestChain);
-                $this->setStatus($controller->getStatus());
-                return $data;
+                return $this->processRequest($request, $nextController, $requestChain);
             }
 
             $potentialEndpoint = $this->parseEndpointName($nextLink, $request->getMethod());
             if (method_exists($controller, $potentialEndpoint)) {
-                return call_user_func_array(
+                $data = call_user_func_array(
                     [$controller, $potentialEndpoint],
                     $this->getParametersFromRequest($request, $controller, $potentialEndpoint)
                 );
+                $this->setStatus($controller->getStatus());
+                return $data;
             }
 
             $message = "Could not find controller or endpoint matching '$nextLink'";
@@ -75,7 +76,7 @@ class Router
      * @param Controller $controller
      * @return \stdClass
      */
-    public function documentController(Controller $controller)
+    protected function documentController(Controller $controller)
     {
         $data = new \stdClass();
         $data->controllers = $this->getControllers($controller);
@@ -98,8 +99,9 @@ class Router
      * @param Controller $controller
      * @return array
      */
-    public function getEndpoints(Controller $controller)
+    protected function getEndpoints(Controller $controller)
     {
+        $documenter = new Documenter();
         $endpoints = [];
         $parts = [];
         $methods = get_class_methods($controller);
@@ -111,7 +113,9 @@ class Router
                     if (!array_key_exists($method, $endpoints)) {
                         $endpoints[$method] = array();
                     }
-                    $endpoints[$method][$endpoint] = $this->getMethodDocumentation($controller, $classMethod);
+                    $endpoints[$method][$endpoint] = $documenter->getMethodDocumentation(
+                        new \ReflectionMethod($controller, $classMethod)
+                    );
                 }
             }
         }
@@ -123,7 +127,7 @@ class Router
      * @param Controller $controller
      * @return array
      */
-    public function getControllers(Controller $controller)
+    protected function getControllers(Controller $controller)
     {
         $methods = get_class_methods($controller);
         $controllers = [];
@@ -175,10 +179,20 @@ class Router
         $reflectionMethod = new \ReflectionMethod($controller, $method);
         $reflectionParameters = $reflectionMethod->getParameters();
         foreach ($reflectionParameters as $reflectionParameter) {
-            $parameters[$reflectionParameter->getName()] = $request->getParameter(
+            $value = $request->getParameter(
                 $reflectionParameter->getName(),
                 $reflectionParameter->isDefaultValueAvailable() ? $reflectionParameter->getDefaultValue() : null
             );
+            if(
+                $reflectionParameter->getClass() &&
+                $reflectionParameter->getClass()->implementsInterface('\AyeAye\Formatter\Deserializable')
+            ) {
+                /** @var Deserializable $deserializable */
+                $value = $reflectionParameter->getClass()
+                                             ->newInstanceWithoutConstructor()
+                                             ->ayeAyeDeserialize((array)$value);
+            }
+            $parameters[$reflectionParameter->getName()] = $value;
         }
         return $parameters;
     }
@@ -200,48 +214,9 @@ class Router
      * @param Status $status
      * @return $this
      */
-    public function setStatus(Status $status)
+    protected function setStatus(Status $status)
     {
         $this->status = $status;
         return $this;
-    }
-
-    /**
-     * Looks at the PHPDoc for the given method and returns an array of information it
-     * @param Controller $controller
-     * @param $method
-     * @return array
-     */
-    public function getMethodDocumentation(Controller $controller, $method)
-    {
-        $reflectionMethod = new \ReflectionMethod($controller, $method);
-        $doc = $reflectionMethod->getDocComment();
-
-        // Description
-        $description = '';
-        preg_match_all('/\*\s+(\w[^@^\n^\r]+)/', $doc, $results);
-        if (array_key_exists(1, $results)) {
-            $description = implode(' ', $results[1]);
-        }
-
-        // Parameters
-        $parameters = array();
-        $nMatches = preg_match_all('/@param(\h+(\S+))?\h+\$?(\S+)(\h+([\S ]+))?/', $doc, $results);
-        for ($i = 0; $i < $nMatches; $i++) {
-            $parameterName = $this->camelcaseToHyphenated($results[3][$i]);
-            $parameter = new \stdClass();
-            if($results[2][$i]) {
-                $parameter->type = $results[2][$i];
-            }
-            if ($results[5][$i]) {
-                $parameter->description = $results[5][$i];
-            }
-            $parameters[$parameterName] = $parameter;
-        }
-
-        return [
-            'description' => $description,
-            'parameters' => $parameters,
-        ];
     }
 }

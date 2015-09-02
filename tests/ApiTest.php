@@ -1,8 +1,9 @@
 <?php
 /**
- * Tests the controller class
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Created by PhpStorm.
+ * User: daniel
+ * Date: 27/07/15
+ * Time: 08:23
  */
 
 namespace AyeAye\Api\Tests;
@@ -11,276 +12,592 @@ use AyeAye\Api\Api;
 use AyeAye\Api\Controller;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
-use AyeAye\Api\Tests\TestData\TestController;
-use AyeAye\Api\Tests\TestData\TestRouter;
+use AyeAye\Api\Router;
+use AyeAye\Api\Tests\TestData\ExceptionController;
 use AyeAye\Formatter\FormatFactory;
-use AyeAye\Formatter\Formats\Php;
-use AyeAye\Formatter\Formats\Xml;
+use Psr\Log\LogLevel;
+use Psr\Log\NullLogger;
 
 /**
- * Test for the Api Class
+ * Class ApiTest
  * @package AyeAye\Api\Tests
+ * @coversDefaultClass \AyeAye\Api\Api
  */
 class ApiTest extends TestCase
 {
 
-    public function testSetRouter()
+    /**
+     * @test
+     * @covers ::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::setLogger
+     * @uses \AyeAye\Api\Api::setRouter
+     */
+    public function testConstruct()
     {
-        $controller = new TestController();
+        $controller = new Controller();
+        $router = new Router();
+        $logger = new NullLogger();
+
         $api = new Api($controller);
-        $router = $api->getRouter();
-        $this->assertInstanceOf(
-            '\AyeAye\Api\Router',
-            $router
+        $this->assertSame(
+            $controller,
+            $this->getObjectAttribute($api, 'controller')
         );
-        $this->assertNotInstanceOf(
-            '\AyeAye\Api\Tests\TestData\TestRouter',
-            $router
+        $this->assertNull(
+            $this->getObjectAttribute($api, 'router')
         );
-
-        $testRouter = new TestRouter();
-        $api->setRouter($testRouter);
-        $router = $api->getRouter();
-        $this->assertInstanceOf(
-            '\AyeAye\Api\Router',
-            $router
-        );
-        $this->assertInstanceOf(
-            '\AyeAye\Api\Tests\TestData\TestRouter',
-            $router
+        $this->assertNull(
+            $this->getObjectAttribute($api, 'logger')
         );
 
-        $controller = new TestController();
-        $router = new TestRouter();
         $api = new Api($controller, $router);
-        $router = $api->getRouter();
-        $this->assertInstanceOf(
-            '\AyeAye\Api\Router',
-            $router
+        $this->assertSame(
+            $controller,
+            $this->getObjectAttribute($api, 'controller')
         );
-        $this->assertInstanceOf(
-            '\AyeAye\Api\Tests\TestData\TestRouter',
-            $router
+        $this->assertSame(
+            $router,
+            $this->getObjectAttribute($api, 'router')
+        );
+        $this->assertNull(
+            $this->getObjectAttribute($api, 'logger')
+        );
+
+        $api = new Api($controller, $router, $logger);
+        $this->assertSame(
+            $controller,
+            $this->getObjectAttribute($api, 'controller')
+        );
+        $this->assertSame(
+            $router,
+            $this->getObjectAttribute($api, 'router')
+        );
+        $this->assertSame(
+            $logger,
+            $this->getObjectAttribute($api, 'logger')
         );
     }
 
     /**
-     * Test the output of the Api using TestController
-     * @see Api
-     * @see TestController
-     * @runInSeparateProcess
+     * @test
+     * @covers ::setLogger
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
      */
-    public function testQuickStart()
+    public function testSetLogger()
     {
-        $initialController = new TestController();
-        $api = new Api($initialController);
+        $controller = new Controller();
+        $logger = new NullLogger();
+        $api = new Api($controller);
 
-        ob_start();
-
-        $api->go()->respond();
-
-        $output = json_decode(ob_get_clean());
-
-
-        // Controllers
-
-        $this->assertContains(
-            'me',
-            $output->data->controllers
+        $this->assertNull(
+            $this->getObjectAttribute($api, 'logger')
         );
-
-        $this->assertContains(
-            'child',
-            $output->data->controllers
-        );
-
-        $this->assertNotContains(
-            'hidden-child',
-            $output->data->controllers
-        );
-
-        $this->assertCount(
-            2,
-            $output->data->controllers
-        );
-
-        // Endpoints
-
-        $this->assertObjectHasAttribute(
-            'information',
-            $output->data->endpoints->get
-        );
-
         $this->assertSame(
-            'Gets some information',
-            $output->data->endpoints->get->information->description
+            $api,
+            $api->setLogger($logger)
         );
-
-        $this->assertEmpty(
-            $output->data->endpoints->get->information->parameters
-        );
-
-        $this->assertObjectHasAttribute(
-            'more-information',
-            $output->data->endpoints->get
-        );
-
         $this->assertSame(
-            'Get some conditional information',
-            $output->data->endpoints->get->{'more-information'}->description
+            $logger,
+            $this->getObjectAttribute($api, 'logger')
         );
-
-        $this->assertSame(
-            'string',
-            $output->data->endpoints->get->{'more-information'}->parameters->condition->type
-        );
-
-        $this->assertSame(
-            'The condition for the information',
-            $output->data->endpoints->get->{'more-information'}->parameters->condition->description
-        );
-
-        $this->assertTrue(
-            count($output->data->endpoints->put) === 1
-        );
-
-        $this->assertObjectHasAttribute(
-            'information',
-            $output->data->endpoints->put
-        );
-
     }
 
     /**
-     * Test the errors are reported to the client correctly
-     * @see Api
-     * @see TestController
-     * @runInSeparateProcess
+     * @test
+     * @covers ::log
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::setLogger
      */
-    public function testInvalidEndpoint()
+    public function testLog()
     {
-        $initialController = new TestController();
+        $controller = new Controller();
+        $level = LogLevel::DEBUG;
+        $message = 'Test Message';
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|NullLogger $logger */
+        $logger = $this->getMock('\Psr\Log\NullLogger');
+        $logger->expects($this->once())
+            ->method('log')
+            ->with($level, $message, []);
+
+        $api = new Api($controller);
+        $log = $this->getObjectMethod($api, 'log');
+
+        $this->assertSame(
+            $api,
+            $log($level, $message)
+        );
+        $api->setLogger($logger);
+
+        $this->assertSame(
+            $api,
+            $log($level, $message)
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::go
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::getInitialController
+     * @uses \AyeAye\Api\Api::getRouter
+     * @uses \AyeAye\Api\Api::getRequest
+     * @uses \AyeAye\Api\Api::getResponse
+     * @uses \AyeAye\Api\Api::getFormatFactory
+     * @uses \AyeAye\Api\Controller
+     * @uses \AyeAye\Api\Request
+     * @uses \AyeAye\Api\Response
+     * @uses \AyeAye\Api\Router
+     * @uses \AyeAye\Api\Status
+     */
+    public function testGo()
+    {
+        $controller = new Controller();
+        $api = new Api($controller);
+        $response = $api->go();
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Response',
+            $response
+        );
+        $this->assertSame(
+            200,
+            $response->getStatus()->getCode()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::go
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::getInitialController
+     * @uses \AyeAye\Api\Api::getRouter
+     * @uses \AyeAye\Api\Api::getRequest
+     * @uses \AyeAye\Api\Api::setRequest
+     * @uses \AyeAye\Api\Api::getResponse
+     * @uses \AyeAye\Api\Api::getFormatFactory
+     * @uses \AyeAye\Api\Api::log
+     * @uses \AyeAye\Api\Controller
+     * @uses \AyeAye\Api\Request
+     * @uses \AyeAye\Api\Response
+     * @uses \AyeAye\Api\Router
+     * @uses \AyeAye\Api\Status
+     */
+    public function testGoException()
+    {
+        $controller = new ExceptionController();
+        $api = new Api($controller);
         $request = new Request(
             Request::METHOD_GET,
-            '/not-a-real-endpoint'
+            'exception'
         );
-        $api = new Api($initialController);
         $api->setRequest($request);
-
-        ob_start();
-
         $response = $api->go();
-        $response->respond();
-
-        $output = json_decode(ob_get_clean());
-
-        $this->assertSame(
-            $output->data,
-            "Could not find controller or endpoint matching 'not-a-real-endpoint'"
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Response',
+            $response
         );
-
         $this->assertSame(
-            $response->getStatus()->getHttpHeader(),
-            'HTTP/1.1 404 Not Found'
+            500,
+            $response->getStatus()->getCode()
         );
-
     }
 
     /**
-     * Tests setting and retrieving a Request object
-     * @see Api
-     * @see Controller
-     * @see Request
+     * @test
+     * @covers ::go
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::getInitialController
+     * @uses \AyeAye\Api\Api::getRouter
+     * @uses \AyeAye\Api\Api::getRequest
+     * @uses \AyeAye\Api\Api::setRequest
+     * @uses \AyeAye\Api\Api::getResponse
+     * @uses \AyeAye\Api\Api::getFormatFactory
+     * @uses \AyeAye\Api\Api::log
+     * @uses \AyeAye\Api\Controller
+     * @uses \AyeAye\Api\Exception
+     * @uses \AyeAye\Api\Request
+     * @uses \AyeAye\Api\Response
+     * @uses \AyeAye\Api\Router
+     * @uses \AyeAye\Api\Status
+     */
+    public function testGoAyeAyeException()
+    {
+        $controller = new ExceptionController();
+        $api = new Api($controller);
+        $request = new Request(
+            Request::METHOD_GET,
+            'aye-aye-exception'
+        );
+        $api->setRequest($request);
+        $response = $api->go();
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Response',
+            $response
+        );
+        $this->assertSame(
+            418,
+            $response->getStatus()->getCode()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::go
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::getInitialController
+     * @uses \AyeAye\Api\Api::getRouter
+     * @uses \AyeAye\Api\Api::getRequest
+     * @uses \AyeAye\Api\Api::getResponse
+     * @uses \AyeAye\Api\Api::setResponse
+     * @uses \AyeAye\Api\Api::getFormatFactory
+     * @uses \AyeAye\Api\Api::createFailSafeResponse
+     * @uses \AyeAye\Api\Api::log
+     * @uses \AyeAye\Api\Controller
+     * @uses \AyeAye\Api\Request
+     * @uses \AyeAye\Api\Response
+     * @uses \AyeAye\Api\Router
+     * @uses \AyeAye\Api\Status
+     */
+    public function testGoResponseException()
+    {
+        $responseBase = $this->getMock('\AyeAye\Api\Response');
+        $responseBase->expects($this->once())
+            ->method('prepareResponse')
+            ->with()
+            ->will($this->throwException(new \Exception()));
+        $controller = new Controller();
+        $api = new Api($controller);
+        $api->setResponse($responseBase);
+        $response = $api->go();
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Response',
+            $response
+        );
+        $this->assertSame(
+            500,
+            $response->getStatus()->getCode()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::setRouter
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     */
+    public function testSetRouter()
+    {
+        $controller = new Controller();
+        $router = new Router();
+        $api = new Api($controller);
+
+        $this->assertNull(
+            $this->getObjectAttribute($api, 'router')
+        );
+        $this->assertSame(
+            $api,
+            $api->setRouter($router)
+        );
+        $this->assertSame(
+            $router,
+            $this->getObjectAttribute($api, 'router')
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getRouter
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::setRouter
+     */
+    public function testGetRouter()
+    {
+        $controller = new Controller();
+        $router = new Router();
+        $api = new Api($controller);
+
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Router',
+            $api->getRouter()
+        );
+        $this->assertNotSame(
+            $router,
+            $api->getRouter()
+        );
+        $this->assertSame(
+            $api,
+            $api->setRouter($router)
+        );
+        $this->assertSame(
+            $router,
+            $api->getRouter()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::setInitialController
+     * @uses \AyeAye\Api\Api::__construct
+     */
+    public function testSetInitialController()
+    {
+        $controllerOne = new Controller();
+        $controllerTwo = new Controller();
+        $api = new Api($controllerOne);
+
+        $this->assertSame(
+            $controllerOne,
+            $this->getObjectAttribute($api, 'controller')
+        );
+        $this->assertSame(
+            $api,
+            $api->setInitialController($controllerTwo)
+        );
+        $this->assertSame(
+            $controllerTwo,
+            $this->getObjectAttribute($api, 'controller')
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getInitialController
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     */
+    public function testGetInitialController()
+    {
+        $controllerOne = new Controller();
+        $controllerTwo = new Controller();
+        $api = new Api($controllerOne);
+
+        $this->assertSame(
+            $controllerOne,
+            $api->getInitialController()
+        );
+        $this->assertSame(
+            $api,
+            $api->setInitialController($controllerTwo)
+        );
+        $this->assertSame(
+            $controllerTwo,
+            $api->getInitialController()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::setRequest
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Request
      */
     public function testSetRequest()
     {
-        $initialController = new Controller(); // Unimportant
-        $api = new Api($initialController);
-
-        $request = new Request(
-            null,
-            null,
-            ['key' => 'value']
-        );
-
-        $testRequest = $api->getRequest();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
+        $request = $this->getMock('\AyeAye\Api\Request');
+        $controller = new Controller();
+        $api = new Api($controller);
 
         $this->assertNull(
-            $testRequest->getParameter('key')
+            $this->getObjectAttribute($api, 'request')
         );
-
-        $api->setRequest($request);
-
-        $testRequest = $api->getRequest();
-
         $this->assertSame(
-            $testRequest->getParameter('key'),
-            'value'
+            $api,
+            $api->setRequest($request)
         );
-
+        $this->assertSame(
+            $request,
+            $this->getObjectAttribute($api, 'request')
+        );
     }
 
     /**
-     * Tests setting and retrieving a Response object
-     * @see Api
-     * @see Controller
-     * @see Response
+     * @test
+     * @covers ::getRequest
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::setRequest
+     * @uses \AyeAye\Api\Request
+     */
+    public function testGetRequest()
+    {
+        $controller = new Controller();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
+        $request = $this->getMock('\AyeAye\Api\Request');
+        $api = new Api($controller);
+
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Request',
+            $api->getRequest()
+        );
+        $this->assertNotSame(
+            $request,
+            $api->getRequest()
+        );
+        $this->assertSame(
+            $api,
+            $api->setRequest($request)
+        );
+        $this->assertSame(
+            $request,
+            $api->getRequest()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::setResponse
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Response
      */
     public function testSetResponse()
     {
-        $initialController = new Controller(); // Unimportant
-        $api = new Api($initialController);
-
-        $response = new Response();
-        $response->setData('test-data');
-
-        $testResponse = $api->getResponse();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Response $response */
+        $response = $this->getMock('\AyeAye\Api\Response');
+        $controller = new Controller();
+        $api = new Api($controller);
 
         $this->assertNull(
-            $testResponse->getData()
+            $this->getObjectAttribute($api, 'response')
         );
-
-        $api->setResponse($response);
-
-        $testResponse = $api->getResponse();
-
         $this->assertSame(
-            $testResponse->getData(),
-            'test-data'
+            $api,
+            $api->setResponse($response)
         );
-
+        $this->assertSame(
+            $response,
+            $this->getObjectAttribute($api, 'response')
+        );
     }
 
     /**
-     * Tests setting and retrieving a Format Factory object
-     * @see Api
-     * @see Controller
-     * @see FormatFactory
+     * @test
+     * @covers ::getResponse
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::setResponse
+     * @uses \AyeAye\Api\Response
      */
-    public function testFormatFactory()
+    public function testGetResponse()
     {
-        $initialController = new Controller(); // Unimportant
-        $api = new Api($initialController);
-
-        $formatFactory = new FormatFactory([
-            'php' => new Php()
-        ]);
-
-        $testFormatFactory = $api->getFormatFactory();
+        $controller = new Controller();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Response $response */
+        $response = $this->getMock('\AyeAye\Api\Response');
+        $api = new Api($controller);
 
         $this->assertInstanceOf(
-            'AyeAye\Formatter\Formats\Xml',
-            $testFormatFactory->getFormatterFor('xml')
+            '\AyeAye\Api\Response',
+            $api->getResponse()
         );
+        $this->assertNotSame(
+            $response,
+            $api->getResponse()
+        );
+        $this->assertSame(
+            $api,
+            $api->setResponse($response)
+        );
+        $this->assertSame(
+            $response,
+            $api->getResponse()
+        );
+    }
 
-        $api->setFormatFactory($formatFactory);
+    /**
+     * @test
+     * @covers ::setFormatFactory
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     */
+    public function testSetFormatFactory()
+    {
+        $formatFactory = new FormatFactory([]);
+        $controller = new Controller();
+        $api = new Api($controller);
 
-        $testFormatFactory = $api->getFormatFactory();
+        $this->assertNull(
+            $this->getObjectAttribute($api, 'formatFactory')
+        );
+        $this->assertSame(
+            $api,
+            $api->setFormatFactory($formatFactory)
+        );
+        $this->assertSame(
+            $formatFactory,
+            $this->getObjectAttribute($api, 'formatFactory')
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getFormatFactory
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Api::setFormatFactory
+     */
+    public function testGetFormatFactory()
+    {
+        $formatFactory = new FormatFactory([]);
+        $controller = new Controller();
+        $api = new Api($controller);
 
         $this->assertInstanceOf(
-            'AyeAye\Formatter\Formats\Php',
-            $testFormatFactory->getFormatterFor('php')
+            'AyeAye\Formatter\FormatFactory',
+            $api->getFormatFactory()
         );
+        $this->assertNotSame(
+            $formatFactory,
+            $api->getFormatFactory()
+        );
+        $this->assertSame(
+            $api,
+            $api->setFormatFactory($formatFactory)
+        );
+        $this->assertSame(
+            $formatFactory,
+            $this->getObjectAttribute($api, 'formatFactory')
+        );
+    }
 
+    /**
+     * @test
+     * @covers ::createFailSafeResponse
+     * @uses \AyeAye\Api\Api::__construct
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Response
+     * @uses \AyeAye\Api\Request
+     * @uses \AyeAye\Api\Status
+     */
+    public function testCreateFailSafeResponse()
+    {
+        $controller = new Controller();
+        $api = new Api($controller);
+
+        $createFailSafeResponse = $this->getObjectMethod($api, 'createFailSafeResponse');
+
+        /** @var Response $response */
+        $response = $createFailSafeResponse();
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Response',
+            $response
+        );
+        $this->assertSame(
+            500,
+            $response->getStatus()->getCode()
+        );
+        $this->assertInstanceOf(
+            '\AyeAye\Formatter\Formats\Json',
+            $this->getObjectAttribute($response, 'formatter')
+        );
     }
 }

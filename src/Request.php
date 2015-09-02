@@ -48,7 +48,7 @@ class Request implements \JsonSerializable
      * The method of request
      * @var string
      */
-    protected $requestMethod = self::METHOD_GET;
+    protected $requestMethod = null;
 
     /**
      * @var string
@@ -78,13 +78,13 @@ class Request implements \JsonSerializable
         $requestedMethod = null,
         $requestedUri = null
     ) {
-        $parameters =  array_slice(func_get_args(), 2);
+        $parameters = array_slice(func_get_args(), 2);
         foreach ($parameters as $parameterGroup) {
             $this->setParameters($parameterGroup);
         }
 
-        $this->requestMethod = $this->getRequestMethod($requestedMethod);
-        $this->requestedUri = $this->getRequestedUri($requestedUri);
+        $this->requestMethod = $requestedMethod ?: $this->getRequestMethod();
+        $this->requestedUri  = $requestedUri    ?: $this->getRequestedUri();
         if (!$this->parameters) {
             $this->parameters = $this->useActualParameters();
         }
@@ -93,39 +93,35 @@ class Request implements \JsonSerializable
     /**
      * Get the HTTP verb for this request
      * Checks it's one the API allows for. Can be overridden with override.
-     * @param string|null $override
      * @return string
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getRequestMethod($override = null)
+    protected function getRequestMethod()
     {
-        $requestMethod = $this->requestMethod;
-        if ($override && in_array($override, $this->allowedMethods)) {
-            $requestMethod = $override;
-        } elseif (array_key_exists('REQUEST_METHOD', $_SERVER)
-            && in_array($_SERVER['REQUEST_METHOD'], $this->allowedMethods)
-        ) {
-            $requestMethod = $_SERVER['REQUEST_METHOD'];
+        if ($this->requestMethod) {
+            return $this->requestMethod;
         }
-        return $requestMethod;
+        if (array_key_exists('REQUEST_METHOD', $_SERVER)) {
+            return $_SERVER['REQUEST_METHOD'];
+        }
+        return static::METHOD_GET;
     }
 
     /**
      * Get the requested uri.
      * Can be overridden with override.
-     * @param string|null $override
      * @return string
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getRequestedUri($override = null)
+    protected function getRequestedUri()
     {
-        $requestedUri = '';
-        if ($override) {
-            $requestedUri = $override;
-        } elseif (array_key_exists('REQUEST_URI', $_SERVER)) {
-            $requestedUri = $_SERVER['REQUEST_URI'];
+        if ($this->requestedUri) {
+            return $this->requestedUri;
         }
-        return $requestedUri;
+        if (array_key_exists('REQUEST_URI', $_SERVER)) {
+            return $_SERVER['REQUEST_URI'];
+        }
+        return '';
     }
 
     /**
@@ -136,11 +132,11 @@ class Request implements \JsonSerializable
      */
     protected function useActualParameters()
     {
-        $this->setParameters($this->urlToParameters());
+        $this->setParameters($this->urlToParameters($this->getRequestedUri()));
         $this->setParameters($_REQUEST);
         $this->setParameters($this->parseHeader($_SERVER));
         $this->setParameters($this->stringToObject($this->readBody()));
-        return $this->parameters;
+        return $this->getParameters();
     }
 
     /**
@@ -148,7 +144,7 @@ class Request implements \JsonSerializable
      * @param string[] $headers
      * @return string
      */
-    public function parseHeader(array $headers = [])
+    protected function parseHeader(array $headers = [])
     {
         $processedHeaders = array();
         foreach ($headers as $key => $value) {
@@ -170,10 +166,7 @@ class Request implements \JsonSerializable
      */
     protected function readBody()
     {
-        if (function_exists('http_get_request_body')) {
-            return http_get_request_body();
-        }
-        return @file_get_contents('php://input');
+        return file_get_contents('php://input');
     }
 
     /**
@@ -182,15 +175,10 @@ class Request implements \JsonSerializable
      * @return array
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function urlToParameters($url = null)
+    protected function urlToParameters($url)
     {
         $urlParameters = [];
-        if (is_null($url)) {
-            $url = array_key_exists('REQUEST_URI', $_SERVER)
-                ? $_SERVER['REQUEST_URI']
-                : '';
-        }
-        $url = is_null($url) ? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) : $url;
+        $url = parse_url($url, PHP_URL_PATH);
         $urlParts = explode('/', $url);
         reset($urlParts); // Note, the first entry will always be blank
         $key = next($urlParts);
@@ -203,28 +191,33 @@ class Request implements \JsonSerializable
 
     /**
      * Tries to turn a string of data into an object. Accepts json, xml or a php serialised object
-     * Failing all else it will return a standard class with the string attached to data
+     * Failing all else, if there was a string it will return a standard class with it attached to a 'text' attribute
      * eg. $this->stringObject('fail')->body == 'fail'
      * @param string $string a string of data
-     * @throws \Exception
      * @return \stdClass
      */
-    public function stringToObject($string)
+    protected function stringToObject($string)
     {
         if (!$string) {
             return new \stdClass();
         }
+
         // Json
-        if ($jsonObject = json_decode($string)) {
+        $jsonObject = json_decode($string);
+        if ($jsonObject) {
             return $jsonObject;
         }
+
         // Xml
-        if ($xmlObject = @simplexml_load_string($string)) {
-            return $xmlObject;
-        }
-        // Php
-        if ($phpObject = @unserialize($string)) {
-            return $phpObject;
+        try {
+            libxml_use_internal_errors();
+            $xmlObject = simplexml_load_string($string);
+            libxml_use_internal_errors(true);
+            if ($xmlObject) {
+                return $xmlObject;
+            }
+        } catch (\Exception $e) {
+            // Do nothing
         }
 
         $object = new \stdClass();
@@ -325,7 +318,7 @@ class Request implements \JsonSerializable
      * @param $requestedUri
      * @return string|null
      */
-    public function getFormatFromUri($requestedUri)
+    protected function getFormatFromUri($requestedUri)
     {
         $uriParts = explode('?', $requestedUri, 2);
         $uriWithoutGet = reset($uriParts);
@@ -353,7 +346,7 @@ class Request implements \JsonSerializable
             unset($requestChain[0]);
         }
 
-        return $requestChain;
+        return array_values($requestChain);
     }
 
     /**
@@ -362,11 +355,11 @@ class Request implements \JsonSerializable
      * @throws \Exception
      * @returns $this
      */
-    public function setParameters($newParameters)
+    protected function setParameters($newParameters)
     {
         if (is_scalar($newParameters)) {
             if (!is_string($newParameters)) {
-                throw new \Exception('Add parameters parameter newParameters can not be scalar');
+                throw new \Exception('newParameters can not be scalar');
             }
             $newParameters = $this->stringToObject($newParameters);
         }
@@ -383,12 +376,12 @@ class Request implements \JsonSerializable
      * @return bool Returns true of value was set
      * @throws \Exception
      */
-    public function setParameter($name, $value)
+    protected function setParameter($name, $value)
     {
         if (!is_scalar($name)) {
-            throw new \Exception('Add parameter: parameter name must be scalar');
+            throw new \Exception('Parameter name must be scalar');
         }
         $this->parameters[$name] = $value;
-        return true;
+        return $this;
     }
 }

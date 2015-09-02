@@ -1,428 +1,559 @@
 <?php
 /**
- * [Description]
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Created by PhpStorm.
+ * User: daniel
+ * Date: 27/07/15
+ * Time: 08:23
  */
 
 namespace AyeAye\Api\Tests;
 
 use AyeAye\Api\Request;
 
+/**
+ * Class ControllerTest
+ * @package AyeAye\Api\Tests
+ * @coversDefaultClass \AyeAye\Api\Request
+ */
 class RequestTest extends TestCase
 {
 
-    public function testDefaultRequest()
+    /**
+     * @test
+     * @covers ::__construct
+     * @uses \AyeAye\Api\Request
+     */
+    public function testConstruct()
     {
         $request = new Request();
-
-        $format = $request->getFormats();
-        $this->assertSame(
-            'json',
-            $format['default']
-        );
-
-        $this->assertNull(
-            $format['suffix']
-        );
-
-        $this->assertNull(
-            $format['header']
-        );
-
-        $method = $request->getMethod();
-        $this->assertSame(
-            'GET',
-            $method
-        );
-
-        $this->assertCount(
-            0,
+        $this->assertEmpty(
             $request->getParameters()
         );
 
-        $this->assertCount(
-            0,
+        $parameters = ['test' => 'testString'];
+        $request = new Request(null, null, ['test' => 'testString']);
+        $this->assertSame(
+            $parameters,
+            $request->getParameters()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getRequestMethod
+     * @uses \AyeAye\Api\Request
+     * @backupGlobals
+     */
+    public function testGetRequestMethod()
+    {
+        $tempServer = $_SERVER;
+
+        $request = new Request();
+        $getRequestMethod = $this->getObjectMethod($request, 'getRequestMethod');
+        $this->assertSame(
+            Request::METHOD_GET,
+            $getRequestMethod()
+        );
+
+        $request = new Request(Request::METHOD_HEAD);
+        $getRequestMethod = $this->getObjectMethod($request, 'getRequestMethod');
+        $this->assertSame(
+            Request::METHOD_HEAD,
+            $getRequestMethod()
+        );
+
+        $_SERVER['REQUEST_METHOD'] = Request::METHOD_POST;
+        $request = new Request();
+        $getRequestMethod = $this->getObjectMethod($request, 'getRequestMethod');
+        $this->assertSame(
+            Request::METHOD_POST,
+            $getRequestMethod()
+        );
+
+        $_SERVER = $tempServer;
+    }
+
+    /**
+     * @test
+     * @covers ::getRequestedUri
+     * @uses \AyeAye\Api\Request
+     */
+    public function testGetRequestedUri()
+    {
+        $tempServer = $_SERVER;
+
+
+        $request = new Request();
+        $getRequestedUri = $this->getObjectMethod($request, 'getRequestedUri');
+
+        $this->assertSame(
+            '',
+            $getRequestedUri()
+        );
+
+        $request = new Request();
+        $getRequestedUri = $this->getObjectMethod($request, 'getRequestedUri');
+        $_SERVER['REQUEST_URI'] = '/test';
+        $this->assertSame(
+            '/test',
+            $getRequestedUri()
+        );
+
+        $url = '/anotherTest#anchor?url=parameter';
+        $request = new Request(Request::METHOD_GET, $url);
+        $getRequestedUri = $this->getObjectMethod($request, 'getRequestedUri');
+        $this->assertSame(
+            $url,
+            $getRequestedUri($url)
+        );
+
+        $_SERVER = $tempServer;
+    }
+
+    /**
+     * @test
+     * @covers ::useActualParameters
+     * @uses \AyeAye\Api\Request
+     */
+    public function testUseActualParameters()
+    {
+        $tempServer = $_SERVER;
+        $tempRequest = $_REQUEST;
+
+        $request = new Request();
+
+        $useActualParameters = $this->getObjectMethod($request, 'useActualParameters');
+        $parameters = $useActualParameters();
+
+        $this->assertSame(
+            [],
+            $parameters
+        );
+
+        $url = '/url/value';
+        $_SERVER['HTTP_ACCEPT'] = 'value';
+        $_REQUEST['request'] = 'value';
+
+        $request = new Request('GET', $url);
+
+        $useActualParameters = $this->getObjectMethod($request, 'useActualParameters');
+        $parameters = $useActualParameters();
+
+        $this->assertSame(
+            [
+                'url' => 'value',
+                'request' => 'value',
+                'Accept' => 'value',
+            ],
+            $parameters
+        );
+
+        $_SERVER = $tempServer;
+        $_REQUEST = $tempRequest;
+    }
+
+    /**
+     * @test
+     * @covers ::parseHeader
+     * @uses \AyeAye\Api\Request
+     */
+    public function testParseHeader()
+    {
+        $request = new Request();
+        $parseHeader = $this->getObjectMethod($request, 'parseHeader');
+
+        $this->assertSame(
+            [],
+            $parseHeader()
+        );
+
+        $headers = [
+            'CONTENT_TYPE' => 'content type',
+            'CONTENT_LENGTH' => 'content length',
+            'HTTP_MULTI_WORD' => 'other value',
+        ];
+
+        $this->assertSame(
+            [
+                'Content-Type' => 'content type',
+                'Content-Length' => 'content length',
+                'Multi-Word' => 'other value',
+            ],
+            $parseHeader($headers)
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::readBody
+     * @uses \AyeAye\Api\Request
+     */
+    public function testReadBody()
+    {
+        $request = new Request();
+        $readBody = $this->getObjectMethod($request, 'readBody');
+        $this->assertSame(
+            '',
+            $readBody()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::urlToParameters
+     * @uses \AyeAye\Api\Request
+     */
+    public function testUrlToParameters()
+    {
+        $request = new Request();
+        $urlToParameters = $this->getObjectMethod($request, 'urlToParameters');
+
+        $url = '/someTest/album/42#anchor?something=true';
+        $expected = [
+            'someTest' => 'album',
+            'album' => '42',
+        ];
+        $this->assertSame(
+            $expected,
+            $urlToParameters($url)
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::stringToObject
+     * @uses \AyeAye\Api\Request
+     */
+    public function testStringToClass()
+    {
+        $request = new Request();
+        $stringToObject = $this->getObjectMethod($request, 'stringToObject');
+
+
+        $this->assertObjectNotHasAttribute(
+            'text',
+            $stringToObject('')
+        );
+
+        $this->assertObjectHasAttribute(
+            'text',
+            $stringToObject('test')
+        );
+        $this->assertSame(
+            'test',
+            $stringToObject('test')->text
+        );
+
+        $json = '{"key":"value"}';
+
+        $this->assertObjectNotHasAttribute(
+            'text',
+            $stringToObject($json)
+        );
+        $this->assertObjectHasAttribute(
+            'key',
+            $stringToObject($json)
+        );
+        $this->assertSame(
+            'value',
+            $stringToObject($json)->key
+        );
+
+        $xml = '<container><key>anotherValue</key></container>';
+
+        $this->assertObjectNotHasAttribute(
+            'text',
+            $stringToObject($xml)
+        );
+        $this->assertObjectHasAttribute(
+            'key',
+            $stringToObject($xml)
+        );
+
+        // ToDo: How does this even???
+//        /** @var \SimpleXMLElement $object */
+//        $object = $stringToObject($xml);
+//        print_r($object->children()->text()); die;
+//        $this->assertSame(
+//            'anotherValue',
+//            $stringToObject($xml)->key[0]
+//        );
+    }
+
+    /**
+     * @test
+     * @covers ::getMethod
+     * @uses \AyeAye\Api\Request
+     */
+    public function testGetMethod()
+    {
+        $request = new Request();
+        $this->assertSame(
+            'GET',
+            $request->getMethod()
+        );
+
+        $request = new Request(Request::METHOD_POST);
+        $this->assertSame(
+            'POST',
+            $request->getMethod()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getParameter
+     * @uses \AyeAye\Api\Request
+     */
+    public function testGetParameter()
+    {
+        $request = new Request(null, null, [
+            'key' => 'value1',
+            'Key' => 'value2'
+        ]);
+
+        $this->assertSame(
+            'value1',
+            $request->getParameter('key', 'default')
+        );
+
+        $this->assertSame(
+            'value2',
+            $request->getParameter('Key', 'default')
+        );
+
+        $this->assertSame(
+            'value1',
+            $request->getParameter('KEY', 'default')
+        );
+
+        $this->assertSame(
+            'default',
+            $request->getParameter('KEYZ', 'default')
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::flatten
+     * @uses \AyeAye\Api\Request
+     */
+    public function testFlatten()
+    {
+        $request = new Request();
+        $flatten = $this->getObjectMethod($request, 'flatten');
+
+        $this->assertSame(
+            'thequickbrownfox',
+            $flatten('The_Quick Brown-fox!')
+        );
+    }
+
+
+    /**
+     * @test
+     * @covers ::getParameters
+     * @uses \AyeAye\Api\Request
+     */
+    public function testGetParameters()
+    {
+        $request = new Request();
+        $this->assertSame(
+            [],
+            $request->getParameters()
+        );
+
+        $expected = ['key' => 'value', 'alpha' => 'beta'];
+        $request = new Request(null, null, $expected);
+        $this->assertSame(
+            $expected,
+            $request->getParameters()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getRequestChain
+     * @uses \AyeAye\Api\Request
+     */
+    public function testGetRequestChain()
+    {
+        $request = new Request();
+
+        $this->assertNull(
+            $this->getObjectAttribute($request, 'requestChain')
+        );
+        $this->assertSame(
+            [],
+            $request->getRequestChain()
+        );
+
+        $request = new Request(null, '/test/chain');
+
+        $this->assertSame(
+            ['test', 'chain'],
             $request->getRequestChain()
         );
     }
 
     /**
-     * Test the Request classes ability to read headers
+     * @test
+     * @covers ::getFormats
+     * @uses \AyeAye\Api\Request
      */
-    public function testParseHeader()
+    public function testGetFormats()
     {
-        /** @var Request $request */
-        $request = new Request();
-        $headersSize = count($request->parseHeader());
-        $this->assertEquals(
-            0,
-            $headersSize
-        );
-
-        $_SERVER['CONTENT_TYPE'] = 'application/json';
-        $_SERVER['CONTENT_LENGTH'] = '9001';
-        $_SERVER['HTTP_NOT_A_REAL_HEADER'] = 'Not a real header';
-        $_SERVER['NOT_A_HEADER'] = 'Not a header';
+        $tempSever = $_SERVER;
 
         $request = new Request();
-        $headers = $request->parseHeader($_SERVER);
-        $this->assertCount(
-            3,
-            $headers
-        );
 
         $this->assertSame(
-            $headers['Content-Type'],
-            $_SERVER['CONTENT_TYPE']
+            [
+                'header' => null,
+                'suffix' => null,
+                'default' => 'json',
+            ],
+            $request->getFormats()
         );
 
-        $this->assertSame(
-            $headers['Content-Length'],
-            $_SERVER['CONTENT_LENGTH']
-        );
-
-        $this->assertSame(
-            $headers['Not-A-Real-Header'],
-            $_SERVER['HTTP_NOT_A_REAL_HEADER']
-        );
-    }
-
-
-    public function testStringToObjectJson()
-    {
-        $json = '{"testArray" : [1, true], "testObject": {"string": "a string"}}';
-        $request = new Request();
-        $jsonObject = $request->stringToObject($json);
-
-        $this->assertCount(
-            2,
-            $jsonObject->testArray
-        );
-
-        $this->assertSame(
-            1,
-            $jsonObject->testArray[0]
-        );
-
-        $this->assertSame(
-            true,
-            $jsonObject->testArray[1]
-        );
-
-        $this->assertSame(
-            'a string',
-            $jsonObject->testObject->string
-        );
-    }
-
-    public function testStringToObjectXml()
-    {
-        $xml = '<data><testObject><string>a string</string></testObject></data>';
-        $request = new Request();
-        $xmlObject = $request->stringToObject($xml);
-
-        $this->assertTrue(
-            is_object($xmlObject)
-        );
-
-        $this->assertEquals(
-            'a string',
-            $xmlObject->testObject->string
-        );
-    }
-
-    public function testStringToObjectPhp()
-    {
-
-        $php = 'O:8:"stdClass":2:{s:9:"testArray";a:2:{i:0;i:1;i:1;b:1;}s:10:"testObject";O:8:"stdClass":1:'
-            .'{s:6:"string";s:8:"a string";}}';
-        $request = new Request();
-        $phpObject = $request->stringToObject($php);
-
-        $this->assertCount(
-            2,
-            $phpObject->testArray
-        );
-
-        $this->assertSame(
-            1,
-            $phpObject->testArray[0]
-        );
-
-        $this->assertSame(
-            true,
-            $phpObject->testArray[1]
-        );
-
-        $this->assertSame(
-            'a string',
-            $phpObject->testObject->string
-        );
-    }
-
-    public function testUrlToParameters()
-    {
-        $request = new Request();
-
-        $array = $request->urlToParameters('');
-        $this->assertCount(
-            0,
-            $array
-        );
-
-        $array = $request->urlToParameters('/');
-        $this->assertCount(
-            0,
-            $array
-        );
-
-        $array = $request->urlToParameters('/one');
-        $this->assertCount(
-            0,
-            $array
-        );
-
-        $array = $request->urlToParameters('/one/two');
-        $this->assertCount(
-            1,
-            $array
-        );
-
-        $array = $request->urlToParameters('/one/two/three');
-        $this->assertCount(
-            2,
-            $array
-        );
-
-        $array = $request->urlToParameters('/one/two/three/four');
-        $this->assertCount(
-            3,
-            $array
-        );
-        $this->assertArrayHasKey(
-            'one',
-            $array
-        );
-        $this->assertSame(
-            'two',
-            $array['one']
-        );
-        $this->assertArrayHasKey(
-            'two',
-            $array
-        );
-        $this->assertSame(
-            'three',
-            $array['two']
-        );
-        $this->assertArrayHasKey(
-            'three',
-            $array
-        );
-        $this->assertSame(
-            'four',
-            $array['three']
-        );
-
-    }
-
-    public function testStringToStringObject()
-    {
-        $string = 'string';
-
-        $request = new Request();
-        $stringObject = $request->stringToObject($string);
-
-        $this->assertSame(
-            $string,
-            $stringObject->text
-        );
-    }
-
-    public function testGetMethod()
-    {
-        $request = new Request();
-        $this->assertSame(
-            Request::METHOD_GET,
-            $request->getMethod()
-        );
-
-        $_SERVER['REQUEST_METHOD'] = Request::METHOD_DELETE; // Tested later
-        $request = new Request(Request::METHOD_POST);
-        $this->assertSame(
-            Request::METHOD_POST,
-            $request->getMethod()
-        );
-
-        $request = new Request();
-        $this->assertSame(
-            Request::METHOD_DELETE,
-            $request->getMethod()
-        );
-    }
-
-    public function testGetParameter()
-    {
-        $request = new Request(
-            null,
-            '',
-            ['true' => true, 'false' => false],
-            '{"bodyString": "a string", "object": {"integer": 3}}'
-        );
-
-        $this->assertNull(
-            $request->getParameter('this-parameter-not-set')
-        );
-
-        $this->assertSame(
-            true,
-            $request->getParameter('true')
-        );
-
-        $this->assertSame(
-            false,
-            $request->getParameter('false')
-        );
-
-        $this->assertSame(
-            'a string',
-            $request->getParameter('bodyString')
-        );
-
-
-        $this->assertNull(
-            $request->getParameter('this-parameter-not-set')
-        );
-
-    }
-
-    public function testJsonSerializable()
-    {
-        $request = new Request(
-            Request::METHOD_POST,
-            '/test/path.xml',
-            ['firstParameter' => '1'],
-            ['HTTP_CONTENT_TYPE' => 'application/json'],
-            '{"secondParameter":2}'
-        );
-
-        $jsonObject = json_decode(json_encode($request));
-
-        $this->assertSame(
-            Request::METHOD_POST,
-            $jsonObject->method
-        );
-
-        $this->assertSame(
-            '/test/path.xml',
-            $jsonObject->requestedUri
-        );
-
-        $this->assertSame(
-            Request::METHOD_POST,
-            $jsonObject->method
-        );
-
-        $this->assertSame(
-            '1',
-            $jsonObject->parameters->firstParameter
-        );
-
-        $this->assertSame(
-            2,
-            $jsonObject->parameters->secondParameter
-        );
-
-        // Lets check the server variable is read too
-        $_SERVER['REQUEST_URI'] = '/test/path.xml?parameter=value';
-
-        $request = new Request();
-        $jsonObject = json_decode(json_encode($request));
-        $this->assertSame(
-            $_SERVER['REQUEST_URI'],
-            $jsonObject->requestedUri
-        );
-
+        $_SERVER = $tempSever;
     }
 
     /**
-     * @expectedException        \Exception
-     * @expectedExceptionMessage Add parameter: parameter name must be scalar
-     * @expectedExceptionCode    0
+     * @test
+     * @covers ::jsonSerialize
+     * @uses \AyeAye\Api\Request
      */
-    public function testAddParameterException()
+    public function testJsonSerialize()
     {
         $request = new Request();
-        $request->setParameter([], []);
+
+        $this->assertSame(
+            [
+                'method' => Request::METHOD_GET,
+                'requestedUri' => '',
+                'parameters' => [],
+            ],
+            $request->jsonSerialize()
+        );
     }
 
     /**
-     * @expectedException        \Exception
-     * @expectedExceptionMessage Add parameters parameter newParameters can not be scalar
-     * @expectedExceptionCode    0
+     * @test
+     * @covers ::getFormatFromUri
+     * @uses \AyeAye\Api\Request
      */
-    public function testAddParametersException()
-    {
-        $request = new Request();
-        $request->setParameters(true);
-    }
-
-    public function testAddParameterFail()
-    {
-        $request = new Request();
-        $this->assertTrue(
-            $request->setParameter('name', 'value')
-        );
-
-        $this->assertSame(
-            'value',
-            $request->getParameter('name')
-        );
-    }
-
-    public function testReadBodyDodgily()
-    {
-        require_once 'TestData/http_get_request_body.php';
-
-        $request = new Request();
-        $this->assertSame(
-            true,
-            $request->getParameter('hackedJson')
-        );
-    }
-
     public function testGetFormatFromUri()
     {
         $request = new Request();
+        $getFormatFromUri = $this->getObjectMethod($request, 'getFormatFromUri');
 
-        $uri = '/test/file.php';
-        $this->assertSame(
-            'php',
-            $request->getFormatFromUri($uri)
+        $this->assertNull(
+            $getFormatFromUri('')
         );
 
-        $uri = '/test/file.json';
-        $this->assertSame(
-            'json',
-            $request->getFormatFromUri($uri)
+        $this->assertNull(
+            $getFormatFromUri('json')
         );
 
-        $uri = '/test/file.json?parameters=true';
         $this->assertSame(
             'json',
-            $request->getFormatFromUri($uri)
+            $getFormatFromUri('resource.json')
+        );
+
+        $this->assertSame(
+            'json',
+            $getFormatFromUri('resource.json?get=stuff')
         );
     }
 
-    public function testVariableFlattening()
+    /**
+     * @test
+     * @covers ::getRequestChainFromUri
+     * @uses \AyeAye\Api\Request
+     */
+    public function testGetRequestChainFromUri()
     {
-        $parameters =
-            [ 'nAmE' => 'string'];
-        $request = new Request(null, null, $parameters);
+        $request = new Request();
+        $getRequestChainFromUri = $this->getObjectMethod($request, 'getRequestChainFromUri');
+
         $this->assertSame(
-            'string',
-            $request->getParameter('na-me')
+            [],
+            $getRequestChainFromUri('')
         );
+
+        $this->assertSame(
+            ['one', 'two'],
+            $getRequestChainFromUri('one/two')
+        );
+
+        $this->assertSame(
+            ['one', 'two'],
+            $getRequestChainFromUri('/one/two')
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::setParameters
+     * @uses \AyeAye\Api\Request
+     */
+    public function testSetParameters()
+    {
+        $request = new Request();
+        $setParameters = $this->getObjectMethod($request, 'setParameters');
+        $parameters = '{"key" : "value"}';
+
+        $this->assertSame(
+            ['key' => 'value'],
+            $setParameters($parameters)->getParameters()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::setParameters
+     * @uses \AyeAye\Api\Request
+     * @expectedException        \Exception
+     * @expectedExceptionMessage newParameters can not be scalar
+     */
+    public function testSetParametersException()
+    {
+        $request = new Request();
+        $setParameters = $this->getObjectMethod($request, 'setParameters');
+        $parameters = true;
+
+        $setParameters($parameters)->getParameters();
+    }
+
+    /**
+     * @test
+     * @covers ::setParameter
+     * @uses \AyeAye\Api\Request
+     */
+    public function testSetParameter()
+    {
+        $request = new Request();
+        $setParameter = $this->getObjectMethod($request, 'setParameter');
+
+        $this->assertSame(
+            ['key' => 'value'],
+            $setParameter('key', 'value')->getParameters()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::setParameter
+     * @uses \AyeAye\Api\Request
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Parameter name must be scalar
+     */
+    public function testSetParameterException()
+    {
+        $request = new Request();
+        $setParameter = $this->getObjectMethod($request, 'setParameter');
+
+        $setParameter([], 'value')->getParameters();
     }
 }

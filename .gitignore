@@ -1,7 +1,7 @@
-.idea
 composer.lock
 composer.phar
-/vendor/
-bin/
+/vendor
+/bin
 phpunit.xml
 build/cache.properties
+/reports

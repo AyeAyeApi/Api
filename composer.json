@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": "^5.4",
-        "ayeaye/formatters": "^1.0.0@beta",
+        "ayeaye/formatters": "^1.0.0@rc",
         "psr/log": "^1.0.0"
     },
     "require-dev": {
@@ -35,7 +35,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "AyeAye\\Api\\Tests\\": "tests/"
+            "AyeAye\\Api\\Tests\\": "tests/",
+            "AyeAye\\Api\\TestsOld\\": "tests_old/"
         }
     },
     "config": {

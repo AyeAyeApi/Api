@@ -1,8 +1,9 @@
 <?php
 /**
- * [Description]
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Created by PhpStorm.
+ * User: daniel
+ * Date: 27/07/15
+ * Time: 08:23
  */
 
 namespace AyeAye\Api\Tests;
@@ -10,306 +11,417 @@ namespace AyeAye\Api\Tests;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
-use AyeAye\Formatter\Formats\Json;
-use AyeAye\Formatter\Formats\Xml;
+use AyeAye\Api\Tests\TestData\GeneratorController;
 use AyeAye\Formatter\FormatFactory;
+use AyeAye\Formatter\Formatter;
+use AyeAye\Formatter\Formats\Json;
 
+/**
+ * Class ResponseTest
+ * @package AyeAye\Api\Tests
+ * @coversDefaultClass \AyeAye\Api\Response
+ */
 class ResponseTest extends TestCase
 {
 
-    public function testSetData()
+    /**
+     * @test
+     * @covers ::getStatus
+     * @covers ::setStatus
+     * @uses \AyeAye\Api\Status
+     */
+    public function testStatus()
     {
-        $testData = 'TestData';
         $response = new Response();
-        $response->setData($testData);
+        $status = new Status();
+
+        $this->assertNull(
+            $response->getStatus()
+        );
+        $this->assertSame(
+            $response,
+            $response->setStatus($status)
+        );
+        $this->assertSame(
+            $status,
+            $response->getStatus()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::setStatusCode
+     * @uses \AyeAye\Api\Status
+     * @uses \AyeAye\Api\Response::setStatus
+     * @uses \AyeAye\Api\Response::getStatus
+     */
+    public function testStatusCode()
+    {
+        $code = 418;
+        $response = new Response();
+
+        $this->assertNull(
+            $response->getStatus()
+        );
+        $this->assertSame(
+            $response,
+            $response->setStatusCode(418)
+        );
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Status',
+            $response->getStatus()
+        );
+        $this->assertSame(
+            $code,
+            $response->getStatus()->getCode()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::setRequest
+     * @covers ::getRequest
+     * @uses \AyeAye\Api\Request
+     */
+    public function testRequest()
+    {
+        $response = new Response();
+        $this->assertNull(
+            $response->getRequest()
+        );
+
+        $request = new Request();
+        $this->assertSame(
+            $response,
+            $response->setRequest($request)
+        );
 
         $this->assertSame(
-            $testData,
+            $request,
+            $response->getRequest()
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::setBodyData
+     * @covers ::getBody
+     */
+    public function testBody()
+    {
+        $response = new Response();
+        $this->assertEmpty(
+            $response->getBody()
+        );
+
+        $object = new \stdClass(); // Good for tracking reference
+        $this->assertSame(
+            $response,
+            $response->setBodyData($object)
+        );
+        $this->assertArrayHasKey(
+            'data',
+            $response->getBody()
+        );
+        $this->assertSame(
+            $object,
+            $response->getBody()['data']
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::setBodyData
+     * @covers ::getData
+     */
+    public function testData()
+    {
+        $response = new Response();
+        $this->assertNull(
+            $response->getData()
+        );
+
+        $object = new \stdClass(); // Good for tracking reference
+
+        $this->assertSame(
+            $response,
+            $response->setBodyData($object)
+        );
+        $this->assertSame(
+            $object,
             $response->getData()
         );
     }
 
     /**
-     * Test setting the status with a status object
+     * @test
+     * @covers ::setBodyData
+     * @covers ::getBody
+     * @requires PHP 5.5
      */
-    public function testSetStatus()
+    public function testBodyGenerator()
     {
-        $testStatus = new Status(418);
+        $controller = new GeneratorController();
         $response = new Response();
-        $response->setStatus($testStatus);
 
         $this->assertSame(
-            $testStatus->getCode(),
-            $response->getStatus()->getCode()
+            $response,
+            $response->setBodyData(
+                $controller->getGeneratorEndpoint()
+            )
         );
-    }
-
-    /**
-     * Test setting the status with a status object
-     */
-    public function testSetStatusCode()
-    {
-        $testStatusCode = 418;
-        $response = new Response();
-        $response->setStatusCode($testStatusCode);
 
         $this->assertSame(
-            $testStatusCode,
-            $response->getStatus()->getCode()
-        );
-    }
-
-    public function testSetRequest()
-    {
-        $request = new Request();
-        $response = new Response();
-        $response->setFormatFactory(
-            new FormatFactory([
-                'json' => new Json()
-            ])
-        );
-        $response->setRequest($request);
-        $response->getRequest();
-    }
-
-    public function testJsonSerializable()
-    {
-        $testData = new \stdClass();
-        $testData->string = 'string';
-        $testStatusCode = '418';
-        $testRequest = new Request(
-            Request::METHOD_POST,
-            '/test/path',
             [
-                'testParameter' => 'value',
-                'debug' => true,
-            ]
-        );
-
-        $response = new Response();
-        $response->setFormatFactory(
-            new FormatFactory([
-                'json' => new Json()
-            ])
-        );
-        $response->setData($testData);
-        $response->setStatusCode($testStatusCode);
-        $response->setRequest($testRequest);
-
-        $responseObject = json_decode(json_encode($response));
-
-        $this->assertSame(
-            '418',
-            $responseObject->status->code
-        );
-
-        $this->assertSame(
-            'string',
-            $responseObject->data->string
-        );
-
-        $this->assertSame(
-            '/test/path',
-            $responseObject->request->requestedUri
-        );
-
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testDebugJsonRespond()
-    {
-        $complexObject = (object)[
-            'childObject' => (object)[
-                    'property' => 'value'
-                ],
-            'childArray' => [
-                'element1',
-                'element2'
-            ]
-        ];
-        $expectedXml =
-            '{'
-            . '"status":{"code":200,"message":"OK"},'
-            . '"request":{"method":"GET","requestedUri":"test.json","parameters":{"debug":true,"hackedJson":true}},'
-            . '"data":{"childObject":{"property":"value"},"childArray":["element1","element2"]}'
-            . '}';
-
-        $request = new Request(
-            Request::METHOD_GET,
-            'test.json',
-            ['debug' => true],
-            http_get_request_body()
-        );
-        $response = new Response();
-        $response->setFormatFactory(
-            new FormatFactory([
-                'json' => new Json()
-            ])
-        );
-        $response->setRequest($request);
-        $response->setStatus(new Status());
-        $response->setData($complexObject);
-
-        ob_start();
-        $response->respond();
-        $responseData = ob_get_contents();
-        ob_end_clean();
-
-        $this->assertSame(
-            $responseData,
-            $expectedXml
+                'data' => 'data',
+                'string' => 'string',
+                'integer' => 42,
+            ],
+            $response->getBody()
         );
     }
 
     /**
-     * @runInSeparateProcess
+     * @test
+     * @covers ::setFormatFactory
+     * @uses \AyeAye\Formatter\FormatFactory
      */
-    public function testDebugXmlRespond()
+    public function testFormatFactory()
     {
-        $complexObject = (object)[
-            'childObject' => (object)[
-                    'property' => 'value'
-                ],
-            'childArray' => [
-                'element1',
-                'element2'
-            ]
-        ];
-        $expectedXml =
-            '<?xml version="1.0" encoding="UTF-8" ?>'
-            . '<response>'
-            . '<status><array><code>200</code><message>OK</message></array></status>'
-            . '<request>'
-            . '<array>'
-            . '<method>GET</method>'
-            . '<requestedUri>test.xml</requestedUri>'
-            . '<parameters><debug>true</debug><hackedJson>true</hackedJson></parameters>'
-            . '</array>'
-            . '</request>'
-            . '<data>'
-            . '<childObject><property>value</property></childObject>'
-            . '<childArray><_0>element1</_0><_1>element2</_1></childArray>'
-            . '</data>'
-            . '</response>';
-
-        $request = new Request(
-            Request::METHOD_GET,
-            'test.xml',
-            ['debug' => true],
-            http_get_request_body()
-        );
+        $expectedFormatFactory = new FormatFactory([]);
         $response = new Response();
-        $response->setFormatFactory(
-            new FormatFactory([
-                'xml' => new Xml()
-            ])
-        );
-        $response->setRequest($request);
-        $response->setStatus(new Status());
-        $response->setData($complexObject);
-
-        ob_start();
-        $response->respond();
-        $responseData = ob_get_contents();
-        ob_end_clean();
 
         $this->assertSame(
-            $responseData,
-            $expectedXml
+            $response,
+            $response->setFormatFactory($expectedFormatFactory)
+        );
+
+        $actualFormatFactory = $this->getObjectAttribute($response, 'formatFactory');
+
+        $this->assertSame(
+            $expectedFormatFactory,
+            $actualFormatFactory
         );
     }
 
     /**
-     * @runInSeparateProcess
+     * @test
+     * @covers ::setFormatter
+     * @uses \AyeAye\Formatter\Formats\Json
      */
-    public function testXmlRespond()
+    public function testFormatter()
     {
-        $complexObject = (object)[
-            'childObject' => (object)[
-                    'property' => 'value'
-                ],
-            'childArray' => [
-                'element1',
-                'element2'
-            ]
-        ];
-        $expectedXml =
-            '<?xml version="1.0" encoding="UTF-8" ?>'
-            . '<response>'
-            . '<data>'
-            . '<childObject><property>value</property></childObject>'
-            . '<childArray><_0>element1</_0><_1>element2</_1></childArray>'
-            . '</data>'
-            . '</response>';
-
-        $request = new Request(
-            Request::METHOD_GET,
-            'test.xml'
-        );
+        $expectedFormatter = new Json();
         $response = new Response();
-        $response->setFormatFactory(
-            new FormatFactory([
-                'xml' => new Xml()
-            ])
-        );
-        $response->setRequest($request);
-        $response->setStatus(new Status());
-        $response->setData($complexObject);
-
-        ob_start();
-        $response->respond();
-        $responseData = ob_get_contents();
-        ob_end_clean();
 
         $this->assertSame(
-            $responseData,
-            $expectedXml
+            $response,
+            $response->setFormatter($expectedFormatter)
+        );
+
+        $actualFormatter = $this->getObjectAttribute($response, 'formatter');
+
+        $this->assertSame(
+            $expectedFormatter,
+            $actualFormatter
         );
     }
 
     /**
-     * @runInSeparateProcess
+     * @test
+     * @covers ::prepareResponse
+     * @uses \AyeAye\Api\Request
+     * @uses \AyeAye\Api\Response::setFormatFactory
+     * @uses \AyeAye\Api\Response::setRequest
+     * @uses \AyeAye\Api\Response::getBody
+     * @uses \AyeAye\Api\Response::setBodyData
      */
-    public function testJsonRespond()
+    public function testPrepareResponse()
     {
-        $complexObject = (object)[
-            'childObject' => (object)[
-                    'property' => 'value'
-                ],
-            'childArray' => [
-                'element1',
-                'element2'
-            ]
-        ];
-        $expectedXml =
-            '{'
-            . '"data":{"childObject":{"property":"value"},"childArray":["element1","element2"]}'
-            . '}';
-
-        $request = new Request(
-            Request::METHOD_GET,
-            'test.json'
-        );
         $response = new Response();
-        $response->setFormatFactory(
-            new FormatFactory([
-                'json' => new Json()
-            ])
-        );
-        $response->setRequest($request);
-        $response->setStatus(new Status());
-        $response->setData($complexObject);
+        $formats = [
+            'testFormat'
+        ];
+        $data = 'data';
+        $expectedBody = [
+            'data' => $data
+        ];
+        $response->setBodyData($data);
 
-        ob_start();
-        $response->respond();
-        $responseData = ob_get_contents();
-        ob_end_clean();
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        $request = $this->getMock('\AyeAye\Api\Request');
+        $request->expects($this->once())
+            ->method('getFormats')
+            ->with()
+            ->will($this->returnValue($formats));
+
+        $formatter = $this->getMock('\AyeAye\Formatter\Formatter');
+        $formatter
+            ->expects($this->once())
+            ->method('format')
+            ->with($expectedBody, 'response')
+            ->will($this->returnValue(json_encode($expectedBody)));
+
+        /** @var FormatFactory|\PHPUnit_Framework_MockObject_MockObject $formatFactory */
+        $formatFactory =
+            $this->getMockBuilder('\AyeAye\Formatter\FormatFactory')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $formatFactory
+            ->expects($this->once())
+            ->method('getFormatterFor')
+            ->with($formats)
+            ->will($this->returnValue($formatter));
+
+        $response
+            ->setFormatFactory($formatFactory)
+            ->setRequest($request);
 
         $this->assertSame(
-            $responseData,
-            $expectedXml
+            $response,
+            $response->prepareResponse()
+        );
+
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($expectedBody),
+            $this->getObjectAttribute($response, 'preparedResponse')
+        );
+
+        return $response;
+    }
+
+    /**
+     * @test
+     * @runInSeparateProcess
+     * @depends testPrepareResponse
+     * @param Response $response
+     * @covers ::respond
+     * @uses \AyeAye\Api\Request
+     */
+    public function testRespond(Response $response)
+    {
+        /** @var Formatter|\PHPUnit_Framework_MockObject_MockObject $formatter */
+        $formatter = $this->getMock('\AyeAye\Formatter\Formatter');
+        $formatter
+            ->expects($this->exactly(2))
+            ->method('getContentType')
+            ->with()
+            ->will($this->returnValue(''));
+
+        /** @var Status|\PHPUnit_Framework_MockObject_MockObject $status */
+        $status = $this->getMockBuilder('\AyeAye\Api\Status')
+                       ->disableOriginalConstructor()
+                       ->getMock();
+        $status
+            ->expects($this->once())
+            ->method('getHttpHeader')
+            ->with()
+            ->will($this->returnValue(null));
+
+        $response->setFormatter($formatter);
+
+        ob_start();
+        $this->assertSame(
+            $response,
+            $response->respond()
+        );
+
+        $this->assertJsonStringEqualsJsonString(
+            json_encode(['data'=>'data']),
+            ob_get_clean()
+        );
+
+
+        ob_start();
+        $response->setStatus($status);
+        $this->assertSame(
+            $response,
+            $response->respond()
+        );
+
+        $this->assertJsonStringEqualsJsonString(
+            json_encode(['data'=>'data']),
+            ob_get_clean()
+        );
+    }
+
+    /**
+     * @test
+     * @runInSeparateProcess
+     * @covers ::respond
+     * @uses \AyeAye\Api\Request
+     * @uses \AyeAye\Api\Response::setFormatFactory
+     * @uses \AyeAye\Api\Response::setRequest
+     * @uses \AyeAye\Api\Response::getBody
+     * @uses \AyeAye\Api\Response::setBodyData
+     * @uses \AyeAye\Api\Response::prepareResponse
+     */
+    public function testRespondFull()
+    {
+        $response = new Response();
+        $formats = [
+            'testFormat'
+        ];
+        $data = 'data';
+        $expectedBody = [
+            'data' => $data
+        ];
+        $response->setBodyData($data);
+
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        $request = $this->getMock('\AyeAye\Api\Request');
+        $request->expects($this->once())
+            ->method('getFormats')
+            ->with()
+            ->will($this->returnValue($formats));
+
+        $formatter = $this->getMock('\AyeAye\Formatter\Formatter');
+        $formatter
+            ->expects($this->once())
+            ->method('format')
+            ->with($expectedBody, 'response')
+            ->will($this->returnValue(json_encode($expectedBody)));
+        $formatter
+            ->expects($this->once())
+            ->method('getContentType')
+            ->with()
+            ->will($this->returnValue(''));
+
+        /** @var FormatFactory|\PHPUnit_Framework_MockObject_MockObject $formatFactory */
+        $formatFactory =
+            $this->getMockBuilder('\AyeAye\Formatter\FormatFactory')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $formatFactory
+            ->expects($this->once())
+            ->method('getFormatterFor')
+            ->with($formats)
+            ->will($this->returnValue($formatter));
+
+        /** @var Status|\PHPUnit_Framework_MockObject_MockObject $status */
+        $status = $this->getMockBuilder('\AyeAye\Api\Status')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $status
+            ->expects($this->once())
+            ->method('getHttpHeader')
+            ->with()
+            ->will($this->returnValue(null));
+
+        $response
+            ->setFormatFactory($formatFactory)
+            ->setRequest($request)
+            ->setStatus($status);
+
+        ob_start();
+        $this->assertSame(
+            $response,
+            $response->respond()
+        );
+
+        $this->assertJsonStringEqualsJsonString(
+            json_encode(['data'=>'data']),
+            ob_get_clean()
         );
     }
 }

@@ -14,7 +14,7 @@ use AyeAye\Formatter\Formatter;
  * Describes response to client
  * @package AyeAye\Api
  */
-class Response implements \JsonSerializable
+class Response
 {
 
     /**
@@ -51,7 +51,7 @@ class Response implements \JsonSerializable
      * The data you wish to return in the response
      * @var mixed
      */
-    protected $data;
+    protected $body = [];
 
     /**
      * @var string
@@ -110,12 +110,24 @@ class Response implements \JsonSerializable
     }
 
     /**
-     * Get the Data that is being returned
+     * Get the specifically requested data that is being returned
      * @return mixed
      */
     public function getData()
     {
-        return $this->data;
+        if (array_key_exists('data', $this->body)) {
+            return $this->body['data'];
+        }
+        return null;
+    }
+
+    /**
+     * Get all data that is being returned
+     * @return mixed
+     */
+    public function getBody()
+    {
+        return $this->body;
     }
 
     /**
@@ -123,9 +135,16 @@ class Response implements \JsonSerializable
      * @param $data
      * @return $this
      */
-    public function setData($data)
+    public function setBodyData($data)
     {
-        $this->data = $data;
+        if ($data instanceof \Generator) {
+            foreach ($data as $key => $value) {
+                $actualKey = $key ?: 'data';
+                $this->body[$actualKey] = $value;
+            }
+            return $this;
+        }
+        $this->body['data'] = $data;
         return $this;
     }
 
@@ -162,10 +181,7 @@ class Response implements \JsonSerializable
                 $this->request->getFormats()
             );
         }
-        $this->preparedResponse =
-            $this->formatter->getHeader()
-            . $this->formatter->format($this->jsonSerialize(), $this->responseName)
-            . $this->formatter->getFooter();
+        $this->preparedResponse = $this->formatter->format($this->getBody(), $this->responseName);
         return $this;
     }
 
@@ -187,26 +203,5 @@ class Response implements \JsonSerializable
         echo $this->preparedResponse;
 
         return $this;
-    }
-
-    /**
-     * Used by PHP to get json object
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        // If in raw mode, only return data
-        if (is_null($this->request->getParameter('debug'))) {
-            return [
-                'data' => $this->getData()
-            ];
-        }
-
-        // Otherwise return all information
-        return [
-            'status' => $this->getStatus(),
-            'request' => $this->getRequest(),
-            'data' => $this->getData(),
-        ];
     }
 }
