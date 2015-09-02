@@ -7,6 +7,7 @@
  */
 
 namespace AyeAye\Api;
+use AyeAye\Formatter\Deserializable;
 
 /**
  * Describes end points and controllers
@@ -178,10 +179,20 @@ class Router
         $reflectionMethod = new \ReflectionMethod($controller, $method);
         $reflectionParameters = $reflectionMethod->getParameters();
         foreach ($reflectionParameters as $reflectionParameter) {
-            $parameters[$reflectionParameter->getName()] = $request->getParameter(
+            $value = $request->getParameter(
                 $reflectionParameter->getName(),
                 $reflectionParameter->isDefaultValueAvailable() ? $reflectionParameter->getDefaultValue() : null
             );
+            if(
+                $reflectionParameter->getClass() &&
+                $reflectionParameter->getClass()->implementsInterface('\AyeAye\Formatter\Deserializable')
+            ) {
+                /** @var Deserializable $deserializable */
+                $value = $reflectionParameter->getClass()
+                                             ->newInstanceWithoutConstructor()
+                                             ->ayeAyeDeserialize((array)$value);
+            }
+            $parameters[$reflectionParameter->getName()] = $value;
         }
         return $parameters;
     }

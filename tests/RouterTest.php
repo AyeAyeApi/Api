@@ -9,6 +9,7 @@ namespace AyeAye\Api\Tests;
 use AyeAye\Api\Request;
 use AyeAye\Api\Router;
 use AyeAye\Api\Status;
+use AyeAye\Api\Tests\TestData\DeserializeController;
 use AyeAye\Api\Tests\TestData\DocumentedController;
 use AyeAye\Api\Tests\TestData\IndexedController;
 
@@ -336,6 +337,44 @@ class RouterTest extends TestCase
                 'string' => false,
             ],
             $getParametersFromRequest($request, $controller, $method)
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getParametersFromRequest
+     * @uses AyeAye\Api\Request
+     */
+    public function testGetParametersFromRequestDeserialize()
+    {
+        $router = new Router();
+        $request = new Request(null, null, [
+            'object' => (object)[
+                'data' => 'testString'
+            ]
+        ]);
+        $controller = new DeserializeController();
+        $method = 'getDeserializeEndpoint';
+
+        $getParametersFromRequest = $this->getObjectMethod($router, 'getParametersFromRequest');
+
+        /** @var \AyeAye\Api\Tests\TestData\DeserializableObject[] $parameters */
+        $parameters = $getParametersFromRequest($request, $controller, $method);
+        $this->assertCount(
+            1,
+            $parameters
+        );
+        $this->assertArrayHasKey(
+            'object',
+            $parameters
+        );
+        $this->assertInstanceOf(
+            '\AyeAye\Api\Tests\TestData\DeserializableObject',
+            $parameters['object']
+        );
+        $this->assertSame(
+            'testString',
+            $parameters['object']->getData()
         );
     }
 
