@@ -8,7 +8,7 @@
 
 namespace AyeAye\Api;
 
-class Documentor
+class Documenter
 {
 
     /**
