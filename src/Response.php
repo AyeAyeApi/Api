@@ -181,10 +181,7 @@ class Response
                 $this->request->getFormats()
             );
         }
-        $this->preparedResponse =
-            $this->formatter->getHeader()
-            . $this->formatter->format($this->getBody(), $this->responseName)
-            . $this->formatter->getFooter();
+        $this->preparedResponse = $this->formatter->format($this->getBody(), $this->responseName);
         return $this;
     }
 

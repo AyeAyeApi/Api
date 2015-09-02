@@ -11,9 +11,9 @@ namespace AyeAye\Api\Tests;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\DocumentedController;
 use AyeAye\Api\Tests\TestData\GeneratorController;
 use AyeAye\Formatter\FormatFactory;
+use AyeAye\Formatter\Formatter;
 use AyeAye\Formatter\Formats\Json;
 
 /**
@@ -258,16 +258,6 @@ class ResponseTest extends TestCase
         $formatter = $this->getMock('\AyeAye\Formatter\Formatter');
         $formatter
             ->expects($this->once())
-            ->method('getHeader')
-            ->with()
-            ->will($this->returnValue(''));
-        $formatter
-            ->expects($this->once())
-            ->method('getFooter')
-            ->with()
-            ->will($this->returnValue(''));
-        $formatter
-            ->expects($this->once())
             ->method('format')
             ->with($expectedBody, 'response')
             ->will($this->returnValue(json_encode($expectedBody)));
@@ -297,5 +287,141 @@ class ResponseTest extends TestCase
             $this->getObjectAttribute($response, 'preparedResponse')
         );
 
+        return $response;
+    }
+
+    /**
+     * @test
+     * @runInSeparateProcess
+     * @depends testPrepareResponse
+     * @param Response $response
+     * @covers ::respond
+     * @uses \AyeAye\Api\Request
+     */
+    public function testRespond(Response $response)
+    {
+        /** @var Formatter|\PHPUnit_Framework_MockObject_MockObject $formatter */
+        $formatter = $this->getMock('\AyeAye\Formatter\Formatter');
+        $formatter
+            ->expects($this->exactly(2))
+            ->method('getContentType')
+            ->with()
+            ->will($this->returnValue(''));
+
+        /** @var Status|\PHPUnit_Framework_MockObject_MockObject $status */
+        $status = $this->getMockBuilder('\AyeAye\Api\Status')
+                       ->disableOriginalConstructor()
+                       ->getMock();
+        $status
+            ->expects($this->once())
+            ->method('getHttpHeader')
+            ->with()
+            ->will($this->returnValue(null));
+
+        $response->setFormatter($formatter);
+
+        ob_start();
+        $this->assertSame(
+            $response,
+            $response->respond()
+        );
+
+        $this->assertJsonStringEqualsJsonString(
+            json_encode(['data'=>'data']),
+            ob_get_clean()
+        );
+
+
+        ob_start();
+        $response->setStatus($status);
+        $this->assertSame(
+            $response,
+            $response->respond()
+        );
+
+        $this->assertJsonStringEqualsJsonString(
+            json_encode(['data'=>'data']),
+            ob_get_clean()
+        );
+    }
+
+    /**
+     * @test
+     * @runInSeparateProcess
+     * @covers ::respond
+     * @uses \AyeAye\Api\Request
+     * @uses \AyeAye\Api\Response::setFormatFactory
+     * @uses \AyeAye\Api\Response::setRequest
+     * @uses \AyeAye\Api\Response::getBody
+     * @uses \AyeAye\Api\Response::setBodyData
+     * @uses \AyeAye\Api\Response::prepareResponse
+     */
+    public function testRespondFull()
+    {
+        $response = new Response();
+        $formats = [
+            'testFormat'
+        ];
+        $data = 'data';
+        $expectedBody = [
+            'data' => $data
+        ];
+        $response->setBodyData($data);
+
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        $request = $this->getMock('\AyeAye\Api\Request');
+        $request->expects($this->once())
+            ->method('getFormats')
+            ->with()
+            ->will($this->returnValue($formats));
+
+        $formatter = $this->getMock('\AyeAye\Formatter\Formatter');
+        $formatter
+            ->expects($this->once())
+            ->method('format')
+            ->with($expectedBody, 'response')
+            ->will($this->returnValue(json_encode($expectedBody)));
+        $formatter
+            ->expects($this->once())
+            ->method('getContentType')
+            ->with()
+            ->will($this->returnValue(''));
+
+        /** @var FormatFactory|\PHPUnit_Framework_MockObject_MockObject $formatFactory */
+        $formatFactory =
+            $this->getMockBuilder('\AyeAye\Formatter\FormatFactory')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $formatFactory
+            ->expects($this->once())
+            ->method('getFormatterFor')
+            ->with($formats)
+            ->will($this->returnValue($formatter));
+
+        /** @var Status|\PHPUnit_Framework_MockObject_MockObject $status */
+        $status = $this->getMockBuilder('\AyeAye\Api\Status')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $status
+            ->expects($this->once())
+            ->method('getHttpHeader')
+            ->with()
+            ->will($this->returnValue(null));
+
+        $response
+            ->setFormatFactory($formatFactory)
+            ->setRequest($request)
+            ->setStatus($status);
+
+        ob_start();
+        $this->assertSame(
+            $response,
+            $response->respond()
+        );
+
+        $this->assertJsonStringEqualsJsonString(
+            json_encode(['data'=>'data']),
+            ob_get_clean()
+        );
     }
 }

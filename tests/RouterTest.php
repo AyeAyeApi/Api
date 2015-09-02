@@ -23,7 +23,7 @@ class RouterTest extends TestCase
     /**
      * @test
      * @covers ::processRequest
-     * @uses AyeAye\Api\Documentor
+     * @uses AyeAye\Api\Documenter
      * @uses AyeAye\Api\Request
      * @uses AyeAye\Api\Controller
      * @uses AyeAye\Api\Router::parseEndpointName
@@ -157,7 +157,7 @@ class RouterTest extends TestCase
      * @test
      * @covers ::documentController
      * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Documentor
+     * @uses AyeAye\Api\Documenter
      * @uses AyeAye\Api\Router::parseEndpointName
      * @uses AyeAye\Api\Router::getEndpoints
      * @uses AyeAye\Api\Router::getControllers
@@ -199,7 +199,7 @@ class RouterTest extends TestCase
     /**
      * @test
      * @covers ::getEndpoints
-     * @uses AyeAye\Api\Documentor
+     * @uses AyeAye\Api\Documenter
      * @uses AyeAye\Api\Controller
      * @uses AyeAye\Api\Router::camelcaseToHyphenated
      */
