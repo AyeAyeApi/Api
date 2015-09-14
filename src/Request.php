@@ -210,9 +210,9 @@ class Request implements \JsonSerializable
 
         // Xml
         try {
-            libxml_use_internal_errors();
+            $wasUsingErrors = libxml_use_internal_errors();
             $xmlObject = simplexml_load_string($string);
-            libxml_use_internal_errors(true);
+            libxml_use_internal_errors($wasUsingErrors);
             if ($xmlObject) {
                 return $xmlObject;
             }
