@@ -320,7 +320,7 @@ class RouterTest extends TestCase
     public function testGetParametersFromRequest()
     {
         $router = new Router();
-        $request = new Request(null, null, [
+        $request = new Request(null, null, null, [
             'integer' => 20,
             'string' => false,
             'not-used' => 'anything',
@@ -348,7 +348,7 @@ class RouterTest extends TestCase
     public function testGetParametersFromRequestDeserialize()
     {
         $router = new Router();
-        $request = new Request(null, null, [
+        $request = new Request(null, null, null, [
             'object' => (object)[
                 'data' => 'testString'
             ]

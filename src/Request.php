@@ -7,6 +7,10 @@
 
 namespace AyeAye\Api;
 
+use AyeAye\Formatter\Reader\Json;
+use AyeAye\Formatter\Reader\Xml;
+use AyeAye\Formatter\ReaderFactory;
+
 /**
  * Describes every detail of a request to the server
  * @package AyeAye\Api
@@ -68,17 +72,26 @@ class Request implements \JsonSerializable
     protected $parameters = [];
 
     /**
+     * @var ReaderFactory
+     */
+    protected $readerFactory;
+
+    /**
      * Create a Request object. You can override any request information
      * @param string $requestedMethod
      * @param string $requestedUri
+     * @param ReaderFactory $readerFactory
      * @param array|object ...$parameters Any number of arrays or objects containing request parameters
      *                                    such as _GET, _POST. If omitted, defaults will be used.
      */
     public function __construct(
         $requestedMethod = null,
-        $requestedUri = null
+        $requestedUri = null,
+        ReaderFactory $readerFactory = null
     ) {
-        $parameters = array_slice(func_get_args(), 2);
+        $this->readerFactory = $readerFactory;
+
+        $parameters = array_slice(func_get_args(), 3);
         foreach ($parameters as $parameterGroup) {
             $this->setParameters($parameterGroup);
         }
@@ -88,6 +101,22 @@ class Request implements \JsonSerializable
         if (!$this->parameters) {
             $this->parameters = $this->useActualParameters();
         }
+    }
+
+    /**
+     * Get the reader factory.
+     * If none is set, then create one, set it and return it.
+     * @return ReaderFactory
+     */
+    protected function getReaderFactory()
+    {
+        if(!$this->readerFactory) {
+            $this->readerFactory = new ReaderFactory([
+                new Json(),
+                new Xml(),
+            ]);
+        }
+        return $this->readerFactory;
     }
 
     /**
@@ -194,35 +223,22 @@ class Request implements \JsonSerializable
      * Failing all else, if there was a string it will return a standard class with it attached to a 'text' attribute
      * eg. $this->stringObject('fail')->body == 'fail'
      * @param string $string a string of data
-     * @return \stdClass
+     * @return array
      */
     protected function stringToObject($string)
     {
-        if (!$string) {
-            return new \stdClass();
+        if (!$string || !is_string($string)) {
+            return [];
         }
 
-        // Json
-        $jsonObject = json_decode($string);
-        if ($jsonObject) {
-            return $jsonObject;
+        $result = $this->getReaderFactory()->read($string);
+        if($result) {
+            return $result;
         }
 
-        // Xml
-        try {
-            $wasUsingErrors = libxml_use_internal_errors();
-            $xmlObject = simplexml_load_string($string);
-            libxml_use_internal_errors($wasUsingErrors);
-            if ($xmlObject) {
-                return $xmlObject;
-            }
-        } catch (\Exception $e) {
-            // Do nothing
-        }
-
-        $object = new \stdClass();
-        $object->text = $string;
-        return $object;
+        $array = [];
+        $array['text'] = $string;
+        return $array;
     }
 
     /**

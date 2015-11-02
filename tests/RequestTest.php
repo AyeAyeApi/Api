@@ -31,7 +31,7 @@ class RequestTest extends TestCase
         );
 
         $parameters = ['test' => 'testString'];
-        $request = new Request(null, null, ['test' => 'testString']);
+        $request = new Request(null, null, null, ['test' => 'testString']);
         $this->assertSame(
             $parameters,
             $request->getParameters()
@@ -230,42 +230,42 @@ class RequestTest extends TestCase
         $stringToObject = $this->getObjectMethod($request, 'stringToObject');
 
 
-        $this->assertObjectNotHasAttribute(
+        $this->assertArrayNotHasKey(
             'text',
             $stringToObject('')
         );
 
-        $this->assertObjectHasAttribute(
+        $this->assertArrayHasKey(
             'text',
             $stringToObject('test')
         );
         $this->assertSame(
             'test',
-            $stringToObject('test')->text
+            $stringToObject('test')['text']
         );
 
         $json = '{"key":"value"}';
 
-        $this->assertObjectNotHasAttribute(
+        $this->assertArrayNotHasKey(
             'text',
             $stringToObject($json)
         );
-        $this->assertObjectHasAttribute(
+        $this->assertArrayHasKey(
             'key',
             $stringToObject($json)
         );
         $this->assertSame(
             'value',
-            $stringToObject($json)->key
+            $stringToObject($json)['key']
         );
 
         $xml = '<container><key>anotherValue</key></container>';
 
-        $this->assertObjectNotHasAttribute(
+        $this->assertArrayNotHasKey(
             'text',
             $stringToObject($xml)
         );
-        $this->assertObjectHasAttribute(
+        $this->assertArrayHasKey(
             'key',
             $stringToObject($xml)
         );
@@ -307,7 +307,7 @@ class RequestTest extends TestCase
      */
     public function testGetParameter()
     {
-        $request = new Request(null, null, [
+        $request = new Request(null, null, null, [
             'key' => 'value1',
             'Key' => 'value2'
         ]);
@@ -364,7 +364,7 @@ class RequestTest extends TestCase
         );
 
         $expected = ['key' => 'value', 'alpha' => 'beta'];
-        $request = new Request(null, null, $expected);
+        $request = new Request(null, null, null, $expected);
         $this->assertSame(
             $expected,
             $request->getParameters()
