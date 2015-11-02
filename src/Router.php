@@ -190,7 +190,7 @@ class Router
                 /** @var Deserializable $deserializable */
                 $value = $reflectionParameter->getClass()
                                              ->newInstanceWithoutConstructor()
-                                             ->ayeAyeDeserialize((array)$value);
+                                             ->ayeAyeDeserialize($value);
             }
             $parameters[$reflectionParameter->getName()] = $value;
         }
