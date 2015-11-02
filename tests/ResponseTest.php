@@ -12,9 +12,9 @@ use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
 use AyeAye\Api\Tests\TestData\GeneratorController;
-use AyeAye\Formatter\FormatFactory;
-use AyeAye\Formatter\Formatter;
-use AyeAye\Formatter\Formats\Json;
+use AyeAye\Formatter\WriterFactory;
+use AyeAye\Formatter\Writer;
+use AyeAye\Formatter\Writer\Json;
 
 /**
  * Class ResponseTest
@@ -183,47 +183,47 @@ class ResponseTest extends TestCase
 
     /**
      * @test
-     * @covers ::setFormatFactory
-     * @uses \AyeAye\Formatter\FormatFactory
+     * @covers ::setWriterFactory
+     * @uses \AyeAye\Formatter\WriterFactory
      */
-    public function testFormatFactory()
+    public function testWriterFactory()
     {
-        $expectedFormatFactory = new FormatFactory([]);
+        $expectedWriterFactory = new WriterFactory([]);
         $response = new Response();
 
         $this->assertSame(
             $response,
-            $response->setFormatFactory($expectedFormatFactory)
+            $response->setWriterFactory($expectedWriterFactory)
         );
 
-        $actualFormatFactory = $this->getObjectAttribute($response, 'formatFactory');
+        $actualWriterFactory = $this->getObjectAttribute($response, 'writerFactory');
 
         $this->assertSame(
-            $expectedFormatFactory,
-            $actualFormatFactory
+            $expectedWriterFactory,
+            $actualWriterFactory
         );
     }
 
     /**
      * @test
-     * @covers ::setFormatter
-     * @uses \AyeAye\Formatter\Formats\Json
+     * @covers ::setWriter
+     * @uses \AyeAye\Formatter\Writer\Json
      */
-    public function testFormatter()
+    public function testWriter()
     {
-        $expectedFormatter = new Json();
+        $expectedWriter = new Json();
         $response = new Response();
 
         $this->assertSame(
             $response,
-            $response->setFormatter($expectedFormatter)
+            $response->setWriter($expectedWriter)
         );
 
-        $actualFormatter = $this->getObjectAttribute($response, 'formatter');
+        $actualWriter = $this->getObjectAttribute($response, 'writer');
 
         $this->assertSame(
-            $expectedFormatter,
-            $actualFormatter
+            $expectedWriter,
+            $actualWriter
         );
     }
 
@@ -231,7 +231,7 @@ class ResponseTest extends TestCase
      * @test
      * @covers ::prepareResponse
      * @uses \AyeAye\Api\Request
-     * @uses \AyeAye\Api\Response::setFormatFactory
+     * @uses \AyeAye\Api\Response::setWriterFactory
      * @uses \AyeAye\Api\Response::setRequest
      * @uses \AyeAye\Api\Response::getBody
      * @uses \AyeAye\Api\Response::setBodyData
@@ -239,8 +239,8 @@ class ResponseTest extends TestCase
     public function testPrepareResponse()
     {
         $response = new Response();
-        $formats = [
-            'testFormat'
+        $writers = [
+            'testWriter'
         ];
         $data = 'data';
         $expectedBody = [
@@ -250,31 +250,32 @@ class ResponseTest extends TestCase
 
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
         $request = $this->getMock('\AyeAye\Api\Request');
-        $request->expects($this->once())
+        $request
+            ->expects($this->once())
             ->method('getFormats')
             ->with()
-            ->will($this->returnValue($formats));
+            ->will($this->returnValue($writers));
 
-        $formatter = $this->getMock('\AyeAye\Formatter\Formatter');
-        $formatter
+        $writer = $this->getMock('\AyeAye\Formatter\Writer');
+        $writer
             ->expects($this->once())
             ->method('format')
             ->with($expectedBody, 'response')
             ->will($this->returnValue(json_encode($expectedBody)));
 
-        /** @var FormatFactory|\PHPUnit_Framework_MockObject_MockObject $formatFactory */
-        $formatFactory =
-            $this->getMockBuilder('\AyeAye\Formatter\FormatFactory')
-                ->disableOriginalConstructor()
-                ->getMock();
-        $formatFactory
+        /** @var WriterFactory|\PHPUnit_Framework_MockObject_MockObject $writerFactory */
+        $writerFactory = $this
+            ->getMockBuilder('\AyeAye\Formatter\WriterFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $writerFactory
             ->expects($this->once())
-            ->method('getFormatterFor')
-            ->with($formats)
-            ->will($this->returnValue($formatter));
+            ->method('getWriterFor')
+            ->with($writers)
+            ->will($this->returnValue($writer));
 
         $response
-            ->setFormatFactory($formatFactory)
+            ->setWriterFactory($writerFactory)
             ->setRequest($request);
 
         $this->assertSame(
@@ -300,9 +301,9 @@ class ResponseTest extends TestCase
      */
     public function testRespond(Response $response)
     {
-        /** @var Formatter|\PHPUnit_Framework_MockObject_MockObject $formatter */
-        $formatter = $this->getMock('\AyeAye\Formatter\Formatter');
-        $formatter
+        /** @var Writer|\PHPUnit_Framework_MockObject_MockObject $writer */
+        $writer = $this->getMock('\AyeAye\Formatter\Writer');
+        $writer
             ->expects($this->exactly(2))
             ->method('getContentType')
             ->with()
@@ -318,7 +319,7 @@ class ResponseTest extends TestCase
             ->with()
             ->will($this->returnValue(null));
 
-        $response->setFormatter($formatter);
+        $response->setWriter($writer);
 
         ob_start();
         $this->assertSame(
@@ -350,7 +351,7 @@ class ResponseTest extends TestCase
      * @runInSeparateProcess
      * @covers ::respond
      * @uses \AyeAye\Api\Request
-     * @uses \AyeAye\Api\Response::setFormatFactory
+     * @uses \AyeAye\Api\Response::setWriterFactory
      * @uses \AyeAye\Api\Response::setRequest
      * @uses \AyeAye\Api\Response::getBody
      * @uses \AyeAye\Api\Response::setBodyData
@@ -359,8 +360,8 @@ class ResponseTest extends TestCase
     public function testRespondFull()
     {
         $response = new Response();
-        $formats = [
-            'testFormat'
+        $writers = [
+            'testWriter'
         ];
         $data = 'data';
         $expectedBody = [
@@ -373,30 +374,30 @@ class ResponseTest extends TestCase
         $request->expects($this->once())
             ->method('getFormats')
             ->with()
-            ->will($this->returnValue($formats));
+            ->will($this->returnValue($writers));
 
-        $formatter = $this->getMock('\AyeAye\Formatter\Formatter');
-        $formatter
+        $writer = $this->getMock('\AyeAye\Formatter\Writer');
+        $writer
             ->expects($this->once())
             ->method('format')
             ->with($expectedBody, 'response')
             ->will($this->returnValue(json_encode($expectedBody)));
-        $formatter
+        $writer
             ->expects($this->once())
             ->method('getContentType')
             ->with()
             ->will($this->returnValue(''));
 
-        /** @var FormatFactory|\PHPUnit_Framework_MockObject_MockObject $formatFactory */
-        $formatFactory =
-            $this->getMockBuilder('\AyeAye\Formatter\FormatFactory')
+        /** @var WriterFactory|\PHPUnit_Framework_MockObject_MockObject $writerFactory */
+        $writerFactory =
+            $this->getMockBuilder('\AyeAye\Formatter\WriterFactory')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $formatFactory
+        $writerFactory
             ->expects($this->once())
-            ->method('getFormatterFor')
-            ->with($formats)
-            ->will($this->returnValue($formatter));
+            ->method('getWriterFor')
+            ->with($writers)
+            ->will($this->returnValue($writer));
 
         /** @var Status|\PHPUnit_Framework_MockObject_MockObject $status */
         $status = $this->getMockBuilder('\AyeAye\Api\Status')
@@ -409,7 +410,7 @@ class ResponseTest extends TestCase
             ->will($this->returnValue(null));
 
         $response
-            ->setFormatFactory($formatFactory)
+            ->setWriterFactory($writerFactory)
             ->setRequest($request)
             ->setStatus($status);
 

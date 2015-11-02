@@ -35,7 +35,7 @@ class DeserializableObject implements Deserializable
      * @param array $data
      * @return static
      */
-    public static function ayeAyeDeserialize(array $data)
+    public static function ayeAyeDeserialize($data)
     {
         $object = new static();
         if(array_key_exists('data', $data)) {

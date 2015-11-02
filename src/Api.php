@@ -7,9 +7,9 @@
 
 namespace AyeAye\Api;
 
-use AyeAye\Formatter\FormatFactory;
-use AyeAye\Formatter\Formats\Json;
-use AyeAye\Formatter\Formats\Xml;
+use AyeAye\Formatter\WriterFactory;
+use AyeAye\Formatter\Writer\Json;
+use AyeAye\Formatter\Writer\Xml;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -46,10 +46,10 @@ class Api implements LoggerAwareInterface
     protected $response;
 
     /**
-     * A collection of formatters available
-     * @var FormatFactory
+     * A collection of writers available
+     * @var WriterFactory
      */
-    protected $formatFactory;
+    protected $writerFactory;
 
     /**
      * @var LoggerInterface
@@ -112,8 +112,8 @@ class Api implements LoggerAwareInterface
 
         try {
             $request = $this->getRequest();
-            $response->setFormatFactory(
-                $this->getFormatFactory()
+            $response->setWriterFactory(
+                $this->getWriterFactory()
             );
             $response->setRequest(
                 $request
@@ -241,25 +241,25 @@ class Api implements LoggerAwareInterface
 
     /**
      * Sets the format factory. Use for dependency injection, or additional formatters
-     * @param FormatFactory $formatFactory
+     * @param WriterFactory $writerFactory
      * @returns $this
      */
-    public function setFormatFactory(FormatFactory $formatFactory)
+    public function setWriterFactory(WriterFactory $writerFactory)
     {
-        $this->formatFactory = $formatFactory;
+        $this->writerFactory = $writerFactory;
         return $this;
     }
 
     /**
      * Get the format factory. If none is set it will create a default format factory for xml and json
-     * @return FormatFactory
+     * @return WriterFactory
      */
-    public function getFormatFactory()
+    public function getWriterFactory()
     {
-        if (!$this->formatFactory) {
+        if (!$this->writerFactory) {
             $xmlFormatter = new Xml();
             $jsonFormatter = new Json();
-            $this->formatFactory = new FormatFactory([
+            $this->writerFactory = new WriterFactory([
                 // xml
                 'xml' => $xmlFormatter,
                 'text/xml' => $xmlFormatter,
@@ -269,7 +269,7 @@ class Api implements LoggerAwareInterface
                 'application/json' => $jsonFormatter,
             ]);
         }
-        return $this->formatFactory;
+        return $this->writerFactory;
     }
 
     /**
@@ -281,7 +281,7 @@ class Api implements LoggerAwareInterface
         $status = new Status(500);
         $response = new Response();
         $response->setRequest(new Request());
-        $response->setFormatter(new Json());
+        $response->setWriter(new Json());
         $response->setStatus($status);
         $response->setBodyData($status->getMessage());
         return $response;

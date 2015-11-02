@@ -14,7 +14,7 @@ use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Router;
 use AyeAye\Api\Tests\TestData\ExceptionController;
-use AyeAye\Formatter\FormatFactory;
+use AyeAye\Formatter\WriterFactory;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 
@@ -147,7 +147,7 @@ class ApiTest extends TestCase
      * @uses \AyeAye\Api\Api::getRouter
      * @uses \AyeAye\Api\Api::getRequest
      * @uses \AyeAye\Api\Api::getResponse
-     * @uses \AyeAye\Api\Api::getFormatFactory
+     * @uses \AyeAye\Api\Api::getWriterFactory
      * @uses \AyeAye\Api\Controller
      * @uses \AyeAye\Api\Request
      * @uses \AyeAye\Api\Response
@@ -179,7 +179,7 @@ class ApiTest extends TestCase
      * @uses \AyeAye\Api\Api::getRequest
      * @uses \AyeAye\Api\Api::setRequest
      * @uses \AyeAye\Api\Api::getResponse
-     * @uses \AyeAye\Api\Api::getFormatFactory
+     * @uses \AyeAye\Api\Api::getWriterFactory
      * @uses \AyeAye\Api\Api::log
      * @uses \AyeAye\Api\Controller
      * @uses \AyeAye\Api\Request
@@ -217,7 +217,7 @@ class ApiTest extends TestCase
      * @uses \AyeAye\Api\Api::getRequest
      * @uses \AyeAye\Api\Api::setRequest
      * @uses \AyeAye\Api\Api::getResponse
-     * @uses \AyeAye\Api\Api::getFormatFactory
+     * @uses \AyeAye\Api\Api::getWriterFactory
      * @uses \AyeAye\Api\Api::log
      * @uses \AyeAye\Api\Controller
      * @uses \AyeAye\Api\Exception
@@ -256,7 +256,7 @@ class ApiTest extends TestCase
      * @uses \AyeAye\Api\Api::getRequest
      * @uses \AyeAye\Api\Api::getResponse
      * @uses \AyeAye\Api\Api::setResponse
-     * @uses \AyeAye\Api\Api::getFormatFactory
+     * @uses \AyeAye\Api\Api::getWriterFactory
      * @uses \AyeAye\Api\Api::createFailSafeResponse
      * @uses \AyeAye\Api\Api::log
      * @uses \AyeAye\Api\Controller
@@ -515,57 +515,57 @@ class ApiTest extends TestCase
 
     /**
      * @test
-     * @covers ::setFormatFactory
+     * @covers ::setWriterFactory
      * @uses \AyeAye\Api\Api::__construct
      * @uses \AyeAye\Api\Api::setInitialController
      */
     public function testSetFormatFactory()
     {
-        $formatFactory = new FormatFactory([]);
+        $writerFactory = new WriterFactory([]);
         $controller = new Controller();
         $api = new Api($controller);
 
         $this->assertNull(
-            $this->getObjectAttribute($api, 'formatFactory')
+            $this->getObjectAttribute($api, 'writerFactory')
         );
         $this->assertSame(
             $api,
-            $api->setFormatFactory($formatFactory)
+            $api->setWriterFactory($writerFactory)
         );
         $this->assertSame(
-            $formatFactory,
-            $this->getObjectAttribute($api, 'formatFactory')
+            $writerFactory,
+            $this->getObjectAttribute($api, 'writerFactory')
         );
     }
 
     /**
      * @test
-     * @covers ::getFormatFactory
+     * @covers ::getWriterFactory
      * @uses \AyeAye\Api\Api::__construct
      * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Api::setFormatFactory
+     * @uses \AyeAye\Api\Api::setWriterFactory
      */
-    public function testGetFormatFactory()
+    public function testGetWriterFactory()
     {
-        $formatFactory = new FormatFactory([]);
+        $writerFactory = new WriterFactory([]);
         $controller = new Controller();
         $api = new Api($controller);
 
         $this->assertInstanceOf(
-            'AyeAye\Formatter\FormatFactory',
-            $api->getFormatFactory()
+            'AyeAye\Formatter\WriterFactory',
+            $api->getWriterFactory()
         );
         $this->assertNotSame(
-            $formatFactory,
-            $api->getFormatFactory()
+            $writerFactory,
+            $api->getWriterFactory()
         );
         $this->assertSame(
             $api,
-            $api->setFormatFactory($formatFactory)
+            $api->setWriterFactory($writerFactory)
         );
         $this->assertSame(
-            $formatFactory,
-            $this->getObjectAttribute($api, 'formatFactory')
+            $writerFactory,
+            $this->getObjectAttribute($api, 'writerFactory')
         );
     }
 
@@ -596,8 +596,8 @@ class ApiTest extends TestCase
             $response->getStatus()->getCode()
         );
         $this->assertInstanceOf(
-            '\AyeAye\Formatter\Formats\Json',
-            $this->getObjectAttribute($response, 'formatter')
+            '\AyeAye\Formatter\Writer\Json',
+            $this->getObjectAttribute($response, 'writer')
         );
     }
 }

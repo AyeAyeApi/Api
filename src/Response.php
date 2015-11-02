@@ -7,8 +7,8 @@
 
 namespace AyeAye\Api;
 
-use AyeAye\Formatter\FormatFactory;
-use AyeAye\Formatter\Formatter;
+use AyeAye\Formatter\WriterFactory;
+use AyeAye\Formatter\Writer;
 
 /**
  * Describes response to client
@@ -25,15 +25,15 @@ class Response
 
     /**
      * Response format. Defaults to json
-     * @var FormatFactory
+     * @var WriterFactory
      */
-    protected $formatFactory;
+    protected $writerFactory;
 
     /**
      * The formatter object used to format this response
-     * @var Formatter
+     * @var Writer
      */
-    protected $formatter;
+    protected $writer;
 
     /**
      * The HTTP status of the response
@@ -150,23 +150,23 @@ class Response
 
     /**
      * Set the format factory that will be used to choose a formatter
-     * @param FormatFactory $formatFactory
+     * @param WriterFactory $writerFactory
      * @return $this
      */
-    public function setFormatFactory(FormatFactory $formatFactory)
+    public function setWriterFactory(WriterFactory $writerFactory)
     {
-        $this->formatFactory = $formatFactory;
+        $this->writerFactory = $writerFactory;
         return $this;
     }
 
     /**
      * This allows you to manually set the formatter, however it is advisable to use setFormatFactor instead
-     * @param Formatter $formatter
+     * @param Writer $writer
      * @return $this
      */
-    public function setFormatter(Formatter $formatter)
+    public function setWriter(Writer $writer)
     {
-        $this->formatter = $formatter;
+        $this->writer = $writer;
         return $this;
     }
 
@@ -176,12 +176,12 @@ class Response
      */
     public function prepareResponse()
     {
-        if (!$this->formatter) {
-            $this->formatter = $this->formatFactory->getFormatterFor(
+        if (!$this->writer) {
+            $this->writer = $this->writerFactory->getWriterFor(
                 $this->request->getFormats()
             );
         }
-        $this->preparedResponse = $this->formatter->format($this->getBody(), $this->responseName);
+        $this->preparedResponse = $this->writer->format($this->getBody(), $this->responseName);
         return $this;
     }
 
@@ -199,7 +199,7 @@ class Response
             header($this->status->getHttpHeader());
         }
 
-        header("Content-Type: {$this->formatter->getContentType()}");
+        header("Content-Type: {$this->writer->getContentType()}");
         echo $this->preparedResponse;
 
         return $this;
