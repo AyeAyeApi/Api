@@ -191,6 +191,10 @@ class Router
                 $value = $reflectionParameter->getClass()
                                              ->newInstanceWithoutConstructor()
                                              ->ayeAyeDeserialize($value);
+                $className = $reflectionParameter->getClass()->getName();
+                if(!is_object($value) || !get_class($value) == $className) {
+                    throw new \RuntimeException("$className::ayeAyeDeserialize did not return an instance of itself");
+                }
             }
             $parameters[$reflectionParameter->getName()] = $value;
         }
