@@ -41,6 +41,11 @@ class Documenter
         return $documentation;
     }
 
+    /**
+     * Get the doc block comment in front of a method and remove the surrounding asterisks
+     * @param \ReflectionMethod $method
+     * @return string[]
+     */
     protected function getMethodComment(\ReflectionMethod $method)
     {
         $lines = preg_split("/((\r?\n)|(\r\n?))/", $method->getDocComment());
