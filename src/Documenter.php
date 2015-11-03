@@ -182,7 +182,6 @@ class Documenter
      * Gets the return types from a method or function's comment.
      * This method assumes multiple possible return types split with | so returns an array.
      * It will also replace '$this' with 'self' to (somewhat) hide internals
-     * Todo: It would be cool if this method could lookup classes and find out more on what the data would look like.
      * @param array $lines
      * @return string[]
      */
