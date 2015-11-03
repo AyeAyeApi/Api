@@ -65,7 +65,7 @@ class Documenter
 
     /**
      * Gets the summary of a method.
-     * Looks at the main comment of a docblock, and returns the string up to the first full stop at a line ending or
+     * Looks at the main comment of a doc block, and returns the string up to the first full stop at a line ending or
      * double line break.
      * @param string[] $lines
      * @return string
