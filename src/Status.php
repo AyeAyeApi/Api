@@ -20,167 +20,167 @@ class Status implements \JsonSerializable
      */
     public static $statusCodes = [
         // Informational
-        100 => 'Continue',
         // If a request has both a header and a body you can break it in two with this
-        101 => 'Switching Protocols',
+        100 => 'Continue',
         // Let the client know you're switching protocols (not really necessary)
-        102 => 'Processing',
+        101 => 'Switching Protocols',
         // Taken from WebDAV, used for requests that take a long time and might get queued
+        102 => 'Processing',
 
         // Success
-        200 => 'OK',
         // Hopefully you'll see this a lot
-        201 => 'Created',
+        200 => 'OK',
         // A new record was successfully created
-        202 => 'Accepted',
+        201 => 'Created',
         // The request has been accepted but NOT yet processed
-        203 => 'Non-Authoritative Information (since HTTP/1.1)',
+        202 => 'Accepted',
         // Returned information might be from another source
-        204 => 'No Content',
+        203 => 'Non-Authoritative Information (since HTTP/1.1)',
         // Requested processed but isn't returning any content
-        205 => 'Reset Content',
+        204 => 'No Content',
         // Request processed but isn't returning any content, request user reset the document view
-        206 => 'Partial Content',
+        205 => 'Reset Content',
         // Request contains partial content (if request larger than range requested by client)
+        206 => 'Partial Content',
         // 207 => 'Multi-Status', // WebDAV, lets just avoid this for now, it's a mess
-        208 => 'Already Reported',
         // Taken from WebDAV. Could be use for an already implemented request
-        226 => 'IM Used',
+        208 => 'Already Reported',
         // o.O
+        226 => 'IM Used',
 
         // Redirect
-        300 => 'Multiple Choices',
         // Multiple choices means the client must provide more information
-        301 => 'Moved Permanently',
+        300 => 'Multiple Choices',
         // And don't come back!
-        302 => 'Found',
+        301 => 'Moved Permanently',
         // Sometimes used to mean Moved Temporarily, however it's implemented link 'See Other'
         // If that's not desired 307 should be used instead
-        303 => 'See Other',
+        302 => 'Found',
         // Like Moved Temporarily except the resource should be hit with GET regardless of method used here
-        304 => 'Not Modified',
+        303 => 'See Other',
         // Can be used to respond to the headers If-Modified-Since or If-Match
-        305 => 'Use Proxy',
+        304 => 'Not Modified',
         // Provides the address of a proxy through with the request needs to be passed (eg, for security)
+        305 => 'Use Proxy',
         // 306 => 'Switch Proxy', // No longer used, see above
-        307 => 'Temporary Redirect',
         // Moved to a different location but uses the same verb
-        308 => 'Permanent Redirect',
+        307 => 'Temporary Redirect',
         // Like 301 but the redirect MUST use the same method. Not really used
+        308 => 'Permanent Redirect',
 
         // Client Error
-        400 => 'Bad Request',
         // Request is syntactically wrong
-        401 => 'Unauthorized',
+        400 => 'Bad Request',
         // Not yet authorized
-        402 => 'Payment Required',
+        401 => 'Unauthorized',
         // Could be used to mean monetary, but could also mean a CAPTCHA
-        403 => 'Forbidden',
+        402 => 'Payment Required',
         // Authorized but still don't have permission
-        404 => 'Not Found',
+        403 => 'Forbidden',
         // I don't think I need to describe this... are you sure you're in the right business?
-        405 => 'Method Not Allowed',
+        404 => 'Not Found',
         // Using GET instead of PUT for example
-        406 => 'Not Acceptable',
+        405 => 'Method Not Allowed',
         // Response available but not appropriate based on the clients request headers
-        407 => 'Proxy Authentication Required',
+        406 => 'Not Acceptable',
         // Authenticate with proxy first
-        408 => 'Request Timeout',
+        407 => 'Proxy Authentication Required',
         // Server took too long
-        409 => 'Conflict',
+        408 => 'Request Timeout',
         // Conflicting information in the request
-        410 => 'Gone',
+        409 => 'Conflict',
         // Requested resource is no longer available and will not be made available again
-        411 => 'Length Required',
+        410 => 'Gone',
         // Request must specify the length of it's content (probably not useful in PHP)
-        412 => 'Precondition Failed',
+        411 => 'Length Required',
         // The server does not meet a precondition of the request
-        413 => 'Request Entity Too Large',
+        412 => 'Precondition Failed',
         // Request is larger than the server is willing to deal with
-        414 => 'Request-URI Too Long',
+        413 => 'Request Entity Too Large',
         // Uri is too long (probably not useful in PHP)
-        415 => 'Unsupported Media Type',
+        414 => 'Request-URI Too Long',
         // The server does not support the requested response format (eg contact-list.png)
-        416 => 'Requested Range Not Satisfiable',
+        415 => 'Unsupported Media Type',
         // For example, the client requested more data than is available
-        417 => 'Expectation Failed',
+        416 => 'Requested Range Not Satisfiable',
         // Expect header requirements can't be et
-        418 => 'I\'m a teapot',
+        417 => 'Expectation Failed',
         // Can not make coffee
-        419 => 'Authentication Timeout',
+        418 => 'I\'m a teapot',
         // Authentication has expired
-        422 => 'Unprocessable Entity',
+        419 => 'Authentication Timeout',
         // Taken from WebDAV, syntactically correct but semantically wrong request
-        423 => 'Locked',
+        422 => 'Unprocessable Entity',
         // Taken from WebDAV, the resource has been locked (could be used like 410 Gone, but try again later)
-        424 => 'Failed Dependency',
+        423 => 'Locked',
         // Taken from WebDAV, this request failed due to an earlier one
-        426 => 'Upgrade Required',
+        424 => 'Failed Dependency',
         // Use a newer protocol (probably not useful in PHP, but could mean client out of date)
-        428 => 'Precondition Required',
+        426 => 'Upgrade Required',
         // Ugh, not sure
-        429 => 'Too Many Requests',
+        428 => 'Precondition Required',
         // For rate limiting
-        431 => 'Request Header Fields Too Large',
+        429 => 'Too Many Requests',
         // For
-        440 => 'Login Timeout',
+        431 => 'Request Header Fields Too Large',
         // Taken from Microsoft, concise.
-        444 => 'No Response',
+        440 => 'Login Timeout',
         // Taken from Nginx, like 204 No Content, except it might be the clients fault
-        449 => 'Retry With',
+        444 => 'No Response',
         // Taken from Microsoft, can be used to specify missing parameters
-        450 => 'Inappropriate content',
+        449 => 'Retry With',
         // Re-purposed from Microsoft.
-        451 => 'Unavailable For Legal Reasons',
+        450 => 'Inappropriate content',
         // I get it :)
+        451 => 'Unavailable For Legal Reasons',
+        // Taken from Nginx and re worded. Useful for certificate authentication
         495 => 'Certificate Error',
         // Taken from Nginx and re worded. Useful for certificate authentication
         496 => 'Certificate Required',
-        // Taken from Nginx and re worded. Useful for certificate authentication
+        // Taken from Esri. useful for OAuth or similar
         498 => 'Token expired/invalid',
         // Taken from Esri. useful for OAuth or similar
         499 => 'Token required',
-        // Taken from Esri. useful for OAuth or similar
 
         // Server Error
-        500 => 'Internal Server Error',
         // Generic "something went wrong on our end"
-        501 => 'Not Implemented',
+        500 => 'Internal Server Error',
         // Request method not implemented but might be in the future
-        502 => 'Bad Gateway',
+        501 => 'Not Implemented',
         // Server was acting as a gateway but received an invalid response from upstream
-        503 => 'Service Unavailable',
+        502 => 'Bad Gateway',
         // Out to lunch, back soon
-        504 => 'Gateway Timeout',
+        503 => 'Service Unavailable',
         // Server was acting as a gateway but did not receive a timely response from upstream
-        505 => 'HTTP Version Not Supported',
+        504 => 'Gateway Timeout',
         // Probably not useful in an PHP
-        506 => 'Variant Also Negotiates',
+        505 => 'HTTP Version Not Supported',
         // o.O
-        507 => 'Insufficient Storage',
+        506 => 'Variant Also Negotiates',
         // Taken from WebDAV. Ran out of space
-        508 => 'Loop Detected',
+        507 => 'Insufficient Storage',
         // Taken from WebDAV. Like 208 but server has detected an infinite loop
-        509 => 'Bandwidth Limit Exceeded',
+        508 => 'Loop Detected',
         // Taken from Apache Bandwidth limit extension, but could be useful for throttling
-        510 => 'Not Extended',
+        509 => 'Bandwidth Limit Exceeded',
         // More extensions to request required?
-        511 => 'Network Authentication Required',
+        510 => 'Not Extended',
         // Not going to be useful in PHP as you're already at the server, see 401
-        520 => 'Origin Error',
+        511 => 'Network Authentication Required',
         // Taken from Cloudflare. Resource provider sent an error. Use 502 instead
-        521 => 'Web server is down',
+        520 => 'Origin Error',
         // Taken from Cloudflare. Can't connect to resource provider Use 503 instead
-        522 => 'Connection timed out',
+        521 => 'Web server is down',
         // Taken from Cloudflare. Connection to resource provider timed out. Use 504 instead
-        523 => 'Proxy Declined Request',
+        522 => 'Connection timed out',
         // Taken from Cloudflare. Resource has been blocked. Use 401 or 403 instead
-        524 => 'A timeout occurred',
+        523 => 'Proxy Declined Request',
         // Taken from Cloudflare. Connection to proxy timed out. Use 504 instead
+        524 => 'A timeout occurred',
+        // Taken from Microsoft. Connection to proxy timed out. Use 504 instead
         598 => 'Network read timeout error',
         // Taken from Microsoft. Connection to proxy timed out. Use 504 instead
         599 => 'Network connect timeout error',
-        // Taken from Microsoft. Connection to proxy timed out. Use 504 instead
     ];
 
     /**
