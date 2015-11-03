@@ -1,8 +1,10 @@
 <?php
 /**
- * A request option
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Request.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright 2015 Daniel Mason
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
@@ -11,9 +13,12 @@ use AyeAye\Formatter\Reader\Json;
 use AyeAye\Formatter\Reader\Xml;
 use AyeAye\Formatter\ReaderFactory;
 
+
 /**
- * Describes every detail of a request to the server
- * @package AyeAye\Api
+ * Class Request
+ * Describes every detail of a request from the client to the server
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 class Request implements \JsonSerializable
 {

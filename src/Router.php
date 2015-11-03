@@ -1,18 +1,21 @@
 <?php
-
 /**
- * Directs traffic to the correct end points.
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Router.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright 2015 Daniel Mason
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
+
 use AyeAye\Formatter\Deserializable;
 
 /**
- * Describes end points and controllers
- * @author Daniel Mason
- * @package AyeAye\Api
+ * Class Router
+ * Finds the correct endpoint to process a request and parses in the request data
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 class Router
 {

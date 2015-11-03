@@ -1,17 +1,19 @@
 <?php
-
 /**
- * Directs traffic to the correct end points.
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Controller.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright 2015 Daniel Mason
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
 
 /**
- * Describes end points and controllers
- * @author Daniel Mason
- * @package AyeAye\Api
+ * Class Controller
+ * Describes endpoints and controllers
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 class Controller
 {

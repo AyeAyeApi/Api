@@ -1,18 +1,20 @@
 <?php
-
 /**
- * An exception specifically for API use.
- * Messages are hidden from the user if the Exception is not caught, a default
- * one set by the code is used instead
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Exception.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright 2015 Daniel Mason
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
 
 /**
- * Used to give the context of HTTP status to an Exception
- * @package AyeAye\Api
+ * Class Exception
+ * Designed to be thrown back to the API user.
+ * Provides a public message and HTTP status code.
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 class Exception extends \Exception implements \JsonSerializable
 {

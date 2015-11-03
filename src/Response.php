@@ -1,8 +1,10 @@
 <?php
 /**
- * Response object
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Response.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright 2015 Daniel Mason
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
@@ -11,8 +13,10 @@ use AyeAye\Formatter\WriterFactory;
 use AyeAye\Formatter\Writer;
 
 /**
- * Describes response to client
- * @package AyeAye\Api
+ * Class Response
+ * Contains a payload of information to return to the client
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 class Response
 {

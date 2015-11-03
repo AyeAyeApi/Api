@@ -1,15 +1,19 @@
 <?php
 /**
- * Represents an HTTP status, used to provide appropriate response
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Api.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright 2015 Daniel Mason
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
 
 /**
- * Collection of HTTP statuses
- * @package AyeAye\Api
+ * Class Status
+ * Represents an HTTP status, used to provide appropriate response
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 class Status implements \JsonSerializable
 {
