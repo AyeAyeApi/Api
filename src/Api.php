@@ -1,8 +1,10 @@
 <?php
 /**
- * Quick start your API with this class
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Api.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright 2015 Daniel Mason
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
@@ -15,8 +17,10 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
- * Used to wrap the other classes into easier to manage code
- * @package AyeAye\Api
+ * Class Api
+ * Quick start your API with this class
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 class Api implements LoggerAwareInterface
 {

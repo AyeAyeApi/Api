@@ -1,13 +1,20 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 27/07/15
- * Time: 08:17
+ * Documenter.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright 2015 Daniel Mason
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
 
+/**
+ * Class Documenter
+ * Parses PHP doc blocks
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
+ */
 class Documenter
 {
 
@@ -41,6 +48,11 @@ class Documenter
         return $documentation;
     }
 
+    /**
+     * Get the doc block comment in front of a method and remove the surrounding asterisks
+     * @param \ReflectionMethod $method
+     * @return string[]
+     */
     protected function getMethodComment(\ReflectionMethod $method)
     {
         $lines = preg_split("/((\r?\n)|(\r\n?))/", $method->getDocComment());
@@ -60,7 +72,7 @@ class Documenter
 
     /**
      * Gets the summary of a method.
-     * Looks at the main comment of a docblock, and returns the string up to the first full stop at a line ending or
+     * Looks at the main comment of a doc block, and returns the string up to the first full stop at a line ending or
      * double line break.
      * @param string[] $lines
      * @return string
@@ -177,7 +189,6 @@ class Documenter
      * Gets the return types from a method or function's comment.
      * This method assumes multiple possible return types split with | so returns an array.
      * It will also replace '$this' with 'self' to (somewhat) hide internals
-     * Todo: It would be cool if this method could lookup classes and find out more on what the data would look like.
      * @param array $lines
      * @return string[]
      */

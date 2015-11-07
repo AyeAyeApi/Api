@@ -1,16 +1,20 @@
 <?php
 /**
- * Abstract Testing class to provide additional utilities
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * ExceptionTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright 2015 Daniel Mason
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests;
 
 /**
  * Class TestCase
+ * Abstract Testing class to provide additional utilities
  * @abstract
  * @package AyeAye\Api\Tests
+ * @see     https://github.com/AyeAyeApi/Api
  */
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
