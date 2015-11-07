@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 27/07/15
- * Time: 08:23
+ * ExceptionTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright 2015 Daniel Mason
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests;
@@ -13,6 +14,7 @@ use AyeAye\Api\Exception;
 /**
  * Class ExceptionTest
  * @package AyeAye\Api\Tests
+ * @see     https://github.com/AyeAyeApi/Api
  * @coversDefaultClass \AyeAye\Api\Exception
  */
 class ExceptionTest extends TestCase

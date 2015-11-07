@@ -1,7 +1,10 @@
 <?php
 /**
- * Author: Daniel Mason
- * Package: Api
+ * StatusTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright 2015 Daniel Mason
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests;
@@ -11,6 +14,7 @@ use AyeAye\Api\Status;
 /**
  * Class StatusTest
  * @package AyeAye\Api\Tests
+ * @see     https://github.com/AyeAyeApi/Api
  * @coversDefaultClass AyeAye\Api\Status
  */
 class StatusTest extends TestCase
