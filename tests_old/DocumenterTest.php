@@ -7,10 +7,10 @@
  * @see       https://github.com/AyeAyeApi/Api
  */
 
-namespace AyeAye\Api\Tests;
+namespace AyeAye\Api\TestsOld;
 
 use AyeAye\Api\Documenter;
-use AyeAye\Api\Tests\TestData\DocumentedController;
+use AyeAye\Api\TestsOld\TestData\DocumentedController;
 
 /**
  * Class DocumenterTest

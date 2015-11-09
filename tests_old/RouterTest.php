@@ -7,14 +7,14 @@
  * @see       https://github.com/AyeAyeApi/Api
  */
 
-namespace AyeAye\Api\Tests;
+namespace AyeAye\Api\TestsOld;
 
 use AyeAye\Api\Request;
 use AyeAye\Api\Router;
 use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\DeserializeController;
-use AyeAye\Api\Tests\TestData\DocumentedController;
-use AyeAye\Api\Tests\TestData\IndexedController;
+use AyeAye\Api\TestsOld\TestData\DeserializeController;
+use AyeAye\Api\TestsOld\TestData\DocumentedController;
+use AyeAye\Api\TestsOld\TestData\IndexedController;
 
 /**
  * Class RouterTest
@@ -362,7 +362,7 @@ class RouterTest extends TestCase
 
         $getParametersFromRequest = $this->getObjectMethod($router, 'getParametersFromRequest');
 
-        /** @var \AyeAye\Api\Tests\TestData\DeserializableObject[] $parameters */
+        /** @var \AyeAye\Api\TestsOld\TestData\DeserializableObject[] $parameters */
         $parameters = $getParametersFromRequest($request, $controller, $method);
         $this->assertCount(
             1,

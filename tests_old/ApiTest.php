@@ -7,14 +7,14 @@
  * @see       https://github.com/AyeAyeApi/Api
  */
 
-namespace AyeAye\Api\Tests;
+namespace AyeAye\Api\TestsOld;
 
 use AyeAye\Api\Api;
 use AyeAye\Api\Controller;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Router;
-use AyeAye\Api\Tests\TestData\ExceptionController;
+use AyeAye\Api\TestsOld\TestData\ExceptionController;
 use AyeAye\Formatter\WriterFactory;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;

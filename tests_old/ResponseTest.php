@@ -7,12 +7,12 @@
  * @see       https://github.com/AyeAyeApi/Api
  */
 
-namespace AyeAye\Api\Tests;
+namespace AyeAye\Api\TestsOld;
 
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\GeneratorController;
+use AyeAye\Api\TestsOld\TestData\GeneratorController;
 use AyeAye\Formatter\WriterFactory;
 use AyeAye\Formatter\Writer;
 use AyeAye\Formatter\Writer\Json;
