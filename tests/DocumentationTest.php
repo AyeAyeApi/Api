@@ -10,7 +10,6 @@
 namespace AyeAye\Api\TestsOld;
 
 use AyeAye\Api\Documentation;
-use AyeAye\Api\TestsOld\TestData\DocumentedController;
 
 /**
  * Class DocumentationTest
@@ -22,16 +21,86 @@ class DocumentationTest extends TestCase
 {
 
     /**
+     * @param string $documentation
+     * @return \ReflectionMethod|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createMethodWithDocBlock($documentation = '')
+    {
+        $reflectionMethod = $this
+            ->getMockBuilder('ReflectionMethod')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $reflectionMethod
+            ->method('getDocComment')
+            ->with()
+            ->will($this->returnValue($documentation));
+        return $reflectionMethod;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|\ReflectionMethod
+     */
+    protected function createDocBlock()
+    {
+        return $this->createMethodWithDocBlock('/**
+             * Test Summary
+             * on two lines.
+             * Test Description
+             * on
+             * three lines.
+             * @param        $incomplete
+             * @param int    $integer    Test integer
+             * @param string $string     Test string
+             * Second line
+             * @return string
+             */');
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|\ReflectionMethod
+     */
+    protected function createDocBlockWithLineBreak()
+    {
+        return $this->createMethodWithDocBlock('/**
+             *
+             * This is a
+             * three line summary
+             * with a break
+             *
+             * This is a one line description
+             * @return $this
+             */');
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|\ReflectionMethod
+     */
+    protected function createDocBlockNoDescriptionMultiReturnType()
+    {
+        return $this->createMethodWithDocBlock('/**
+             * This is a summary. There is no description
+             * @return null|mixed
+             */');
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|\ReflectionMethod
+     */
+    protected function createEmptyDocBlock()
+    {
+        return $this->createMethodWithDocBlock('');
+    }
+
+    /**
      * @test
      * @covers ::getMethodDocumentation
      * @uses \AyeAye\Api\Documentation
      */
     public function testGetMethodDocumentation()
     {
-        $controller = new DocumentedController();
         $documentation = new Documentation();
 
-        $method = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
+        $method = $this->createDocBlock();
         $expected = [
             'summary' => "Test Summary\non two lines.",
             'description' => "Test Description\non\nthree lines.",
@@ -57,7 +126,7 @@ class DocumentationTest extends TestCase
             $documentation->getMethodDocumentation($method)
         );
 
-        $method = new \ReflectionMethod($controller, 'selfReferenceController');
+        $method = $this->createDocBlockWithLineBreak();
         $expected = [
             'summary' => "This is a\nthree line summary\nwith a break",
             'description' => "This is a one line description",
@@ -70,7 +139,7 @@ class DocumentationTest extends TestCase
             $documentation->getMethodDocumentation($method)
         );
 
-        $method = new \ReflectionMethod($controller, 'getNullEndpoint');
+        $method = $this->createDocBlockNoDescriptionMultiReturnType();
         $expected = [
             'summary' => "This is a summary. There is no description",
             'parameters' => [],
@@ -82,7 +151,7 @@ class DocumentationTest extends TestCase
             $documentation->getMethodDocumentation($method)
         );
 
-        $method = new \ReflectionMethod($controller, 'noDocumentation');
+        $method = $this->createEmptyDocBlock();
         $expected = [
             'parameters' => [],
             'returnType' => []
@@ -100,11 +169,10 @@ class DocumentationTest extends TestCase
      */
     public function testGetMethodComment()
     {
-        $controller = new DocumentedController();
         $documentation = new Documentation();
         $getMethodComment = $this->getObjectMethod($documentation, 'getMethodComment');
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
+        $method = $this->createDocBlock();
         $expected = [
             'Test Summary',
             'on two lines.',
@@ -119,10 +187,10 @@ class DocumentationTest extends TestCase
         ];
         $this->assertSame(
             $expected,
-            $getMethodComment($reflectionMethod)
+            $getMethodComment($method)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
+        $method = $this->createDocBlockWithLineBreak();
         $expected = [
             '',
             'This is a',
@@ -134,24 +202,24 @@ class DocumentationTest extends TestCase
         ];
         $this->assertSame(
             $expected,
-            $getMethodComment($reflectionMethod)
+            $getMethodComment($method)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'getNullEndpoint');
+        $method = $this->createDocBlockNoDescriptionMultiReturnType();
         $expected = [
             'This is a summary. There is no description',
             '@return null|mixed',
         ];
         $this->assertSame(
             $expected,
-            $getMethodComment($reflectionMethod)
+            $getMethodComment($method)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'noDocumentation');
+        $method = $this->createEmptyDocBlock();
         $expected = [];
         $this->assertSame(
             $expected,
-            $getMethodComment($reflectionMethod)
+            $getMethodComment($method)
         );
     }
 
@@ -162,35 +230,34 @@ class DocumentationTest extends TestCase
      */
     public function testgetSummary()
     {
-        $controller = new DocumentedController();
         $documentation = new Documentation();
 
         $getMethodComment = $this->getObjectMethod($documentation, 'getMethodComment');
         $getSummary = $this->getObjectMethod($documentation, 'getSummary');
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createDocBlock();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             "Test Summary\non two lines.",
             $getSummary($comment)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createDocBlockWithLineBreak();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             "This is a\nthree line summary\nwith a break",
             $getSummary($comment)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'getNullEndpoint');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createDocBlockNoDescriptionMultiReturnType();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             'This is a summary. There is no description',
             $getSummary($comment)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'noDocumentation');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createEmptyDocBlock();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             '',
             $getSummary($comment)
@@ -204,36 +271,34 @@ class DocumentationTest extends TestCase
      */
     public function testGetDescription()
     {
-        $controller = new DocumentedController();
         $documentation = new Documentation();
 
         $getMethodComment = $this->getObjectMethod($documentation, 'getMethodComment');
         $getDescription = $this->getObjectMethod($documentation, 'getDescription');
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
-
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createDocBlock();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             "Test Description\non\nthree lines.",
             $getDescription($comment)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createDocBlockWithLineBreak();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             'This is a one line description',
             $getDescription($comment)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'getNullEndpoint');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createDocBlockNoDescriptionMultiReturnType();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             '',
             $getDescription($comment)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'noDocumentation');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createEmptyDocBlock();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             '',
             $getDescription($comment)
@@ -247,13 +312,12 @@ class DocumentationTest extends TestCase
      */
     public function testGetParameters()
     {
-        $controller = new DocumentedController();
         $documentation = new Documentation();
 
         $getMethodComment = $this->getObjectMethod($documentation, 'getMethodComment');
         $getParameters = $this->getObjectMethod($documentation, 'getParameters');
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
+        $method = $this->createDocBlock();
         $expected = [
             'incomplete' => [
                 'type' => '',
@@ -268,28 +332,28 @@ class DocumentationTest extends TestCase
                 'description' => "Test string\nSecond line",
             ],
         ];
-        $comment = $getMethodComment($reflectionMethod);
+        $comment = $getMethodComment($method);
         $this->assertSame(
             $expected,
             $getParameters($comment)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createDocBlockWithLineBreak();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             [],
             $getParameters($comment)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'getNullEndpoint');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createDocBlockNoDescriptionMultiReturnType();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             [],
             $getParameters($comment)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'noDocumentation');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createEmptyDocBlock();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             [],
             $getParameters($comment)
@@ -303,36 +367,35 @@ class DocumentationTest extends TestCase
      */
     public function testGetReturnType()
     {
-        $controller = new DocumentedController();
         $documentation = new Documentation();
 
         $getMethodComment = $this->getObjectMethod($documentation, 'getMethodComment');
         $getReturnType = $this->getObjectMethod($documentation, 'getReturnType');
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createDocBlock();
+        $comment = $getMethodComment($method);
 
         $this->assertSame(
             ['string'],
-            $getReturnType($comment, $reflectionMethod->getDeclaringClass())
+            $getReturnType($comment, $method->getDeclaringClass())
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'selfReferenceController');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createDocBlockWithLineBreak();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             ['self'],
-            $getReturnType($comment, $reflectionMethod->getDeclaringClass())
+            $getReturnType($comment, $method->getDeclaringClass())
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'getNullEndpoint');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createDocBlockNoDescriptionMultiReturnType();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             ['null', 'mixed'],
             $getReturnType($comment)
         );
 
-        $reflectionMethod = new \ReflectionMethod($controller, 'noDocumentation');
-        $comment = $getMethodComment($reflectionMethod);
+        $method = $this->createEmptyDocBlock();
+        $comment = $getMethodComment($method);
         $this->assertSame(
             [],
             $getReturnType($comment)
