@@ -1,6 +1,6 @@
 <?php
 /**
- * DocumenterTest.php
+ * DocumentationTest.php
  * @author    Daniel Mason <daniel@danielmason.com>
  * @copyright 2015 Daniel Mason
  * @license   GPL 3
@@ -9,27 +9,27 @@
 
 namespace AyeAye\Api\TestsOld;
 
-use AyeAye\Api\Documenter;
+use AyeAye\Api\Documentation;
 use AyeAye\Api\TestsOld\TestData\DocumentedController;
 
 /**
- * Class DocumenterTest
+ * Class DocumentationTest
  * @package AyeAye\Api\Tests
  * @see     https://github.com/AyeAyeApi/Api
- * @coversDefaultClass \AyeAye\Api\Documenter
+ * @coversDefaultClass \AyeAye\Api\Documentation
  */
-class DocumenterTest extends TestCase
+class DocumentationTest extends TestCase
 {
 
     /**
      * @test
      * @covers ::getMethodDocumentation
-     * @uses \AyeAye\Api\Documenter
+     * @uses \AyeAye\Api\Documentation
      */
     public function testGetMethodDocumentation()
     {
         $controller = new DocumentedController();
-        $documenter = new Documenter();
+        $documentation = new Documentation();
 
         $method = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
         $expected = [
@@ -54,7 +54,7 @@ class DocumenterTest extends TestCase
         ];
         $this->assertSame(
             $expected,
-            $documenter->getMethodDocumentation($method)
+            $documentation->getMethodDocumentation($method)
         );
 
         $method = new \ReflectionMethod($controller, 'selfReferenceController');
@@ -67,7 +67,7 @@ class DocumenterTest extends TestCase
         ];
         $this->assertSame(
             $expected,
-            $documenter->getMethodDocumentation($method)
+            $documentation->getMethodDocumentation($method)
         );
 
         $method = new \ReflectionMethod($controller, 'getNullEndpoint');
@@ -79,7 +79,7 @@ class DocumenterTest extends TestCase
         ];
         $this->assertSame(
             $expected,
-            $documenter->getMethodDocumentation($method)
+            $documentation->getMethodDocumentation($method)
         );
 
         $method = new \ReflectionMethod($controller, 'noDocumentation');
@@ -90,7 +90,7 @@ class DocumenterTest extends TestCase
         ];
         $this->assertSame(
             $expected,
-            $documenter->getMethodDocumentation($method)
+            $documentation->getMethodDocumentation($method)
         );
     }
 
@@ -101,8 +101,8 @@ class DocumenterTest extends TestCase
     public function testGetMethodComment()
     {
         $controller = new DocumentedController();
-        $documenter = new Documenter();
-        $getMethodComment = $this->getObjectMethod($documenter, 'getMethodComment');
+        $documentation = new Documentation();
+        $getMethodComment = $this->getObjectMethod($documentation, 'getMethodComment');
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
         $expected = [
@@ -158,15 +158,15 @@ class DocumenterTest extends TestCase
     /**
      * @test
      * @covers ::getSummary
-     * @uses \AyeAye\Api\Documenter::getMethodComment
+     * @uses \AyeAye\Api\Documentation::getMethodComment
      */
     public function testgetSummary()
     {
         $controller = new DocumentedController();
-        $documenter = new Documenter();
+        $documentation = new Documentation();
 
-        $getMethodComment = $this->getObjectMethod($documenter, 'getMethodComment');
-        $getSummary = $this->getObjectMethod($documenter, 'getSummary');
+        $getMethodComment = $this->getObjectMethod($documentation, 'getMethodComment');
+        $getSummary = $this->getObjectMethod($documentation, 'getSummary');
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
         $comment = $getMethodComment($reflectionMethod);
@@ -200,15 +200,15 @@ class DocumenterTest extends TestCase
     /**
      * @test
      * @covers ::getDescription
-     * @uses \AyeAye\Api\Documenter::getMethodComment
+     * @uses \AyeAye\Api\Documentation::getMethodComment
      */
     public function testGetDescription()
     {
         $controller = new DocumentedController();
-        $documenter = new Documenter();
+        $documentation = new Documentation();
 
-        $getMethodComment = $this->getObjectMethod($documenter, 'getMethodComment');
-        $getDescription = $this->getObjectMethod($documenter, 'getDescription');
+        $getMethodComment = $this->getObjectMethod($documentation, 'getMethodComment');
+        $getDescription = $this->getObjectMethod($documentation, 'getDescription');
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
 
@@ -243,15 +243,15 @@ class DocumenterTest extends TestCase
     /**
      * @test
      * @covers ::getParameters
-     * @uses \AyeAye\Api\Documenter::getMethodComment
+     * @uses \AyeAye\Api\Documentation::getMethodComment
      */
     public function testGetParameters()
     {
         $controller = new DocumentedController();
-        $documenter = new Documenter();
+        $documentation = new Documentation();
 
-        $getMethodComment = $this->getObjectMethod($documenter, 'getMethodComment');
-        $getParameters = $this->getObjectMethod($documenter, 'getParameters');
+        $getMethodComment = $this->getObjectMethod($documentation, 'getMethodComment');
+        $getParameters = $this->getObjectMethod($documentation, 'getParameters');
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
         $expected = [
@@ -299,15 +299,15 @@ class DocumenterTest extends TestCase
     /**
      * @test
      * @covers ::getReturnType()
-     * @uses \AyeAye\Api\Documenter::getMethodComment
+     * @uses \AyeAye\Api\Documentation::getMethodComment
      */
     public function testGetReturnType()
     {
         $controller = new DocumentedController();
-        $documenter = new Documenter();
+        $documentation = new Documentation();
 
-        $getMethodComment = $this->getObjectMethod($documenter, 'getMethodComment');
-        $getReturnType = $this->getObjectMethod($documenter, 'getReturnType');
+        $getMethodComment = $this->getObjectMethod($documentation, 'getMethodComment');
+        $getReturnType = $this->getObjectMethod($documentation, 'getReturnType');
 
         $reflectionMethod = new \ReflectionMethod($controller, 'getDocumentedEndpoint');
         $comment = $getMethodComment($reflectionMethod);
