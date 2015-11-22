@@ -163,13 +163,18 @@ class ResponseTest extends TestCase
      */
     public function testBodyGenerator()
     {
-        $controller = new GeneratorController();
+        $generator = function() {
+            yield 'data' => 'data';
+            yield 'string' => 'string';
+            yield 'integer' => 42;
+        };
+
         $response = new Response();
 
         $this->assertSame(
             $response,
             $response->setBodyData(
-                $controller->getGeneratorEndpoint()
+                $generator()
             )
         );
 
