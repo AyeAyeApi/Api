@@ -10,6 +10,7 @@
 namespace AyeAye\Api\TestsOld;
 
 use AyeAye\Api\Request;
+use AyeAye\Formatter\ReaderFactory;
 
 /**
  * Class ControllerTest
@@ -38,6 +39,42 @@ class RequestTest extends TestCase
             $parameters,
             $request->getParameters()
         );
+    }
+
+    /**
+     * @test
+     * @covers ::getReaderFactory
+     * @uses \AyeAye\Api\Request
+     */
+    public function testGetReaderFactory()
+    {
+        $readerFactory = new ReaderFactory();
+        $request = new Request();
+        $getReaderFactory = $this->getObjectMethod($request, 'getReaderFactory');
+
+        $this->assertInstanceOf(
+            'AyeAye\Formatter\ReaderFactory',
+            $getReaderFactory()
+        );
+
+        $this->assertNotSame(
+            $readerFactory,
+            $getReaderFactory()
+        );
+
+        $request = new Request(null, null, $readerFactory);
+        $getReaderFactory = $this->getObjectMethod($request, 'getReaderFactory');
+
+        $this->assertInstanceOf(
+            'AyeAye\Formatter\ReaderFactory',
+            $getReaderFactory()
+        );
+
+        $this->assertSame(
+            $readerFactory,
+            $getReaderFactory()
+        );
+
     }
 
     /**
