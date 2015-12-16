@@ -169,7 +169,7 @@ class Request implements \JsonSerializable
         $this->setParameters($this->urlToParameters($this->getRequestedUri()));
         $this->setParameters($_REQUEST);
         $this->setParameters($this->parseHeader($_SERVER));
-        $this->setParameters($this->stringToObject($this->readBody()));
+        $this->setParameters($this->stringToArray($this->readBody()));
         return $this->getParameters();
     }
 
@@ -230,7 +230,7 @@ class Request implements \JsonSerializable
      * @param string $string a string of data
      * @return array
      */
-    protected function stringToObject($string)
+    protected function stringToArray($string)
     {
         if (!$string || !is_string($string)) {
             return [];
@@ -382,7 +382,7 @@ class Request implements \JsonSerializable
             if (!is_string($newParameters)) {
                 throw new \Exception('newParameters can not be scalar');
             }
-            $newParameters = $this->stringToObject($newParameters);
+            $newParameters = $this->stringToArray($newParameters);
         }
         foreach ($newParameters as $field => $value) {
             $this->setParameter($field, $value);

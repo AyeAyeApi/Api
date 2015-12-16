@@ -104,7 +104,7 @@ class Router
      */
     protected function getEndpoints(Controller $controller)
     {
-        $documenter = new Documenter();
+        $documentation = new Documentation();
         $endpoints = [];
         $parts = [];
         $methods = get_class_methods($controller);
@@ -116,7 +116,7 @@ class Router
                     if (!array_key_exists($method, $endpoints)) {
                         $endpoints[$method] = array();
                     }
-                    $endpoints[$method][$endpoint] = $documenter->getMethodDocumentation(
+                    $endpoints[$method][$endpoint] = $documentation->getMethodDocumentation(
                         new \ReflectionMethod($controller, $classMethod)
                     );
                 }

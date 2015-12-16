@@ -1,6 +1,6 @@
 <?php
 /**
- * Documenter.php
+ * Documentation.php
  * @author    Daniel Mason <daniel@danielmason.com>
  * @copyright 2015 Daniel Mason
  * @license   GPL 3
@@ -10,12 +10,12 @@
 namespace AyeAye\Api;
 
 /**
- * Class Documenter
+ * Class Documentation
  * Parses PHP doc blocks
  * @package AyeAye/Api
  * @see     https://github.com/AyeAyeApi/Api
  */
-class Documenter
+class Documentation
 {
 
     /**

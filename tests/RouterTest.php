@@ -9,12 +9,8 @@
 
 namespace AyeAye\Api\Tests;
 
-use AyeAye\Api\Request;
 use AyeAye\Api\Router;
 use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\DeserializeController;
-use AyeAye\Api\Tests\TestData\DocumentedController;
-use AyeAye\Api\Tests\TestData\IndexedController;
 
 /**
  * Class RouterTest
@@ -26,164 +22,14 @@ class RouterTest extends TestCase
 {
 
     /**
-     * @test
-     * @covers ::processRequest
-     * @uses AyeAye\Api\Documenter
-     * @uses AyeAye\Api\Request
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::getEndpoints
-     * @uses AyeAye\Api\Router::getControllers
-     * @uses AyeAye\Api\Router::camelcaseToHyphenated
-     * @uses AyeAye\Api\Router::documentController
-     * @uses AyeAye\Api\Router::getParametersFromRequest
+     * @return Status|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function testProcessRequestSelfDocumented()
+    protected function getMockStatus()
     {
-        $controller = new DocumentedController();
-        $request = new Request();
-
-        $router = new Router();
-        $response = $router->processRequest($request, $controller);
-        $this->assertObjectHasAttribute(
-            'controllers',
-            $response
-        );
-        $this->assertObjectHasAttribute(
-            'endpoints',
-            $response
-        );
-
-    }
-
-    /**
-     * @test
-     * @covers ::processRequest
-     * @uses AyeAye\Api\Request
-     * @uses AyeAye\Api\Status
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::parseControllerName
-     * @uses AyeAye\Api\Router::getParametersFromRequest
-     * @uses AyeAye\Api\Router::setStatus
-     */
-    public function testProcessRequestEndpointOnly()
-    {
-        $controller = new DocumentedController();
-        $request = new Request('GET', 'documented');
-
-        $router = new Router();
-        $this->assertSame(
-            'information',
-            $router->processRequest($request, $controller, null)
-        );
-
-    }
-
-    /**
-     * @test
-     * @covers ::processRequest
-     * @uses AyeAye\Api\Request
-     * @uses AyeAye\Api\Status
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::parseControllerName
-     * @uses AyeAye\Api\Router::getParametersFromRequest
-     * @uses AyeAye\Api\Router::setStatus
-     */
-    public function testProcessRequestIndexedController()
-    {
-        $controller = new IndexedController();
-
-        $request = new Request('GET', '');
-        $router = new Router();
-        $this->assertSame(
-            'Got Index',
-            $router->processRequest($request, $controller, null)
-        );
-
-        $request = new Request('PUT', '');
-        $router = new Router();
-        $this->assertSame(
-            'Put Index',
-            $router->processRequest($request, $controller, null)
-        );
-
-    }
-
-    /**
-     * @test
-     * @covers ::processRequest
-     * @uses AyeAye\Api\Request
-     * @uses AyeAye\Api\Status
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::parseControllerName
-     * @uses AyeAye\Api\Router::getParametersFromRequest
-     * @uses AyeAye\Api\Router::setStatus
-     */
-    public function testProcessRequestControllerToEndpoint()
-    {
-        $controller = new DocumentedController();
-        $request = new Request('GET', 'self-reference/documented');
-
-        $router = new Router();
-        $this->assertSame(
-            'information',
-            $router->processRequest($request, $controller, null)
-        );
-
-    }
-
-    /**
-     * @test
-     * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionCode    404
-     * @expectedExceptionMessage Could not find controller or endpoint matching 'nonsense'
-     * @covers ::processRequest
-     * @uses AyeAye\Api\Exception
-     * @uses AyeAye\Api\Request
-     * @uses AyeAye\Api\Status
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::parseControllerName
-     */
-    public function testProcessRequestNotFound()
-    {
-        $controller = new DocumentedController();
-        $request = new Request('GET', 'nonsense');
-        $router = new Router();
-        $router->processRequest($request, $controller, null);
-
-    }
-
-
-    /**
-     * @test
-     * @covers ::documentController
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Documenter
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::getEndpoints
-     * @uses AyeAye\Api\Router::getControllers
-     * @uses AyeAye\Api\Router::camelcaseToHyphenated
-     */
-    public function testDocumentController()
-    {
-        $controller = new DocumentedController();
-        $router = new Router();
-
-        $documentController = $this->getObjectMethod($router, 'documentController');
-        $documentation = $documentController($controller);
-        $this->assertObjectHasAttribute(
-            'controllers',
-            $documentation
-        );
-        $this->assertObjectHasAttribute(
-            'endpoints',
-            $documentation
-        );
-
+        return $this
+            ->getMockBuilder('AyeAye\Api\Status')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
@@ -198,60 +44,6 @@ class RouterTest extends TestCase
         $this->assertSame(
             'camelcase-to-hyphenated',
             $camelcaseToHyphenated('camelcaseToHyphenated')
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::getEndpoints
-     * @uses AyeAye\Api\Documenter
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::camelcaseToHyphenated
-     */
-    public function testGetEndpoints()
-    {
-        $router = new Router();
-        $getEndpoints = $this->getObjectMethod($router, 'getEndpoints');
-
-        $controller = new DocumentedController();
-        $endpoints = $getEndpoints($controller);
-        $this->assertArrayHasKey(
-            'get',
-            $endpoints
-        );
-        $this->assertArrayNotHasKey(
-            'put',
-            $endpoints
-        );
-
-        $controller = new IndexedController();
-        $endpoints = $getEndpoints($controller);
-        $this->assertArrayHasKey(
-            'get',
-            $endpoints
-        );
-        $this->assertArrayHasKey(
-            'put',
-            $endpoints
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::getControllers
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::camelcaseToHyphenated
-     */
-    public function testGetControllers()
-    {
-        $router = new Router();
-        $getControllers = $this->getObjectMethod($router, 'getControllers');
-
-        $controller = new DocumentedController();
-        $controllers = $getControllers($controller);
-        $this->assertContains(
-            'self-reference',
-            $controllers
         );
     }
 
@@ -316,71 +108,24 @@ class RouterTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @covers ::getParametersFromRequest
-     * @uses AyeAye\Api\Request
-     */
-    public function testGetParametersFromRequest()
-    {
-        $router = new Router();
-        $request = new Request(null, null, null, [
-            'integer' => 20,
-            'string' => false,
-            'not-used' => 'anything',
-        ]);
-        $controller = new DocumentedController();
-        $method = 'getDocumentedEndpoint';
-
-        $getParametersFromRequest = $this->getObjectMethod($router, 'getParametersFromRequest');
-
-        $this->assertSame(
-            [
-                'incomplete' => null,
-                'integer' => 20,
-                'string' => false,
-            ],
-            $getParametersFromRequest($request, $controller, $method)
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::getParametersFromRequest
-     * @uses AyeAye\Api\Request
-     */
-    public function testGetParametersFromRequestDeserialize()
-    {
-        $router = new Router();
-        $request = new Request(null, null, null, [
-            'object' => (object)[
-                'data' => 'testString'
-            ]
-        ]);
-        $controller = new DeserializeController();
-        $method = 'getDeserializeEndpoint';
-
-        $getParametersFromRequest = $this->getObjectMethod($router, 'getParametersFromRequest');
-
-        /** @var \AyeAye\Api\Tests\TestData\DeserializableObject[] $parameters */
-        $parameters = $getParametersFromRequest($request, $controller, $method);
-        $this->assertCount(
-            1,
-            $parameters
-        );
-        $this->assertArrayHasKey(
-            'object',
-            $parameters
-        );
-        $this->assertInstanceOf(
-            '\AyeAye\Api\Tests\TestData\DeserializableObject',
-            $parameters['object']
-        );
-        $this->assertSame(
-            'testString',
-            $parameters['object']->getData()
-        );
-    }
+//    /**
+//     * @test
+//     * @covers ::getControllers
+//     */
+//    public function testGetControllers()
+//    {
+//        $mockController = $this->getMockForAbstractClass('AyeAye\Api\Controller');
+//        $mockController->method('testController');
+//        $mockController->method('anotherTestController');
+//
+//        $router = new Router();
+//        $getControllers = $this->getObjectMethod($router, 'getControllers');
+//
+//        $this->assertCount(
+//            2,
+//            $getControllers($mockController)
+//        );
+//    }
 
     /**
      * @test
@@ -391,39 +136,38 @@ class RouterTest extends TestCase
     public function testGetStatus()
     {
         $router = new Router();
+        $status = $this->getMockStatus();
 
-        $this->assertSame(
-            200,
-            $router->getStatus()->getCode()
+        $this->assertInstanceOf(
+            'AyeAye\Api\Status',
+            $router->getStatus()
         );
-        $this->assertSame(
-            'OK',
-            $router->getStatus()->getMessage()
+        $this->assertNotSame(
+            $status,
+            $router->getStatus()
         );
 
-        $status = new Status(500);
         $setStatus = $this->getObjectMethod($router, 'setStatus');
         $setStatus($status);
 
-        $this->assertSame(
-            500,
-            $router->getStatus()->getCode()
+        $this->assertInstanceOf(
+            'AyeAye\Api\Status',
+            $router->getStatus()
         );
         $this->assertSame(
-            'Internal Server Error',
-            $router->getStatus()->getMessage()
+            $status,
+            $router->getStatus()
         );
     }
 
     /**
      * @test
      * @covers ::setStatus
-     * @uses AyeAye\Api\Status
      * @uses AyeAye\Api\Router::getStatus
      */
     public function testSetStatus()
     {
-        $status = new Status(418);
+        $status = $this->getMockStatus();
         $router = new Router();
 
         $setStatus = $this->getObjectMethod($router, 'setStatus');

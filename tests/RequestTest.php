@@ -10,6 +10,7 @@
 namespace AyeAye\Api\Tests;
 
 use AyeAye\Api\Request;
+use AyeAye\Formatter\ReaderFactory;
 
 /**
  * Class ControllerTest
@@ -38,6 +39,42 @@ class RequestTest extends TestCase
             $parameters,
             $request->getParameters()
         );
+    }
+
+    /**
+     * @test
+     * @covers ::getReaderFactory
+     * @uses \AyeAye\Api\Request
+     */
+    public function testGetReaderFactory()
+    {
+        $readerFactory = new ReaderFactory();
+        $request = new Request();
+        $getReaderFactory = $this->getObjectMethod($request, 'getReaderFactory');
+
+        $this->assertInstanceOf(
+            'AyeAye\Formatter\ReaderFactory',
+            $getReaderFactory()
+        );
+
+        $this->assertNotSame(
+            $readerFactory,
+            $getReaderFactory()
+        );
+
+        $request = new Request(null, null, $readerFactory);
+        $getReaderFactory = $this->getObjectMethod($request, 'getReaderFactory');
+
+        $this->assertInstanceOf(
+            'AyeAye\Formatter\ReaderFactory',
+            $getReaderFactory()
+        );
+
+        $this->assertSame(
+            $readerFactory,
+            $getReaderFactory()
+        );
+
     }
 
     /**
@@ -223,63 +260,61 @@ class RequestTest extends TestCase
 
     /**
      * @test
-     * @covers ::stringToObject
+     * @covers ::stringToArray
      * @uses \AyeAye\Api\Request
      */
-    public function testStringToClass()
+    public function testStringToArray()
     {
         $request = new Request();
-        $stringToObject = $this->getObjectMethod($request, 'stringToObject');
+        $stringToArray = $this->getObjectMethod($request, 'stringToArray');
 
 
         $this->assertArrayNotHasKey(
             'text',
-            $stringToObject('')
+            $stringToArray('')
         );
 
         $this->assertArrayHasKey(
             'text',
-            $stringToObject('test')
+            $stringToArray('test')
         );
         $this->assertSame(
             'test',
-            $stringToObject('test')['text']
+            $stringToArray('test')['text']
         );
 
         $json = '{"key":"value"}';
 
         $this->assertArrayNotHasKey(
             'text',
-            $stringToObject($json)
+            $stringToArray($json)
         );
         $this->assertArrayHasKey(
             'key',
-            $stringToObject($json)
+            $stringToArray($json)
         );
         $this->assertSame(
             'value',
-            $stringToObject($json)['key']
+            $stringToArray($json)['key']
         );
 
         $xml = '<container><key>anotherValue</key></container>';
 
         $this->assertArrayNotHasKey(
             'text',
-            $stringToObject($xml)
+            $stringToArray($xml)
         );
         $this->assertArrayHasKey(
             'key',
-            $stringToObject($xml)
+            $stringToArray($xml)
         );
 
-        // ToDo: How does this even???
-//        /** @var \SimpleXMLElement $object */
-//        $object = $stringToObject($xml);
-//        print_r($object->children()->text()); die;
-//        $this->assertSame(
-//            'anotherValue',
-//            $stringToObject($xml)->key[0]
-//        );
+//         ToDo: How does this even???
+        /** @var \SimpleXMLElement $object */
+        $this->assertSame(
+            'anotherValue',
+            $stringToArray($xml)['key']
+        );
     }
 
     /**

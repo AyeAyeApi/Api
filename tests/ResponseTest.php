@@ -12,7 +12,7 @@ namespace AyeAye\Api\Tests;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\GeneratorController;
+use AyeAye\Api\TestsOld\TestData\GeneratorController;
 use AyeAye\Formatter\WriterFactory;
 use AyeAye\Formatter\Writer;
 use AyeAye\Formatter\Writer\Json;
@@ -163,13 +163,18 @@ class ResponseTest extends TestCase
      */
     public function testBodyGenerator()
     {
-        $controller = new GeneratorController();
+        $generator = function() {
+            yield 'data' => 'data';
+            yield 'string' => 'string';
+            yield 'integer' => 42;
+        };
+
         $response = new Response();
 
         $this->assertSame(
             $response,
             $response->setBodyData(
-                $controller->getGeneratorEndpoint()
+                $generator()
             )
         );
 
