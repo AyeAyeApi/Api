@@ -7,7 +7,7 @@
  * @see       https://github.com/AyeAyeApi/Api
  */
 
-namespace AyeAye\Api\TestsOld;
+namespace AyeAye\Api\Tests;
 
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
