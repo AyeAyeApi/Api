@@ -12,7 +12,6 @@ namespace AyeAye\Api\Tests;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
-use AyeAye\Api\TestsOld\TestData\GeneratorController;
 use AyeAye\Formatter\WriterFactory;
 use AyeAye\Formatter\Writer;
 use AyeAye\Formatter\Writer\Json;
@@ -256,14 +255,14 @@ class ResponseTest extends TestCase
         $response->setBodyData($data);
 
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
-        $request = $this->getMock('\AyeAye\Api\Request');
+        $request = $this->getMockRequest();
         $request
             ->expects($this->once())
             ->method('getFormats')
             ->with()
             ->will($this->returnValue($writers));
 
-        $writer = $this->getMock('\AyeAye\Formatter\Writer');
+        $writer = $this->getMockWriter();
         $writer
             ->expects($this->once())
             ->method('format')
@@ -271,10 +270,7 @@ class ResponseTest extends TestCase
             ->will($this->returnValue(json_encode($expectedBody)));
 
         /** @var WriterFactory|\PHPUnit_Framework_MockObject_MockObject $writerFactory */
-        $writerFactory = $this
-            ->getMockBuilder('\AyeAye\Formatter\WriterFactory')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $writerFactory = $this->getMockWriterFactory();
         $writerFactory
             ->expects($this->once())
             ->method('getWriterFor')
@@ -309,7 +305,7 @@ class ResponseTest extends TestCase
     public function testRespond(Response $response)
     {
         /** @var Writer|\PHPUnit_Framework_MockObject_MockObject $writer */
-        $writer = $this->getMock('\AyeAye\Formatter\Writer');
+        $writer = $this->getMockWriter();
         $writer
             ->expects($this->exactly(2))
             ->method('getContentType')
@@ -317,9 +313,7 @@ class ResponseTest extends TestCase
             ->will($this->returnValue(''));
 
         /** @var Status|\PHPUnit_Framework_MockObject_MockObject $status */
-        $status = $this->getMockBuilder('\AyeAye\Api\Status')
-                       ->disableOriginalConstructor()
-                       ->getMock();
+        $status = $this->getMockStatus();
         $status
             ->expects($this->once())
             ->method('getHttpHeader')
@@ -377,13 +371,13 @@ class ResponseTest extends TestCase
         $response->setBodyData($data);
 
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
-        $request = $this->getMock('\AyeAye\Api\Request');
+        $request = $this->getMockRequest();
         $request->expects($this->once())
             ->method('getFormats')
             ->with()
             ->will($this->returnValue($writers));
 
-        $writer = $this->getMock('\AyeAye\Formatter\Writer');
+        $writer = $this->getMockWriter();
         $writer
             ->expects($this->once())
             ->method('format')
@@ -396,10 +390,7 @@ class ResponseTest extends TestCase
             ->will($this->returnValue(''));
 
         /** @var WriterFactory|\PHPUnit_Framework_MockObject_MockObject $writerFactory */
-        $writerFactory =
-            $this->getMockBuilder('\AyeAye\Formatter\WriterFactory')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $writerFactory = $this->getMockWriterFactory();
         $writerFactory
             ->expects($this->once())
             ->method('getWriterFor')
@@ -407,9 +398,7 @@ class ResponseTest extends TestCase
             ->will($this->returnValue($writer));
 
         /** @var Status|\PHPUnit_Framework_MockObject_MockObject $status */
-        $status = $this->getMockBuilder('\AyeAye\Api\Status')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $status = $this->getMockStatus();
         $status
             ->expects($this->once())
             ->method('getHttpHeader')

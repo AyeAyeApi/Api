@@ -53,7 +53,7 @@ class RequestTest extends TestCase
         $getReaderFactory = $this->getObjectMethod($request, 'getReaderFactory');
 
         $this->assertInstanceOf(
-            'AyeAye\Formatter\ReaderFactory',
+            ReaderFactory::class,
             $getReaderFactory()
         );
 
@@ -66,7 +66,7 @@ class RequestTest extends TestCase
         $getReaderFactory = $this->getObjectMethod($request, 'getReaderFactory');
 
         $this->assertInstanceOf(
-            'AyeAye\Formatter\ReaderFactory',
+            ReaderFactory::class,
             $getReaderFactory()
         );
 

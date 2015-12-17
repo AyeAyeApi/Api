@@ -11,6 +11,7 @@ namespace AyeAye\Api\Tests;
 
 use AyeAye\Api\Controller;
 use AyeAye\Api\Exception as AyeAyeException;
+use AyeAye\Api\Exception;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Router;
@@ -63,7 +64,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getMockController()
     {
-        return $this->getMock('\AyeAye\Api\Controller');
+        return $this->getMock(Controller::class);
     }
 
     /**
@@ -72,7 +73,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected function getMockRequest()
     {
         return $this
-            ->getMockBuilder('\AyeAye\Api\Request')
+            ->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -83,7 +84,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected function getMockResponse()
     {
         return $this
-            ->getMockBuilder('\AyeAye\Api\Response')
+            ->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -93,7 +94,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getMockRouter()
     {
-        return $this->getMock('\AyeAye\Api\Router');
+        return $this->getMock(Router::class);
     }
 
     /**
@@ -102,7 +103,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected function getMockStatus()
     {
         return $this
-            ->getMockBuilder('\AyeAye\Api\Status')
+            ->getMockBuilder(Status::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -113,7 +114,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected function getMockWriterFactory()
     {
         return $this
-            ->getMockBuilder('\AyeAye\Formatter\WriterFactory')
+            ->getMockBuilder(WriterFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -123,7 +124,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getMockLogger()
     {
-        return $this->getMockForAbstractClass('\Psr\Log\AbstractLogger');
+        return $this->getMockForAbstractClass(AbstractLogger::class);
     }
 
     /**
@@ -132,7 +133,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected function getMockAyeAyeException()
     {
         return $this
-            ->getMockBuilder('\AyeAye\Api\Exception')
+            ->getMockBuilder(Exception::class)
             ->disableOriginalConstructor()
             ->getMock();
     }

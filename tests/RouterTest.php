@@ -22,17 +22,6 @@ class RouterTest extends TestCase
 {
 
     /**
-     * @return Status|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getMockStatus()
-    {
-        return $this
-            ->getMockBuilder('AyeAye\Api\Status')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    /**
      * @test
      * @covers ::camelcaseToHyphenated
      */
