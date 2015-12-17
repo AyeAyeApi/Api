@@ -81,69 +81,10 @@ class Router
      */
     protected function documentController(Controller $controller)
     {
-        $data = new \stdClass();
-        $data->controllers = $this->getControllers($controller);
-        $data->endpoints = $this->getEndpoints($controller);
-        return $data;
+        return new ControllerDocumentation(
+            new \ReflectionObject($controller)
+        );
     }
-
-    /**
-     * Takes a camelcase string, such as method names, and hyphenates it for urls
-     * @param string $camelcaseString
-     * @return string Hyphenated string for urls
-     */
-    protected function camelcaseToHyphenated($camelcaseString)
-    {
-        return strtolower(preg_replace('/([a-z])([A-Z])/s', '$1-$2', $camelcaseString));
-    }
-
-    /**
-     * Returns a list of endpoints attached to this class
-     * @param Controller $controller
-     * @return array
-     */
-    protected function getEndpoints(Controller $controller)
-    {
-        $documentation = new Documentation();
-        $endpoints = [];
-        $parts = [];
-        $methods = get_class_methods($controller);
-        foreach ($methods as $classMethod) {
-            if (preg_match('/([a-z]+)([A-Z]\w+)Endpoint$/', $classMethod, $parts)) {
-                if (!$controller->isMethodHidden($classMethod)) {
-                    $method = strtolower($parts[1]);
-                    $endpoint = $this->camelcaseToHyphenated($parts[2]);
-                    if (!array_key_exists($method, $endpoints)) {
-                        $endpoints[$method] = array();
-                    }
-                    $endpoints[$method][$endpoint] = $documentation->getMethodDocumentation(
-                        new \ReflectionMethod($controller, $classMethod)
-                    );
-                }
-            }
-        }
-        return $endpoints;
-    }
-
-    /**
-     * Returns a list of controllers attached to this class
-     * @param Controller $controller
-     * @return array
-     */
-    protected function getControllers(Controller $controller)
-    {
-        $methods = get_class_methods($controller);
-        $controllers = [];
-        foreach ($methods as $method) {
-            if (preg_match('/(\w+)Controller$/', $method, $parts)) {
-                if (!$controller->isMethodHidden($method)) {
-                    $controllers[] = $this->camelcaseToHyphenated($parts[1]);
-                }
-            }
-        }
-        return $controllers;
-    }
-
 
     /**
      * Construct the method name for an endpoint
@@ -188,7 +129,7 @@ class Router
             );
             if(
                 $reflectionParameter->getClass() &&
-                $reflectionParameter->getClass()->implementsInterface('\AyeAye\Formatter\Deserializable')
+                $reflectionParameter->getClass()->implementsInterface(Deserializable::class)
             ) {
                 /** @var Deserializable $deserializable */
                 $value = $reflectionParameter->getClass()

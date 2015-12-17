@@ -10,11 +10,13 @@
 namespace AyeAye\Api\Tests;
 
 use AyeAye\Api\Controller;
+use AyeAye\Api\Documentation;
 use AyeAye\Api\Exception as AyeAyeException;
 use AyeAye\Api\Exception;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Router;
+use AyeAye\Formatter\Writer;
 use AyeAye\Formatter\WriterFactory;
 use AyeAye\Api\Status;
 use Psr\Log\AbstractLogger;
@@ -36,14 +38,14 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getObjectMethod($object, $methodName)
     {
-        $method = new \ReflectionMethod($object, $methodName);
-        $method->setAccessible(true);
-        $callable = function () use ($object, $method) {
-            $arguments = func_get_args();
-            array_unshift($arguments, $object);
-            return call_user_func_array([$method, 'invoke'], $arguments);
+        if (!is_object($object)) {
+            throw new \InvalidArgumentException('Can not get method of non object');
+        }
+        $reflectionMethod = new \ReflectionMethod($object, $methodName);
+        $reflectionMethod->setAccessible(true);
+        return function () use ($object, $reflectionMethod) {
+            return $reflectionMethod->invokeArgs($object, func_get_args());
         };
-        return $callable;
     }
 
     /**
@@ -65,6 +67,14 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected function getMockController()
     {
         return $this->getMock(Controller::class);
+    }
+
+    /**
+     * @return Documentation|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMockDocumentation()
+    {
+        return $this->getMock(Documentation::class);
     }
 
     /**
@@ -117,6 +127,14 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             ->getMockBuilder(WriterFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
+    }
+
+    /**
+     * @return Writer|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMockWriter()
+    {
+        return $this->getMock(Writer::class);
     }
 
     /**

@@ -9,6 +9,8 @@
 
 namespace AyeAye\Api\Tests;
 
+use AyeAye\Api\Controller;
+use AyeAye\Api\ControllerDocumentation;
 use AyeAye\Api\Router;
 use AyeAye\Api\Status;
 
@@ -23,16 +25,26 @@ class RouterTest extends TestCase
 
     /**
      * @test
-     * @covers ::camelcaseToHyphenated
+     * @covers ::documentController
+     * @uses \AyeAye\Api\ControllerDocumentation
      */
-    public function testCamelcaseToHyphenated()
+    public function testDocumentController()
     {
+        $controller = new Controller();
+
         $router = new Router();
-        $camelcaseToHyphenated = $this->getObjectMethod($router, 'camelcaseToHyphenated');
+        $documentController = $this->getObjectMethod($router, 'documentController');
+
+        $documentedController = $documentController($controller);
+
+        $this->assertInstanceOf(
+            ControllerDocumentation::class,
+            $documentedController
+        );
 
         $this->assertSame(
-            'camelcase-to-hyphenated',
-            $camelcaseToHyphenated('camelcaseToHyphenated')
+            Controller::class,
+            $this->getObjectAttribute($documentedController, 'reflectedController')->getName()
         );
     }
 
@@ -96,25 +108,6 @@ class RouterTest extends TestCase
             $parseControllerName('camel+case')
         );
     }
-
-//    /**
-//     * @test
-//     * @covers ::getControllers
-//     */
-//    public function testGetControllers()
-//    {
-//        $mockController = $this->getMockForAbstractClass('AyeAye\Api\Controller');
-//        $mockController->method('testController');
-//        $mockController->method('anotherTestController');
-//
-//        $router = new Router();
-//        $getControllers = $this->getObjectMethod($router, 'getControllers');
-//
-//        $this->assertCount(
-//            2,
-//            $getControllers($mockController)
-//        );
-//    }
 
     /**
      * @test
