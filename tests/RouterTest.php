@@ -9,10 +9,7 @@
 
 namespace AyeAye\Api\Tests;
 
-use AyeAye\Api\Controller;
-use AyeAye\Api\ControllerDocumentation;
 use AyeAye\Api\Router;
-use AyeAye\Api\Status;
 
 /**
  * Class RouterTest
@@ -22,92 +19,6 @@ use AyeAye\Api\Status;
  */
 class RouterTest extends TestCase
 {
-
-    /**
-     * @test
-     * @covers ::documentController
-     * @uses \AyeAye\Api\ControllerDocumentation
-     */
-    public function testDocumentController()
-    {
-        $controller = new Controller();
-
-        $router = new Router();
-        $documentController = $this->getObjectMethod($router, 'documentController');
-
-        $documentedController = $documentController($controller);
-
-        $this->assertInstanceOf(
-            ControllerDocumentation::class,
-            $documentedController
-        );
-
-        $this->assertSame(
-            Controller::class,
-            $this->getObjectAttribute($documentedController, 'reflectedController')->getName()
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::parseEndpointName
-     */
-    public function testParseEndpointName()
-    {
-        $router = new Router();
-        $parseEndpointName = $this->getObjectMethod($router, 'parseEndpointName');
-
-        $this->assertSame(
-            'getTestEndpoint',
-            $parseEndpointName('test')
-        );
-
-        $this->assertSame(
-            'putCamelCaseEndpoint',
-            $parseEndpointName('camel-case', 'put')
-        );
-
-        $this->assertSame(
-            'postCamelCaseEndpoint',
-            $parseEndpointName('camel+case', 'POST')
-        );
-
-        $this->assertSame(
-            'optionsCamelCaseEndpoint',
-            $parseEndpointName('camel%20case', 'oPtIoNs')
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::parseControllerName
-     */
-    public function testParseControllerName()
-    {
-        $router = new Router();
-        $parseControllerName = $this->getObjectMethod($router, 'parseControllerName');
-
-        // ToDo: Should this be an error?
-        $this->assertSame(
-            'Controller',
-            $parseControllerName('')
-        );
-
-        $this->assertSame(
-            'camelCaseController',
-            $parseControllerName('camel-case')
-        );
-
-        $this->assertSame(
-            'camelCaseController',
-            $parseControllerName('camel%20case')
-        );
-
-        $this->assertSame(
-            'camelCaseController',
-            $parseControllerName('camel+case')
-        );
-    }
 
     /**
      * @test

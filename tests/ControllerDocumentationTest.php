@@ -25,27 +25,12 @@ class ControllerDocumentationTest extends TestCase
      */
     protected function getMockReflectedController()
     {
-        $mockReflection = $this
-            ->getMockBuilder(\ReflectionObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockReflection = $this->getMockReflectionObject();
         $mockReflection
             ->expects($this->once())
             ->method('isSubclassOf')
             ->with(Controller::class)
             ->will($this->returnValue(true));
-        return $mockReflection;
-    }
-
-    /**
-     * @return \ReflectionObject|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getMockReflectedMethod()
-    {
-        $mockReflection = $this
-            ->getMockBuilder(\ReflectionMethod::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         return $mockReflection;
     }
 
@@ -102,7 +87,7 @@ class ControllerDocumentationTest extends TestCase
         $methodName3 = 'postComplexlyNamedEndpoint';
         $methodName4 = 'postHiddenEndpoint';
 
-        $reflectedMethod = $this->getMockReflectedMethod();
+        $reflectedMethod = $this->getMockReflectionMethod();
         $reflectedMethod
             ->expects($this->any())
             ->method('invokeArgs')
@@ -110,22 +95,22 @@ class ControllerDocumentationTest extends TestCase
                 return reset($inputArray) == 'postHiddenEndpoint';
             }));
 
-        $method1 = $this->getMockReflectedMethod();
+        $method1 = $this->getMockReflectionMethod();
         $method1
             ->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($methodName1));
-        $method2 = $this->getMockReflectedMethod();
+        $method2 = $this->getMockReflectionMethod();
         $method2
             ->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($methodName2));
-        $method3 = $this->getMockReflectedMethod();
+        $method3 = $this->getMockReflectionMethod();
         $method3
             ->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($methodName3));
-        $method4 = $this->getMockReflectedMethod();
+        $method4 = $this->getMockReflectionMethod();
         $method4
             ->expects($this->any())
             ->method('getName')
@@ -211,7 +196,7 @@ class ControllerDocumentationTest extends TestCase
         $methodName3 = 'hiddenController';
         $methodName4 = 'controllerNope';
 
-        $reflectedMethod = $this->getMockReflectedMethod();
+        $reflectedMethod = $this->getMockReflectionMethod();
         $reflectedMethod
             ->expects($this->any())
             ->method('invokeArgs')
@@ -219,22 +204,22 @@ class ControllerDocumentationTest extends TestCase
                 return reset($inputArray) == 'hiddenController';
             }));
 
-        $method1 = $this->getMockReflectedMethod();
+        $method1 = $this->getMockReflectionMethod();
         $method1
             ->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($methodName1));
-        $method2 = $this->getMockReflectedMethod();
+        $method2 = $this->getMockReflectionMethod();
         $method2
             ->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($methodName2));
-        $method3 = $this->getMockReflectedMethod();
+        $method3 = $this->getMockReflectionMethod();
         $method3
             ->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($methodName3));
-        $method4 = $this->getMockReflectedMethod();
+        $method4 = $this->getMockReflectionMethod();
         $method4
             ->expects($this->any())
             ->method('getName')
@@ -325,7 +310,7 @@ class ControllerDocumentationTest extends TestCase
         $mockReflectedObject = $this->getMockReflectedController();
 
         /** @var \ReflectionMethod|\PHPUnit_Framework_MockObject_MockObject $mockReflectedMethod */
-        $mockReflectedMethod = $this->getMockReflectedMethod();
+        $mockReflectedMethod = $this->getMockReflectionMethod();
         $mockReflectedMethod
             ->expects($this->once())
             ->method('setAccessible')

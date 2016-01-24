@@ -62,6 +62,42 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return \ReflectionMethod|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMockReflectionMethod()
+    {
+        $mockReflection = $this
+            ->getMockBuilder(\ReflectionMethod::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        return $mockReflection;
+    }
+
+    /**
+     * @return \ReflectionObject|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMockReflectionObject()
+    {
+        $mockReflection = $this
+            ->getMockBuilder(\ReflectionObject::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        return $mockReflection;
+    }
+
+    /**
+     * @return \ReflectionObject|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMockReflectionParameter()
+    {
+        $mockReflection = $this
+            ->getMockBuilder(\ReflectionParameter::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        return $mockReflection;
+    }
+
+    /**
      * @return Controller|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getMockController()
