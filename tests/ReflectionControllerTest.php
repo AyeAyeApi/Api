@@ -316,4 +316,28 @@ class ReflectionControllerTest extends TestCase
         );
 
     }
+
+    /**
+     * @test
+     * @covers ::getStatus
+     * @uses \AyeAye\Api\ReflectionController::__construct
+     */
+    public function testGetStatus()
+    {
+        $status = $this->getMockStatus();
+
+        $controller = $this->getMockController();
+        $controller
+            ->expects($this->once())
+            ->method('getStatus')
+            ->with()
+            ->will($this->returnValue($status));
+
+        $reflection = new ReflectionController($controller);
+
+        $this->assertSame(
+            $status,
+            $reflection->getStatus()
+        );
+    }
 }
