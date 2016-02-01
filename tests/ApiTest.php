@@ -52,7 +52,7 @@ class ApiTest extends TestCase
      * @test
      * @covers ::__construct
      * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Api::setRouter
+     * @uses \AyeAye\Api\Injector\RouterInjector
      */
     public function testConstructControllerRouter()
     {
@@ -79,7 +79,7 @@ class ApiTest extends TestCase
     /**
      * @test
      * @covers ::__construct
-     * @uses \AyeAye\Api\Api::setLogger
+     * @uses \AyeAye\Api\Injector\LoggerInjector
      * @uses \AyeAye\Api\Api::setInitialController
      */
     public function testConstructControllerLogger()
@@ -108,9 +108,9 @@ class ApiTest extends TestCase
     /**
      * @test
      * @covers ::__construct
-     * @uses \AyeAye\Api\Api::setLogger
      * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Api::setRouter
+     * @uses \AyeAye\Api\Injector\LoggerInjector
+     * @uses \AyeAye\Api\Injector\RouterInjector
      */
     public function testConstructAll()
     {
@@ -171,7 +171,7 @@ class ApiTest extends TestCase
      * @covers ::log
      * @uses \AyeAye\Api\Api::__construct
      * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Api::setLogger
+     * @uses \AyeAye\Api\Injector\LoggerInjector
      */
     public function testLog()
     {
@@ -234,15 +234,11 @@ class ApiTest extends TestCase
      * @uses \AyeAye\Api\Api::__construct
      * @uses \AyeAye\Api\Api::setInitialController
      * @uses \AyeAye\Api\Api::getInitialController
-     * @uses \AyeAye\Api\Api::setLogger
-     * @uses \AyeAye\Api\Api::getRouter
-     * @uses \AyeAye\Api\Api::setRouter
-     * @uses \AyeAye\Api\Api::setResponse
-     * @uses \AyeAye\Api\Api::getResponse
-     * @uses \AyeAye\Api\Api::getRequest
-     * @uses \AyeAye\Api\Api::setRequest
-     * @uses \AyeAye\Api\Api::getWriterFactory
-     * @uses \AyeAye\Api\Api::setWriterFactory
+     * @uses \AyeAye\Api\Injector\LoggerInjector
+     * @uses \AyeAye\Api\Injector\RouterInjector
+     * @uses \AyeAye\Api\Injector\ResponseInjector
+     * @uses \AyeAye\Api\Injector\RequestInjector
+     * @uses \AyeAye\Api\Injector\WriterFactoryInjector
      */
     public function testGo()
     {
@@ -305,15 +301,12 @@ class ApiTest extends TestCase
      * @test
      * @covers ::go
      * @uses \AyeAye\Api\Api::__construct
-     * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Api::setLogger
-     * @uses \AyeAye\Api\Api::setResponse
-     * @uses \AyeAye\Api\Api::getResponse
-     * @uses \AyeAye\Api\Api::getRequest
-     * @uses \AyeAye\Api\Api::setRequest
-     * @uses \AyeAye\Api\Api::getWriterFactory
-     * @uses \AyeAye\Api\Api::setWriterFactory
      * @uses \AyeAye\Api\Api::log
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Injector\LoggerInjector
+     * @uses \AyeAye\Api\Injector\ResponseInjector
+     * @uses \AyeAye\Api\Injector\RequestInjector
+     * @uses \AyeAye\Api\Injector\WriterFactoryInjector
      */
     public function testGoAyeAyeException()
     {
@@ -382,15 +375,12 @@ class ApiTest extends TestCase
      * @test
      * @covers ::go
      * @uses \AyeAye\Api\Api::__construct
-     * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Api::setLogger
-     * @uses \AyeAye\Api\Api::setResponse
-     * @uses \AyeAye\Api\Api::getResponse
-     * @uses \AyeAye\Api\Api::getRequest
-     * @uses \AyeAye\Api\Api::setRequest
-     * @uses \AyeAye\Api\Api::getWriterFactory
-     * @uses \AyeAye\Api\Api::setWriterFactory
      * @uses \AyeAye\Api\Api::log
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Injector\LoggerInjector
+     * @uses \AyeAye\Api\Injector\ResponseInjector
+     * @uses \AyeAye\Api\Injector\RequestInjector
+     * @uses \AyeAye\Api\Injector\WriterFactoryInjector
      * @uses \AyeAye\Api\Status
      */
     public function testGoException()
@@ -446,19 +436,15 @@ class ApiTest extends TestCase
      * @test
      * @covers ::go
      * @uses \AyeAye\Api\Api::__construct
-     * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Api::getInitialController
-     * @uses \AyeAye\Api\Api::setLogger
-     * @uses \AyeAye\Api\Api::getRouter
-     * @uses \AyeAye\Api\Api::setRouter
-     * @uses \AyeAye\Api\Api::setResponse
-     * @uses \AyeAye\Api\Api::getResponse
-     * @uses \AyeAye\Api\Api::getRequest
-     * @uses \AyeAye\Api\Api::setRequest
-     * @uses \AyeAye\Api\Api::getWriterFactory
-     * @uses \AyeAye\Api\Api::setWriterFactory
      * @uses \AyeAye\Api\Api::createFailSafeResponse
      * @uses \AyeAye\Api\Api::log
+     * @uses \AyeAye\Api\Api::getInitialController
+     * @uses \AyeAye\Api\Api::setInitialController
+     * @uses \AyeAye\Api\Injector\LoggerInjector
+     * @uses \AyeAye\Api\Injector\ResponseInjector
+     * @uses \AyeAye\Api\Injector\RequestInjector
+     * @uses \AyeAye\Api\Injector\RouterInjector
+     * @uses \AyeAye\Api\Injector\WriterFactoryInjector
      * @uses \AyeAye\Api\Status
      * @uses \AyeAye\Api\Response
      * @uses \AyeAye\Api\Request
@@ -564,7 +550,7 @@ class ApiTest extends TestCase
      * @covers ::getRouter
      * @uses \AyeAye\Api\Api::__construct
      * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Api::setRouter
+     * @uses \AyeAye\Api\Injector\RouterInjector
      */
     public function testGetRouter()
     {
@@ -705,7 +691,7 @@ class ApiTest extends TestCase
      * @covers ::getRequest
      * @uses \AyeAye\Api\Api::__construct
      * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Api::setRequest
+     * @uses \AyeAye\Api\Injector\RequestInjector
      * @uses \AyeAye\Api\Request
      */
     public function testGetRequest()
@@ -768,7 +754,7 @@ class ApiTest extends TestCase
      * @covers ::getResponse
      * @uses \AyeAye\Api\Api::__construct
      * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Api::setResponse
+     * @uses \AyeAye\Api\Injector\ResponseInjector
      * @uses \AyeAye\Api\Response
      */
     public function testGetResponse()
@@ -831,7 +817,7 @@ class ApiTest extends TestCase
      * @covers ::getWriterFactory
      * @uses \AyeAye\Api\Api::__construct
      * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Api::setWriterFactory
+     * @uses \AyeAye\Api\Injector\WriterFactoryInjector
      * @uses \AyeAye\Formatter\WriterFactory
      */
     public function testGetWriterFactory()
