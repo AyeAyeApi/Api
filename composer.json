@@ -40,9 +40,11 @@
         }
     },
     "config": {
-        "bin-dir": "bin",
-        "process-timeout":      600,
-        "preferred-install":    "dist",
-        "github-protocols":     ["https"]
+        "github-protocols": ["https"]
+    },
+    "scripts" : {
+      "test" : [
+        "vendor/bin/phpunit"
+      ]
     }
 }
