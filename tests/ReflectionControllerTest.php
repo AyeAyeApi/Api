@@ -30,10 +30,15 @@ class ReflectionControllerTest extends TestCase
      */
     public function testDocumentController()
     {
-        $controller = new Controller();
-        $reflection = new ReflectionController($controller);
+        $className = 'ControllerTest';
+        /** @var Controller|\PHPUnit_Framework_MockObject_MockObject $controller */
+        $controller = $this
+            ->getMockBuilder(Controller::class)
+            ->setMockClassName($className)
+            ->getMock();
+        $reflectionController = new ReflectionController($controller);
 
-        $documentController = $this->getObjectMethod($reflection, 'getDocumentation');
+        $documentController = $this->getObjectMethod($reflectionController, 'getDocumentation');
 
         $getDocumentation = $documentController($controller);
 
@@ -43,9 +48,20 @@ class ReflectionControllerTest extends TestCase
         );
 
         $this->assertSame(
-            Controller::class,
+            $className,
             $this->getObjectAttribute($getDocumentation, 'reflectedController')->getName()
         );
+    }
+
+    /**
+     * @test
+     * @covers ::hasEndpoint
+     * @uses \AyeAye\Api\ReflectionController::__construct
+     */
+    public function testHasEndpoint()
+    {
+        $controller = $this->getMockController();
+        $reflectionController = new ReflectionController($controller);
     }
 
     /**
@@ -55,10 +71,10 @@ class ReflectionControllerTest extends TestCase
      */
     public function testParseEndpointName()
     {
-        $controller = new Controller();
-        $reflection = new ReflectionController($controller);
+        $controller = $this->getMockController();
+        $reflectionController = new ReflectionController($controller);
 
-        $parseEndpointName = $this->getObjectMethod($reflection, 'parseEndpointName');
+        $parseEndpointName = $this->getObjectMethod($reflectionController, 'parseEndpointName');
 
 
         $this->assertSame(
@@ -84,10 +100,10 @@ class ReflectionControllerTest extends TestCase
      */
     public function testParseControllerName()
     {
-        $controller = new Controller();
-        $reflection = new ReflectionController($controller);
+        $controller = $this->getMockController();
+        $reflectionController = new ReflectionController($controller);
 
-        $parseControllerName = $this->getObjectMethod($reflection, 'parseControllerName');
+        $parseControllerName = $this->getObjectMethod($reflectionController, 'parseControllerName');
 
         // ToDo: Should this be an error?
         $this->assertSame(
@@ -118,8 +134,8 @@ class ReflectionControllerTest extends TestCase
      */
     public function testMapRequestToArguments()
     {
-        $controller = new Controller();
-        $reflection = new ReflectionController($controller);
+        $controller = $this->getMockController();
+        $reflectionController = new ReflectionController($controller);
 
         $name1 = 'param1';
         $expectedValue1 = null;
@@ -223,7 +239,7 @@ class ReflectionControllerTest extends TestCase
                 $parameter3,
             ]));
 
-        $mapRequestToArguments = $this->getObjectMethod($reflection, 'mapRequestToArguments');
+        $mapRequestToArguments = $this->getObjectMethod($reflectionController, 'mapRequestToArguments');
 
         $map = $mapRequestToArguments($method, $request);
 
@@ -247,8 +263,8 @@ class ReflectionControllerTest extends TestCase
      */
     public function testMapRequestToArgumentsException()
     {
-        $controller = new Controller();
-        $reflection = new ReflectionController($controller);
+        $controller = $this->getMockController();
+        $reflectionController = new ReflectionController($controller);
 
         $inputValue3 = 'input value 3';
         $object3 = $this->getMockForAbstractClass(Deserializable::class);
@@ -304,7 +320,7 @@ class ReflectionControllerTest extends TestCase
                 $parameter3,
             ]));
 
-        $mapRequestToArguments = $this->getObjectMethod($reflection, 'mapRequestToArguments');
+        $mapRequestToArguments = $this->getObjectMethod($reflectionController, 'mapRequestToArguments');
 
         $map = $mapRequestToArguments($method, $request);
 
@@ -333,11 +349,11 @@ class ReflectionControllerTest extends TestCase
             ->with()
             ->will($this->returnValue($status));
 
-        $reflection = new ReflectionController($controller);
+        $reflectionController = new ReflectionController($controller);
 
         $this->assertSame(
             $status,
-            $reflection->getStatus()
+            $reflectionController->getStatus()
         );
     }
 }
