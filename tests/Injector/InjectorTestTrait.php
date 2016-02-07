@@ -9,6 +9,7 @@
 namespace AyeAye\Api\Tests\Injector;
 
 
+use AyeAye\Api\ControllerReflector;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Router;
@@ -46,6 +47,11 @@ trait InjectorTestTrait
      * @return WriterFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     abstract protected function getMockWriterFactory();
+
+    /**
+     * @return ControllerReflector|\PHPUnit_Framework_MockObject_MockObject
+     */
+    abstract protected function getMockControllerReflector();
 
 
     /**

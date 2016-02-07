@@ -10,6 +10,7 @@
 namespace AyeAye\Api\Tests;
 
 use AyeAye\Api\Router;
+use AyeAye\Api\Tests\Injector\ControllerReflectorInjectorTest;
 
 /**
  * Class RouterTest
@@ -19,6 +20,15 @@ use AyeAye\Api\Router;
  */
 class RouterTest extends TestCase
 {
+    use ControllerReflectorInjectorTest;
+
+    /**
+     * @return Router
+     */
+    protected function getTestSubject()
+    {
+        return new Router();
+    }
 
     /**
      * @test
