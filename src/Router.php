@@ -9,6 +9,8 @@
 
 namespace AyeAye\Api;
 
+use AyeAye\Api\Injector\ControllerReflectorInjector;
+
 /**
  * Class Router
  * Finds the correct endpoint to process a request and parses in the request data
@@ -17,6 +19,7 @@ namespace AyeAye\Api;
  */
 class Router
 {
+    use ControllerReflectorInjector;
 
     /**
      * The status object that represents an HTTP status
@@ -36,7 +39,7 @@ class Router
     public function processRequest(Request $request, Controller $controller, array $requestChain = null)
     {
 
-        $reflectionController = new ReflectionController($controller);
+        $reflectionController = $this->getControllerReflector()->reflectController($controller);
 
         if (is_null($requestChain)) {
             $requestChain = $request->getRequestChain();
