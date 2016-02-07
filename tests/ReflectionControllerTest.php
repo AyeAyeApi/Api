@@ -24,6 +24,25 @@ class ReflectionControllerTest extends TestCase
 
     /**
      * @test
+     * @covers ::__construct
+     */
+    public function testConstruct()
+    {
+        $controller = $this->getMockController();
+        $reflectionController = new ReflectionController($controller);
+
+        $this->assertSame(
+            $controller,
+            $this->getObjectAttribute($reflectionController, 'controller')
+        );
+        $this->assertInstanceOf(
+            \ReflectionObject::class,
+            $this->getObjectAttribute($reflectionController, 'reflection')
+        );
+    }
+
+    /**
+     * @test
      * @covers ::getDocumentation
      * @uses \AyeAye\Api\ControllerDocumentation
      * @uses \AyeAye\Api\ReflectionController::__construct
@@ -57,11 +76,117 @@ class ReflectionControllerTest extends TestCase
      * @test
      * @covers ::hasEndpoint
      * @uses \AyeAye\Api\ReflectionController::__construct
+     * @uses \AyeAye\Api\ReflectionController::parseEndpointName
      */
     public function testHasEndpoint()
     {
         $controller = $this->getMockController();
+        $reflectionOverride =
+            $this
+                ->getMockBuilder(\ReflectionObject::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('hasMethod')
+            ->with('getTestEndpoint')
+            ->will($this->returnValue(true));
+
         $reflectionController = new ReflectionController($controller);
+        $this->setObjectAttribute($reflectionController, 'reflection', $reflectionOverride);
+
+        $this->assertTrue(
+            $reflectionController->hasEndpoint('get', 'test')
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getEndpointResult
+     * @uses \AyeAye\Api\ReflectionController::__construct
+     * @uses \AyeAye\Api\ReflectionController::parseEndpointName
+     * @uses \AyeAye\Api\ReflectionController::mapRequestToArguments
+     */
+    public function testGetEndpointResult()
+    {
+        $request = $this->getMockRequest();
+        $controller = $this->getMockController();
+
+        $reflectionMethod =
+            $this
+                ->getMockBuilder(\ReflectionMethod::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $reflectionMethod
+            ->expects($this->once())
+            ->method('invokeArgs')
+            ->with($controller, [])
+            ->will($this->returnValue(true));
+        $reflectionMethod
+            ->expects($this->once())
+            ->method('getParameters')
+            ->with()
+            ->will($this->returnValue([]));
+
+        $reflectionOverride =
+            $this
+                ->getMockBuilder(\ReflectionObject::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('hasMethod')
+            ->with('getTestEndpoint')
+            ->will($this->returnValue(true));
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('getMethod')
+            ->with('getTestEndpoint')
+            ->will($this->returnValue($reflectionMethod));
+
+        $reflectionController = new ReflectionController($controller);
+        $this->setObjectAttribute($reflectionController, 'reflection', $reflectionOverride);
+
+        $this->assertTrue(
+            $reflectionController->getEndpointResult('get', 'test', $request)
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getEndpointResult
+     * @uses \AyeAye\Api\ReflectionController::__construct
+     * @uses \AyeAye\Api\ReflectionController::parseEndpointName
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage TestController::getTestEndpoint does not exist
+     */
+    public function testGetEndpointResultException()
+    {
+        $controllerName = 'TestController';
+        $request = $this->getMockRequest();
+        $controller = $this->getMockController();
+
+        $reflectionOverride =
+            $this
+                ->getMockBuilder(\ReflectionObject::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('hasMethod')
+            ->with('getTestEndpoint')
+            ->will($this->returnValue(false));
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('getName')
+            ->with()
+            ->will($this->returnValue($controllerName));
+
+        $reflectionController = new ReflectionController($controller);
+        $this->setObjectAttribute($reflectionController, 'reflection', $reflectionOverride);
+
+        $reflectionController->getEndpointResult('get', 'test', $request);
+
     }
 
     /**
@@ -90,6 +215,220 @@ class ReflectionControllerTest extends TestCase
         $this->assertSame(
             'optionsCamelCaseEndpoint',
             $parseEndpointName('oPtIoNs', 'camel%20case')
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::hasChildController
+     * @uses \AyeAye\Api\ReflectionController::__construct
+     * @uses \AyeAye\Api\ReflectionController::parseControllerName
+     */
+    public function testHasChildController()
+    {
+        /** @var Controller|\PHPUnit_Framework_MockObject_MockObject $controller */
+        $controller = $this->getMockController();
+        $reflectionOverride =
+            $this
+                ->getMockBuilder(\ReflectionObject::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('hasMethod')
+            ->with('childController')
+            ->will($this->returnValue(true));
+
+        $reflectionController = new ReflectionController($controller);
+        $this->setObjectAttribute($reflectionController, 'reflection', $reflectionOverride);
+
+        $this->assertTrue(
+            $reflectionController->hasChildController('child')
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getChildController
+     * @uses \AyeAye\Api\ReflectionController::__construct
+     * @uses \AyeAye\Api\ReflectionController::parseControllerName
+     * @uses \AyeAye\Api\ReflectionController::hasChildController
+     */
+    public function testGetChildController()
+    {
+        $controller = $this->getMockController();
+        $childController = $this->getMockController();
+        $controllerMethod =
+            $this
+                ->getMockBuilder(\ReflectionMethod::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $controllerMethod
+            ->expects($this->once())
+            ->method('invokeArgs')
+            ->with($controller)
+            ->will($this->returnValue($childController));
+        $reflectionOverride =
+            $this
+                ->getMockBuilder(\ReflectionObject::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('hasMethod')
+            ->with('childController')
+            ->will($this->returnValue(true));
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('getMethod')
+            ->with('childController')
+            ->will($this->returnValue($controllerMethod));
+
+        $reflectionController = new ReflectionController($controller);
+        $this->setObjectAttribute($reflectionController, 'reflection', $reflectionOverride);
+
+        $this->assertSame(
+            $childController,
+            $reflectionController->getChildController('child')
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getChildController
+     * @uses \AyeAye\Api\ReflectionController::__construct
+     * @uses \AyeAye\Api\ReflectionController::parseControllerName
+     * @uses \AyeAye\Api\ReflectionController::hasChildController
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage TestController::childController does not exist
+     */
+    public function testGetChildControllerNoMethod()
+    {
+        $controller = $this->getMockController();
+        $reflectionOverride =
+            $this
+                ->getMockBuilder(\ReflectionObject::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('hasMethod')
+            ->with('childController')
+            ->will($this->returnValue(false));
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('getName')
+            ->with()
+            ->will($this->returnValue('TestController'));
+        $reflectionOverride
+            ->expects($this->never())
+            ->method('getMethod');
+
+        $reflectionController = new ReflectionController($controller);
+        $this->setObjectAttribute($reflectionController, 'reflection', $reflectionOverride);
+
+        $reflectionController->getChildController('child');
+    }
+
+    /**
+     * @test
+     * @covers ::getChildController
+     * @uses \AyeAye\Api\ReflectionController::__construct
+     * @uses \AyeAye\Api\ReflectionController::parseControllerName
+     * @uses \AyeAye\Api\ReflectionController::hasChildController
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage TestController::childController did not return a Controller
+     */
+    public function testGetChildControllerNotController()
+    {
+        $controller = $this->getMockController();
+        $childController = $this->getMock(\stdClass::class);
+        $controllerMethod =
+            $this
+                ->getMockBuilder(\ReflectionMethod::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $controllerMethod
+            ->expects($this->once())
+            ->method('invokeArgs')
+            ->with($controller)
+            ->will($this->returnValue($childController));
+        $reflectionOverride =
+            $this
+                ->getMockBuilder(\ReflectionObject::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('hasMethod')
+            ->with('childController')
+            ->will($this->returnValue(true));
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('getMethod')
+            ->with('childController')
+            ->will($this->returnValue($controllerMethod));
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('getName')
+            ->with()
+            ->will($this->returnValue('TestController'));
+
+        $reflectionController = new ReflectionController($controller);
+        $this->setObjectAttribute($reflectionController, 'reflection', $reflectionOverride);
+
+        $reflectionController->getChildController('child');
+    }
+
+    /**
+     * @test
+     * @covers ::getChildControllerReflection
+     * @uses \AyeAye\Api\ReflectionController::__construct
+     * @uses \AyeAye\Api\ReflectionController::parseControllerName
+     * @uses \AyeAye\Api\ReflectionController::hasChildController
+     * @uses \AyeAye\Api\ReflectionController::getChildController
+     */
+    public function getChildControllerReflection()
+    {
+        $controller = $this->getMockController();
+        $childController = $this->getMockController();
+        $controllerMethod =
+            $this
+                ->getMockBuilder(\ReflectionMethod::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $controllerMethod
+            ->expects($this->once())
+            ->method('invokeArgs')
+            ->with($controller)
+            ->will($this->returnValue($childController));
+        $reflectionOverride =
+            $this
+                ->getMockBuilder(\ReflectionObject::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('hasMethod')
+            ->with('testController')
+            ->will($this->returnValue(true));
+        $reflectionOverride
+            ->expects($this->once())
+            ->method('getMethod')
+            ->with('testController')
+            ->will($this->returnValue($controllerMethod));
+
+        $reflectionController = new ReflectionController($controller);
+        $this->setObjectAttribute($reflectionController, 'reflection', $reflectionOverride);
+
+        $childReflectionController = $reflectionController->getChildControllerReflection('test');
+        $this->assertInstanceOf(
+            ReflectionController::class,
+            $childReflectionController
+        );
+        $this->assertSame(
+            $childController,
+            $this->getObjectAttribute($childReflectionController, 'controller')
         );
     }
 
