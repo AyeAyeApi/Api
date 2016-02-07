@@ -45,6 +45,14 @@
     "scripts" : {
       "test" : [
         "vendor/bin/phpunit"
+      ],
+      "quality" : [
+        "vendor/bin/phpcpd src",
+        "vendor/bin/phpcs --standard=phpcs.xml src",
+        "vendor/bin/phpmd src text phpmd.xml"
+      ],
+      "quality-fix" : [
+        "vendor/bin/phpcbf --standard=phpcs.xml src"
       ]
     }
 }
