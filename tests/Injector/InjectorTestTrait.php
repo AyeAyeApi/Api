@@ -13,6 +13,7 @@ use AyeAye\Api\ControllerReflector;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Router;
+use AyeAye\Api\Status;
 use AyeAye\Formatter\WriterFactory;
 use Psr\Log\LoggerInterface;
 
@@ -42,6 +43,11 @@ trait InjectorTestTrait
      * @return Router|\PHPUnit_Framework_MockObject_MockObject
      */
     abstract protected function getMockRouter();
+
+    /**
+     * @return Status|\PHPUnit_Framework_MockObject_MockObject
+     */
+    abstract protected function getMockStatus();
 
     /**
      * @return WriterFactory|\PHPUnit_Framework_MockObject_MockObject
