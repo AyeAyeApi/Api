@@ -13,7 +13,6 @@ use AyeAye\Formatter\Reader\Json;
 use AyeAye\Formatter\Reader\Xml;
 use AyeAye\Formatter\ReaderFactory;
 
-
 /**
  * Class Request
  * Describes every detail of a request from the client to the server
@@ -115,7 +114,7 @@ class Request implements \JsonSerializable
      */
     protected function getReaderFactory()
     {
-        if(!$this->readerFactory) {
+        if (!$this->readerFactory) {
             $this->readerFactory = new ReaderFactory([
                 new Json(),
                 new Xml(),
@@ -237,7 +236,7 @@ class Request implements \JsonSerializable
         }
 
         $result = $this->getReaderFactory()->read($string);
-        if($result) {
+        if ($result) {
             return $result;
         }
 

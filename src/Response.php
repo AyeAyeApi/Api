@@ -9,6 +9,7 @@
 
 namespace AyeAye\Api;
 
+use AyeAye\Api\Injector\StatusInjector;
 use AyeAye\Formatter\WriterFactory;
 use AyeAye\Formatter\Writer;
 
@@ -20,6 +21,8 @@ use AyeAye\Formatter\Writer;
  */
 class Response
 {
+
+    use StatusInjector;
 
     /**
      * Used to name the data object that is returned to the user where applicable
@@ -40,12 +43,6 @@ class Response
     protected $writer;
 
     /**
-     * The HTTP status of the response
-     * @var Status
-     */
-    protected $status;
-
-    /**
      * The initial request. This will only be shown if debug is on
      * @var Request
      */
@@ -61,26 +58,6 @@ class Response
      * @var string
      */
     protected $preparedResponse;
-
-    /**
-     * Get the Status object assigned to the response
-     * @return \AyeAye\Api\Status
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
-     * Set the Status object that will report the HTTP status to the client
-     * @param Status $status
-     * @return $this
-     */
-    public function setStatus(Status $status)
-    {
-        $this->status = $status;
-        return $this;
-    }
 
     /**
      * Set the Status object that will report the HTTP status to the client using only the HTTP status code

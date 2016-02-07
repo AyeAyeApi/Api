@@ -12,6 +12,7 @@ namespace AyeAye\Api\Tests;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
+use AyeAye\Api\Tests\Injector\StatusInjectorTest;
 use AyeAye\Formatter\WriterFactory;
 use AyeAye\Formatter\Writer;
 use AyeAye\Formatter\Writer\Json;
@@ -25,28 +26,14 @@ use AyeAye\Formatter\Writer\Json;
 class ResponseTest extends TestCase
 {
 
-    /**
-     * @test
-     * @covers ::getStatus
-     * @covers ::setStatus
-     * @uses \AyeAye\Api\Status
-     */
-    public function testStatus()
-    {
-        $response = new Response();
-        $status = new Status();
+    use StatusInjectorTest;
 
-        $this->assertNull(
-            $response->getStatus()
-        );
-        $this->assertSame(
-            $response,
-            $response->setStatus($status)
-        );
-        $this->assertSame(
-            $status,
-            $response->getStatus()
-        );
+    /**
+     * @return Response
+     */
+    protected function getTestSubject()
+    {
+        return new Response();
     }
 
     /**
@@ -62,7 +49,7 @@ class ResponseTest extends TestCase
         $response = new Response();
 
         $this->assertNull(
-            $response->getStatus()
+            $this->getObjectAttribute($response, 'status')
         );
         $this->assertSame(
             $response,
