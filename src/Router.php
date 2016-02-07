@@ -10,6 +10,7 @@
 namespace AyeAye\Api;
 
 use AyeAye\Api\Injector\ControllerReflectorInjector;
+use AyeAye\Api\Injector\StatusInjector;
 
 /**
  * Class Router
@@ -20,12 +21,7 @@ use AyeAye\Api\Injector\ControllerReflectorInjector;
 class Router
 {
     use ControllerReflectorInjector;
-
-    /**
-     * The status object that represents an HTTP status
-     * @var Status
-     */
-    protected $status;
+    use StatusInjector;
 
     /**
      * Look at a request and work out what to do next.
@@ -70,29 +66,5 @@ class Router
         }
 
         return $reflectionController->getDocumentation();
-
-    }
-
-    /**
-     * Get the Status object associated with the controller
-     * @return Status
-     */
-    public function getStatus()
-    {
-        if (!$this->status) {
-            $this->status = new Status();
-        }
-        return $this->status;
-    }
-
-    /**
-     * Set the status object associated with the controller
-     * @param Status $status
-     * @return $this
-     */
-    protected function setStatus(Status $status)
-    {
-        $this->status = $status;
-        return $this;
     }
 }

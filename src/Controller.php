@@ -9,6 +9,8 @@
 
 namespace AyeAye\Api;
 
+use AyeAye\Api\Injector\StatusInjector;
+
 /**
  * Class Controller
  * Describes endpoints and controllers
@@ -18,6 +20,8 @@ namespace AyeAye\Api;
 class Controller
 {
 
+    use StatusInjector;
+
     /**
      * Endpoints that should not be publicly listed
      * @var string[]
@@ -25,35 +29,6 @@ class Controller
     private $hiddenMethods = [
         'getIndexEndpoint' => true, // Value not used
     ];
-
-    /**
-     * The status object that represents an HTTP status
-     * @var Status
-     */
-    private $status;
-
-    /**
-     * Get the Status object associated with the controller
-     * @return Status
-     */
-    public function getStatus()
-    {
-        if (!$this->status) {
-            $this->status = new Status();
-        }
-        return $this->status;
-    }
-
-    /**
-     * Set the status object associated with the controller
-     * @param Status $status
-     * @return $this
-     */
-    protected function setStatus(Status $status)
-    {
-        $this->status = $status;
-        return $this;
-    }
 
     /**
      * Set the status object associated with the controller using an HTTP status code
