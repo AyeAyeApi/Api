@@ -79,8 +79,7 @@ class ReflectionController
                 $parameter->getName(),
                 $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null
             );
-            if (
-                $parameter->getClass() &&
+            if ($parameter->getClass() &&
                 $parameter->getClass()->implementsInterface(Deserializable::class)
             ) {
                 /** @var Deserializable $deserializable */
@@ -182,5 +181,4 @@ class ReflectionController
     {
         return new ControllerDocumentation($this->reflection);
     }
-
 }

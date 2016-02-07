@@ -8,7 +8,6 @@
 
 namespace AyeAye\Api\Injector;
 
-
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 

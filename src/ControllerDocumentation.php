@@ -41,8 +41,7 @@ class ControllerDocumentation implements Serializable
      */
     public function __construct(\ReflectionObject $reflectedController)
     {
-        if(
-            !$reflectedController->isSubclassOf(Controller::class)
+        if (!$reflectedController->isSubclassOf(Controller::class)
             && $reflectedController->getName() !== Controller::class
         ) {
             throw new \InvalidArgumentException(
@@ -59,7 +58,7 @@ class ControllerDocumentation implements Serializable
      */
     protected function getEndpoints()
     {
-        if(!$this->endpointsCache){
+        if (!$this->endpointsCache) {
             $isHidden = $this->getControllerMethod('isMethodHidden');
             $endpoints = [];
             $parts = [];
@@ -76,7 +75,7 @@ class ControllerDocumentation implements Serializable
                     }
                 }
             }
-        $this->endpointsCache = $endpoints;
+            $this->endpointsCache = $endpoints;
         }
         return $this->endpointsCache;
     }
@@ -87,7 +86,7 @@ class ControllerDocumentation implements Serializable
      */
     protected function getControllers()
     {
-        if(!$this->controllersCache) {
+        if (!$this->controllersCache) {
             $isHidden = $this->getControllerMethod('isMethodHidden');
             $methods = $this->reflectedController->getMethods(\ReflectionMethod::IS_PUBLIC);
             $controllers = [];
@@ -122,7 +121,7 @@ class ControllerDocumentation implements Serializable
     {
         $reflectionMethod = $this->reflectedController->getMethod($methodName);
         $reflectionMethod->setAccessible(true);
-        return function() use ($reflectionMethod) {
+        return function () use ($reflectionMethod) {
             return $reflectionMethod->invokeArgs($this->reflectedController, func_get_args());
         };
     }
@@ -147,5 +146,4 @@ class ControllerDocumentation implements Serializable
     {
         return $this->getDocumentation();
     }
-
 }

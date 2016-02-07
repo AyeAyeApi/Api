@@ -65,7 +65,7 @@ class Router
             throw new Exception($message, 404);
         }
 
-        if($reflectionController->hasEndpoint($request->getMethod(), 'index')) {
+        if ($reflectionController->hasEndpoint($request->getMethod(), 'index')) {
             return $reflectionController->getEndpointResult($request->getMethod(), 'index', $request);
         }
 

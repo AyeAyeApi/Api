@@ -26,7 +26,7 @@ trait ControllerReflectorInjector
      */
     public function getControllerReflector()
     {
-        if(!$this->controllerReflector) {
+        if (!$this->controllerReflector) {
             $this->controllerReflector = new ControllerReflector();
         }
         return $this->controllerReflector;

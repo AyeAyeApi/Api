@@ -2,7 +2,6 @@
 
 namespace AyeAye\Api\Injector;
 
-
 use AyeAye\Api\Router;
 
 trait RouterInjector
