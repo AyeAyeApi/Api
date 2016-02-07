@@ -10,10 +10,12 @@
 namespace AyeAye\Api\Tests;
 
 use AyeAye\Api\Controller;
+use AyeAye\Api\ControllerDocumentation;
 use AyeAye\Api\ControllerReflector;
 use AyeAye\Api\Documentation;
 use AyeAye\Api\Exception as AyeAyeException;
 use AyeAye\Api\Exception;
+use AyeAye\Api\ReflectionController;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Router;
@@ -106,12 +108,31 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $this->getMock(Controller::class);
     }
 
+    protected function getMockControllerDocumentation()
+    {
+        return $this
+            ->getMockBuilder(ControllerDocumentation::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
     /**
      * @return ControllerReflector|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getMockControllerReflector()
     {
         return $this->getMock(ControllerReflector::class);
+    }
+
+    /**
+     * @return ReflectionController|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMockReflectionController()
+    {
+        return $this
+            ->getMockBuilder(ReflectionController::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**

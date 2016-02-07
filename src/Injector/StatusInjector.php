@@ -8,7 +8,6 @@
 
 namespace AyeAye\Api\Injector;
 
-
 use AyeAye\Api\Status;
 
 trait StatusInjector

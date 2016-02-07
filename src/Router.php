@@ -62,7 +62,9 @@ class Router
         }
 
         if ($reflectionController->hasEndpoint($request->getMethod(), 'index')) {
-            return $reflectionController->getEndpointResult($request->getMethod(), 'index', $request);
+            $data = $reflectionController->getEndpointResult($request->getMethod(), 'index', $request);
+            $this->setStatus($reflectionController->getStatus());
+            return $data;
         }
 
         return $reflectionController->getDocumentation();
