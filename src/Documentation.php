@@ -2,7 +2,7 @@
 /**
  * Documentation.php
  * @author    Daniel Mason <daniel@danielmason.com>
- * @copyright 2015 Daniel Mason
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
  * @license   GPL 3
  * @see       https://github.com/AyeAyeApi/Api
  */
@@ -11,13 +11,12 @@ namespace AyeAye\Api;
 
 /**
  * Class Documentation
- * Parses PHP doc blocks
+ * Parses PHP DocBlocks of methods.
  * @package AyeAye/Api
  * @see     https://github.com/AyeAyeApi/Api
  */
 class Documentation
 {
-
     /**
      * Breaks the doc block of the given method into its component parts
      * @param \ReflectionMethod $method

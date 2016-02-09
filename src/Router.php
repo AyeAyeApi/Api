@@ -2,7 +2,7 @@
 /**
  * Router.php
  * @author    Daniel Mason <daniel@danielmason.com>
- * @copyright 2015 Daniel Mason
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
  * @license   GPL 3
  * @see       https://github.com/AyeAyeApi/Api
  */
@@ -14,7 +14,7 @@ use AyeAye\Api\Injector\StatusInjector;
 
 /**
  * Class Router
- * Finds the correct endpoint to process a request and parses in the request data
+ * Finds the correct endpoint to process a request
  * @package AyeAye/Api
  * @see     https://github.com/AyeAyeApi/Api
  */

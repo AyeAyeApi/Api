@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 16/12/2015
- * Time: 14:48
+ * ControllerDocumentationTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests;

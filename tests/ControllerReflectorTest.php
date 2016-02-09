@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 07/02/2016
- * Time: 17:24
+ * ControllerReflectorTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests;

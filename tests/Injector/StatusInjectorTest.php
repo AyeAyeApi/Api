@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 07/02/2016
- * Time: 23:11
+ * StatusInjectorTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests\Injector;
@@ -12,7 +13,9 @@ use AyeAye\Api\Router;
 
 /**
  * Trait StatusInjectorTest
- * @package AyeAye\Api\Tests\Injector
+ * Add to the test class for any class that uses the StatusInjector trait
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 trait StatusInjectorTest
 {

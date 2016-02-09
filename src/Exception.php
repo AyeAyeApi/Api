@@ -2,7 +2,7 @@
 /**
  * Exception.php
  * @author    Daniel Mason <daniel@danielmason.com>
- * @copyright 2015 Daniel Mason
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
  * @license   GPL 3
  * @see       https://github.com/AyeAyeApi/Api
  */
@@ -11,14 +11,13 @@ namespace AyeAye\Api;
 
 /**
  * Class Exception
- * Designed to be thrown back to the API user.
- * Provides a public message and HTTP status code.
+ * An exception specifically designed to be thrown back to the API end user. It provides a public message and HTTP
+ * status code.
  * @package AyeAye/Api
  * @see     https://github.com/AyeAyeApi/Api
  */
 class Exception extends \Exception implements \JsonSerializable
 {
-
     const DEFAULT_ERROR_CODE = 500;
     const DEFAULT_MESSAGE = 'Internal Server Error';
 

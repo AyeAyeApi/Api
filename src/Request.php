@@ -2,7 +2,7 @@
 /**
  * Request.php
  * @author    Daniel Mason <daniel@danielmason.com>
- * @copyright 2015 Daniel Mason
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
  * @license   GPL 3
  * @see       https://github.com/AyeAyeApi/Api
  */
@@ -15,13 +15,12 @@ use AyeAye\Formatter\ReaderFactory;
 
 /**
  * Class Request
- * Describes every detail of a request from the client to the server
+ * Describes every detail of a request from the client
  * @package AyeAye/Api
  * @see     https://github.com/AyeAyeApi/Api
  */
 class Request implements \JsonSerializable
 {
-
     // HTTP verbs as defined in http://www.ietf.org/rfc/rfc2616
     const METHOD_GET = 'GET';
     const METHOD_HEAD = 'HEAD';
@@ -85,8 +84,9 @@ class Request implements \JsonSerializable
      * @param string $requestedMethod
      * @param string $requestedUri
      * @param ReaderFactory $readerFactory
-     * @param array|object ...$parameters Any number of arrays or objects containing request parameters
-     *                                    such as _GET, _POST. If omitted, defaults will be used.
+     * @param array|object ...$parameters Any number of arrays or objects containing request parameters such as _GET,
+     *                                   _POST. This will override the defaults which will otherwise be taken from the
+     *                                   url and _REQUEST global variable.
      */
     public function __construct(
         $requestedMethod = null,

@@ -1,18 +1,25 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 17/12/2015
- * Time: 12:44
+ * ReflectionController.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
 
 use AyeAye\Formatter\Deserializable;
 
+/**
+ * Class ReflectionController
+ * Provides functionality similar to ReflectionObject (which is what is used underneath) to provide Controller specific
+ * code reflection.
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
+ */
 class ReflectionController
 {
-
     /**
      * @var Controller
      */

@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 01/02/2016
- * Time: 20:56
+ * LoggerInjector.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Injector;
@@ -11,9 +12,14 @@ namespace AyeAye\Api\Injector;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
+/**
+ * Trait LoggerInjector
+ * Allows the injection and management of a Psr/LoggerInterface object. Provides a NullLogger if one isn't set.
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
+ */
 trait LoggerInjector
 {
-
     /**
      * @var LoggerInterface
      */

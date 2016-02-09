@@ -1,9 +1,22 @@
 <?php
+/**
+ * RequestInjector.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
+ */
 
 namespace AyeAye\Api\Injector;
 
 use AyeAye\Api\Request;
 
+/**
+ * Trait RequestInjector
+ * Allows the injection and management of a Request object. Provides a default if one isn't set.
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
+ */
 trait RequestInjector
 {
     /**

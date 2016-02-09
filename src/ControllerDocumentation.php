@@ -1,18 +1,25 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 16/12/2015
- * Time: 12:20
+ * ControllerDocumentation.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
 
 use AyeAye\Formatter\Serializable;
 
+/**
+ * Class ControllerDocumentation
+ * Parses the relevant child controller and endpoint methods of a Controller object through a Documentation object and
+ * returns the result as an array. This is used to provide API documentation to end users.
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
+ */
 class ControllerDocumentation implements Serializable
 {
-
     /**
      * @var \ReflectionObject
      */

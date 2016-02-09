@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 04/02/2016
- * Time: 22:37
+ * ControllerReflectorInjectorTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests\Injector;
@@ -11,8 +12,10 @@ namespace AyeAye\Api\Tests\Injector;
 use AyeAye\Api\ControllerReflector;
 
 /**
- * Trait ControllerReflectorTest
- * @package AyeAye\Api\Tests\Injector
+ * Trait ControllerReflectorInjectorTest
+ * Add to the test class for any class that uses the ControllerReflectorInjector trait
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 trait ControllerReflectorInjectorTest
 {

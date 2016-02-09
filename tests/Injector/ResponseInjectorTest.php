@@ -1,13 +1,20 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 04/02/2016
- * Time: 23:47
+ * ResponseInjectorTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests\Injector;
 
+/**
+ * Trait ResponseInjectorTest
+ * Add to the test class for any class that uses the ResponseInjector trait
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
+ */
 trait ResponseInjectorTest
 {
     use InjectorTestTrait;

@@ -1,13 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 17/12/2015
- * Time: 13:58
+ * ReflectionControllerTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests;
-
 
 use AyeAye\Api\Controller;
 use AyeAye\Api\ControllerDocumentation;

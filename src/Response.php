@@ -2,7 +2,7 @@
 /**
  * Response.php
  * @author    Daniel Mason <daniel@danielmason.com>
- * @copyright 2015 Daniel Mason
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
  * @license   GPL 3
  * @see       https://github.com/AyeAyeApi/Api
  */
@@ -21,7 +21,6 @@ use AyeAye\Formatter\Writer;
  */
 class Response
 {
-
     use StatusInjector;
 
     /**

@@ -1,15 +1,22 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 04/02/2016
- * Time: 22:37
+ * LoggerInjectorTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests\Injector;
 
 use Psr\Log\NullLogger;
 
+/**
+ * Trait LoggerInjectorTest
+ * Add to the test class for any class that uses the LoggerInjector trait
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
+ */
 trait LoggerInjectorTest
 {
     use InjectorTestTrait;
