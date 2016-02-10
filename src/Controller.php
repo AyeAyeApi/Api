@@ -22,7 +22,7 @@ class Controller
     use StatusInjector;
 
     /**
-     * Endpoints that should not be publicly listed
+     * Methods (controllers and endpoints) that should not be publicly listed.
      * @var string[]
      */
     private $hiddenMethods = [
@@ -30,7 +30,12 @@ class Controller
     ];
 
     /**
-     * Hide an endpoint
+     * Hide a method
+     *
+     * When a controller or endpoint method is hidden, it will no longer be
+     * automatically listed in the controllers index. It will, however, still
+     * be accessible.
+     *
      * @param $methodName
      * @return $this
      * @throws Exception
@@ -45,7 +50,10 @@ class Controller
     }
 
     /**
-     * Is an endpoint currently hidden
+     * Is a method currently hidden.
+     *
+     * This is used to determine if it should be indexed or not.
+     *
      * @param $methodName
      * @return bool
      * @throws Exception
@@ -59,7 +67,14 @@ class Controller
     }
 
     /**
-     * Show a hidden endpoint
+     * Show a hidden method.
+     *
+     * This reveals what would otherwise be a hidden method, allowing it to be
+     * indexed. If the named method does not exist, it will throw an exception
+     * via isMethodHidden.
+     *
+     * If the method exists but is not hidden this will not do anything.
+     *
      * @param $methodName
      * @return $this
      * @throws Exception
