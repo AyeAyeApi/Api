@@ -66,9 +66,6 @@ class Controller
      */
     protected function showMethod($methodName)
     {
-        if (!method_exists($this, $methodName)) {
-            throw new Exception(500, "The method '$methodName' does not exist in ".get_called_class());
-        }
         if ($this->isMethodHidden($methodName)) {
             unset($this->hiddenMethods[$methodName]);
         }

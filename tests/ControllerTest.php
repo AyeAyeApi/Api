@@ -189,26 +189,4 @@ class ControllerTest extends TestCase
             $this->getObjectAttribute($controller, 'hiddenMethods')
         );
     }
-
-    /**
-     * @test
-     * @covers ::showMethod
-     * @uses \AyeAye\Api\Exception
-     * @uses \AyeAye\Api\Status
-     * @expectedException \AyeAye\Api\Exception
-     * @expectedExceptionCode 500
-     * @expectedExceptionMessage The method 'notARealMethod' does not exist in AyeAye\Api\Controller
-     * @return void
-     */
-    public function testShowMethodException()
-    {
-        // Test Data
-        $method = 'notARealMethod';
-
-        // Tests
-        $controller = new Controller();
-
-        $showMethod = $this->getObjectMethod($controller, 'showMethod');
-        $showMethod($method);
-    }
 }
