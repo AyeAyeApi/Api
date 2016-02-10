@@ -26,7 +26,10 @@ trait RouterInjector
     private $router;
 
     /**
-     * Set the router to be used when go is called
+     * Set the router to be used when go is called.
+     *
+     * Use this for dependency injection.
+     *
      * @param Router $router
      * @return $this;
      */
@@ -37,7 +40,10 @@ trait RouterInjector
     }
 
     /**
-     * Get the router
+     * Get the router.
+     *
+     * If no router has been set, the default will be used.
+     *
      * @return Router
      */
     public function getRouter()

@@ -26,7 +26,10 @@ trait ResponseInjector
     private $response;
 
     /**
-     * Set the response object. Use for dependency injection
+     * Set the response object.
+     *
+     * Use for dependency injection.
+     *
      * @param Response $response
      * @returns $this
      */
@@ -37,7 +40,10 @@ trait ResponseInjector
     }
 
     /**
-     * Get the response object. If none is set it will create a default Response object
+     * Get the response object.
+     *
+     * If none is set it will create a default Response object.
+     *
      * @return Response
      */
     public function getResponse()

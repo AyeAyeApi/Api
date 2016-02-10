@@ -25,6 +25,11 @@ trait ControllerReflectorInjector
     private $controllerReflector;
 
     /**
+     * Get the controller reflector.
+     *
+     * If a controller reflector has not been set, a default is set and then
+     * returned.
+     *
      * @return ControllerReflector
      */
     public function getControllerReflector()
@@ -36,6 +41,10 @@ trait ControllerReflectorInjector
     }
 
     /**
+     * Set a controller reflector object.
+     *
+     * This allows Dependency Injection.
+     *
      * @param ControllerReflector $controllerReflector
      * @return $this
      */

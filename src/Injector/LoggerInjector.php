@@ -26,6 +26,8 @@ trait LoggerInjector
     private $logger;
 
     /**
+     * Set a PSR logger.
+     *
      * @param LoggerInterface $logger
      * @return $this
      */
@@ -36,6 +38,11 @@ trait LoggerInjector
     }
 
     /**
+     * Get the previously set PSR logger.
+     *
+     * If a logger has not been set, the PSR NullLogger will be returned. This
+     * can be used like any other logger but won't have any effect.
+     *
      * @return NullLogger
      */
     public function getLogger()

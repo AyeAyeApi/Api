@@ -26,6 +26,10 @@ trait StatusInjector
     private $status;
 
     /**
+     * Get the status from the current object.
+     *
+     * If a status has not been set, a default "200 OK" status is returned.
+     *
      * @return Status
      */
     public function getStatus()
@@ -37,6 +41,12 @@ trait StatusInjector
     }
 
     /**
+     * Set the status for the current object.
+     *
+     * Use any time the status of the request changes. Avoid setting to 200 as
+     * this will be the default and it would be undesirable to change a bad
+     * status to OK.
+     *
      * @param Status $status
      * @return $this
      */

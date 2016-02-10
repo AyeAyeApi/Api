@@ -29,7 +29,10 @@ trait WriterFactoryInjector
     private $writerFactory;
 
     /**
-     * Sets the writer factory
+     * Sets the writer factory.
+     *
+     * Use for dependency injection.
+     *
      * @param WriterFactory $writerFactory
      * @returns $this
      */
@@ -41,7 +44,9 @@ trait WriterFactoryInjector
 
     /**
      * Get the writer factory.
+     *
      * If none is set it will create a default format factory for xml and json
+     *
      * @return WriterFactory
      */
     public function getWriterFactory()

@@ -26,7 +26,10 @@ trait RequestInjector
     private $request;
 
     /**
-     * Set the request object. Use for dependency injection
+     * Set the request object.
+     *
+     * Use for injecting or overriding the actual request from the client.
+     *
      * @param Request $request
      * @return $this;
      */
@@ -37,7 +40,12 @@ trait RequestInjector
     }
 
     /**
-     * Get the request. If none is set it will create a default Request object
+     * Get the request object.
+     *
+     * If none is set it will create a default Request object that makes
+     * available all of the parameters Aye Aye can find in the actual request
+     * from the user.
+     *
      * @return Request
      */
     public function getRequest()
