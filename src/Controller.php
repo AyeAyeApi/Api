@@ -30,17 +30,6 @@ class Controller
     ];
 
     /**
-     * Set the status object associated with the controller using an HTTP status code
-     * @param $statusCode
-     * @return $this
-     */
-    protected function setStatusCode($statusCode)
-    {
-        $this->setStatus(new Status($statusCode));
-        return $this;
-    }
-
-    /**
      * Hide an endpoint
      * @param $methodName
      * @return $this

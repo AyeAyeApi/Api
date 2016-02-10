@@ -10,6 +10,7 @@
 namespace AyeAye\Api\Tests;
 
 use AyeAye\Api\Controller;
+use AyeAye\Api\Tests\Injector\StatusInjectorTest;
 
 
 /**
@@ -20,112 +21,14 @@ use AyeAye\Api\Controller;
  */
 class ControllerTest extends TestCase
 {
+    use StatusInjectorTest;
 
     /**
-     * @test
-     * @covers ::getStatus
-     * @uses \AyeAye\Api\Status
-     * @uses \AyeAye\Api\Controller::setStatus
-     * @return void
+     * @return Controller
      */
-    public function testGetStatus()
+    protected function getTestSubject()
     {
-        // Mocks
-        $status = $this->getMockStatus();
-
-        // Tests
-        $controller = new Controller();
-
-        $result = $controller->getStatus();
-
-        $this->assertInstanceOf(
-            '\AyeAye\Api\Status',
-            $result
-        );
-
-        $this->assertNotSame(
-            $status,
-            $result
-        );
-
-        $this->setObjectAttribute($controller, 'status', $status);
-
-        $result = $controller->getStatus();
-
-        $this->assertInstanceOf(
-            '\AyeAye\Api\Status',
-            $result
-        );
-
-        $this->assertSame(
-            $status,
-            $result
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::setStatus
-     * @uses \AyeAye\Api\Status
-     * @return void
-     */
-    public function testSetStatus()
-    {
-        // Mocks
-        $status = $this->getMockStatus();
-
-        // Tests
-        $controller = new Controller();
-
-        $this->assertNull(
-            $this->getObjectAttribute($controller, 'status')
-        );
-
-        $setStatus = $this->getObjectMethod($controller, 'setStatus');
-
-        $this->assertSame(
-            $controller,
-            $setStatus($status)
-        );
-
-        $this->assertSame(
-            $status,
-            $this->getObjectAttribute($controller, 'status')
-        );
-
-    }
-
-    /**
-     * @test
-     * @covers ::setStatusCode
-     * @uses \AyeAye\Api\Status
-     * @uses \AyeAye\Api\Controller::setStatus
-     * @return void
-     */
-    public function testSetStatusCode()
-    {
-        // Test Data
-        $statusCode = 418;
-
-        // Tests
-        $controller = new Controller();
-
-        $this->assertNull(
-            $this->getObjectAttribute($controller, 'status')
-        );
-
-        $setStatusCode = $this->getObjectMethod($controller, 'setStatusCode');
-
-        $this->assertSame(
-            $controller,
-            $setStatusCode($statusCode)
-        );
-
-        $this->assertSame(
-            $statusCode,
-            $this->getObjectAttribute($controller, 'status')->getCode()
-        );
-
+        return new Controller();
     }
 
     /**
