@@ -40,10 +40,14 @@ class Api implements LoggerAwareInterface
     protected $controller;
 
     /**
-     * Initialise the API with a controller that forms the starting point of routing information
-     * @param Router $router The router to power the api
-     * @param Controller $initialController The starting point for the Api
-     * @param LoggerInterface $logger Provide a logger
+     * Set up the API
+     *
+     * Initialise the API with a controller that forms the starting point of
+     * routing information.
+     *
+     * @param Router          $router            The router to power the api
+     * @param Controller      $initialController The starting point for the Api
+     * @param LoggerInterface $logger            Provide a logger
      */
     public function __construct(Controller $initialController, Router $router = null, LoggerInterface $logger = null)
     {
@@ -57,10 +61,13 @@ class Api implements LoggerAwareInterface
     }
 
     /**
-     * Write to the pre-set logger
-     * @param $level
-     * @param $message
-     * @param array $context
+     * Write to the logger.
+     *
+     * Implementing the PSR LogAware interface.
+     *
+     * @param integer $level
+     * @param string  $message
+     * @param array   $context
      * @return $this
      */
     protected function log($level, $message, array $context = array())
@@ -71,9 +78,10 @@ class Api implements LoggerAwareInterface
 
     /**
      * Process the request, get a response and return it.
-     * Exceptions thrown in most places will be handled here, though currently there's no way to handle exceptions
-     * int the Response object itself (eg, invalid formats)e
-     * Tip. You can ->respond() straight off this method
+     *
+     * Exceptions thrown in most places will be handled here.
+     * Currently there's no nice way to handle exceptions in Response::respond
+     *
      * @return Response
      * @SuppressWarnings(PHPMD.ShortMethodName)
      */
@@ -122,7 +130,7 @@ class Api implements LoggerAwareInterface
     }
 
     /**
-     * Set the initial controller that the api will begin with
+     * Set the initial controller that the api will begin with.
      * @param Controller $controller
      * @returns $this
      */
@@ -133,7 +141,7 @@ class Api implements LoggerAwareInterface
     }
 
     /**
-     * Get the initial controller that the api will begin with
+     * Get the initial controller that the api will begin with.
      * @return Controller
      */
     public function getInitialController()
@@ -142,7 +150,16 @@ class Api implements LoggerAwareInterface
     }
 
     /**
-     * In the event of a catastrophic failure, this response can be used to return JSON
+     * Returns a standardised 500 error.
+     *
+     * To be used in the event of a catastrophic failure, this method creates
+     * all new objects, ignoring dependency injection and returns in JSON.
+     *
+     * This will be problematic for users expecting a response in a format
+     * other than JSON and should only be called if the format they are
+     * actually expecting can not be provided when using
+     * Response::prepareResponse.
+     *
      * @return Response
      */
     protected function createFailSafeResponse()
