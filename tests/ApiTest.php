@@ -46,9 +46,8 @@ class ApiTest extends TestCase
     /**
      * @test
      * @covers ::__construct
-     * @uses \AyeAye\Api\Api::setInitialController
      */
-    public function testConstructController()
+    public function testConstruct()
     {
         // Mocks
         $controller = $this->getMockController();
@@ -60,109 +59,12 @@ class ApiTest extends TestCase
             $controller,
             $this->getObjectAttribute($api, 'controller')
         );
-        $this->assertNull(
-            $this->getObjectAttribute($api, 'router')
-        );
-        $this->assertNull(
-            $this->getObjectAttribute($api, 'logger')
-        );
     }
-
-    /**
-     * @test
-     * @covers ::__construct
-     * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Injector\RouterInjector
-     */
-    public function testConstructControllerRouter()
-    {
-        // Mocks
-        $controller = $this->getMockController();
-        $router = $this->getMockRouter();
-
-        // Tests
-        $api = new Api($controller, $router);
-
-        $this->assertSame(
-            $controller,
-            $this->getObjectAttribute($api, 'controller')
-        );
-        $this->assertSame(
-            $router,
-            $this->getObjectAttribute($api, 'router')
-        );
-        $this->assertNull(
-            $this->getObjectAttribute($api, 'logger')
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::__construct
-     * @uses \AyeAye\Api\Injector\LoggerInjector
-     * @uses \AyeAye\Api\Api::setInitialController
-     */
-    public function testConstructControllerLogger()
-    {
-        // Mocks
-        $controller = $this->getMockController();
-        $logger = $this->getMockLogger();
-
-
-        // Tests
-        $api = new Api($controller, null, $logger);
-
-        $this->assertSame(
-            $controller,
-            $this->getObjectAttribute($api, 'controller')
-        );
-        $this->assertNull(
-            $this->getObjectAttribute($api, 'router')
-        );
-        $this->assertSame(
-            $logger,
-            $this->getObjectAttribute($api, 'logger')
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::__construct
-     * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Injector\LoggerInjector
-     * @uses \AyeAye\Api\Injector\RouterInjector
-     */
-    public function testConstructAll()
-    {
-        // Mocks
-        $controller = $this->getMockController();
-        $router = $this->getMockRouter();
-        $logger = $this->getMockLogger();
-
-        // Tests
-        $api = new Api($controller, $router, $logger);
-
-        $this->assertSame(
-            $controller,
-            $this->getObjectAttribute($api, 'controller')
-        );
-        $this->assertSame(
-            $router,
-            $this->getObjectAttribute($api, 'router')
-        );
-        $this->assertSame(
-            $logger,
-            $this->getObjectAttribute($api, 'logger')
-        );
-    }
-
-
 
     /**
      * @test
      * @covers ::log
      * @uses \AyeAye\Api\Api::__construct
-     * @uses \AyeAye\Api\Api::setInitialController
      * @uses \AyeAye\Api\Injector\LoggerInjector
      */
     public function testLog()
@@ -224,8 +126,6 @@ class ApiTest extends TestCase
      * @test
      * @covers ::go
      * @uses \AyeAye\Api\Api::__construct
-     * @uses \AyeAye\Api\Api::setInitialController
-     * @uses \AyeAye\Api\Api::getInitialController
      * @uses \AyeAye\Api\Injector\LoggerInjector
      * @uses \AyeAye\Api\Injector\RouterInjector
      * @uses \AyeAye\Api\Injector\ResponseInjector
@@ -278,8 +178,10 @@ class ApiTest extends TestCase
             ->will($this->returnValue($status));
 
         // Tests
-        $api = new Api($controller, $router, $logger);
-        $api->setRequest($request)
+        $api = new Api($controller);
+        $api->setRouter($router)
+            ->setLogger($logger)
+            ->setRequest($request)
             ->setResponse($response)
             ->setWriterFactory($writerFactory);
 
@@ -294,7 +196,6 @@ class ApiTest extends TestCase
      * @covers ::go
      * @uses \AyeAye\Api\Api::__construct
      * @uses \AyeAye\Api\Api::log
-     * @uses \AyeAye\Api\Api::setInitialController
      * @uses \AyeAye\Api\Injector\LoggerInjector
      * @uses \AyeAye\Api\Injector\ResponseInjector
      * @uses \AyeAye\Api\Injector\RequestInjector
@@ -351,8 +252,9 @@ class ApiTest extends TestCase
 
 
         // Tests
-        $api = new Api($controller, null, $logger);
-        $api->setRequest($request)
+        $api = new Api($controller);
+        $api->setLogger($logger)
+            ->setRequest($request)
             ->setResponse($response)
             ->setWriterFactory($writerFactory);
 
@@ -367,7 +269,6 @@ class ApiTest extends TestCase
      * @covers ::go
      * @uses \AyeAye\Api\Api::__construct
      * @uses \AyeAye\Api\Api::log
-     * @uses \AyeAye\Api\Api::setInitialController
      * @uses \AyeAye\Api\Injector\LoggerInjector
      * @uses \AyeAye\Api\Injector\ResponseInjector
      * @uses \AyeAye\Api\Injector\RequestInjector
@@ -411,8 +312,9 @@ class ApiTest extends TestCase
 
 
         // Tests
-        $api = new Api($controller, null, $logger);
-        $api->setRequest($request)
+        $api = new Api($controller);
+        $api->setLogger($logger)
+            ->setRequest($request)
             ->setResponse($response)
             ->setWriterFactory($writerFactory);
 
@@ -428,8 +330,6 @@ class ApiTest extends TestCase
      * @uses \AyeAye\Api\Api::__construct
      * @uses \AyeAye\Api\Api::createFailSafeResponse
      * @uses \AyeAye\Api\Api::log
-     * @uses \AyeAye\Api\Api::getInitialController
-     * @uses \AyeAye\Api\Api::setInitialController
      * @uses \AyeAye\Api\Injector\LoggerInjector
      * @uses \AyeAye\Api\Injector\ResponseInjector
      * @uses \AyeAye\Api\Injector\RequestInjector
@@ -495,8 +395,10 @@ class ApiTest extends TestCase
             ->with(LogLevel::CRITICAL, $message, ['exception' => $exception]);
 
         // Tests
-        $api = new Api($controller, $router, $logger);
-        $api->setRequest($request)
+        $api = new Api($controller);
+        $api->setRouter($router)
+            ->setLogger($logger)
+            ->setRequest($request)
             ->setResponse($response)
             ->setWriterFactory($writerFactory);
 
@@ -508,87 +410,8 @@ class ApiTest extends TestCase
 
     /**
      * @test
-     * @covers ::setInitialController
-     * @uses \AyeAye\Api\Api::__construct
-     */
-    public function testInitialController()
-    {
-        // Mocks
-        $controller1 = $this->getMockController();
-        $controller2 = $this->getMockController();
-
-        // Tests
-        $api = new Api($controller1);
-
-        $this->assertSame(
-            $controller1,
-            $this->getObjectAttribute($api, 'controller')
-        );
-        $this->assertNotSame(
-            $controller2,
-            $this->getObjectAttribute($api, 'controller')
-        );
-
-        $this->assertSame(
-            $api,
-            $api->setInitialController($controller2)
-        );
-
-        $this->assertSame(
-            $controller2,
-            $this->getObjectAttribute($api, 'controller')
-        );
-        $this->assertNotSame(
-            $controller1,
-            $this->getObjectAttribute($api, 'controller')
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::getInitialController
-     * @uses \AyeAye\Api\Api::__construct
-     * @uses \AyeAye\Api\Api::setInitialController
-     */
-    public function testGetInitialController()
-    {
-        // Mocks
-        $controller1 = $this->getMockController();
-        $controller2 = $this->getMockController();
-
-
-        // Tests
-        $api = new Api($controller1);
-
-        $this->assertSame(
-            $controller1,
-            $api->getInitialController()
-        );
-        $this->assertNotSame(
-            $controller2,
-            $api->getInitialController()
-        );
-
-        $this->assertSame(
-            $api,
-            $api->setInitialController($controller2)
-        );
-
-        $this->assertSame(
-            $controller2,
-            $api->getInitialController()
-        );
-        $this->assertNotSame(
-            $controller1,
-            $api->getInitialController()
-        );
-    }
-
-    /**
-     * @test
      * @covers ::createFailSafeResponse
      * @uses \AyeAye\Api\Api::__construct
-     * @uses \AyeAye\Api\Api::setInitialController
      * @uses \AyeAye\Api\Status
      * @uses \AyeAye\Api\Response
      * @uses \AyeAye\Api\Request

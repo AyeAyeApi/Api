@@ -16,7 +16,6 @@ use AyeAye\Api\Injector\RouterInjector;
 use AyeAye\Api\Injector\WriterFactoryInjector;
 use AyeAye\Formatter\Writer\Json;
 use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
@@ -45,19 +44,11 @@ class Api implements LoggerAwareInterface
      * Initialise the API with a controller that forms the starting point of
      * routing information.
      *
-     * @param Router          $router            The router to power the api
      * @param Controller      $initialController The starting point for the Api
-     * @param LoggerInterface $logger            Provide a logger
      */
-    public function __construct(Controller $initialController, Router $router = null, LoggerInterface $logger = null)
+    public function __construct(Controller $initialController)
     {
-        if ($logger) {
-            $this->setLogger($logger);
-        }
-        $this->setInitialController($initialController);
-        if ($router) {
-            $this->setRouter($router);
-        }
+        $this->controller = $initialController;
     }
 
     /**
@@ -100,7 +91,7 @@ class Api implements LoggerAwareInterface
             $response->setBodyData(
                 $this->getRouter()->processRequest(
                     $this->getRequest(),
-                    $this->getInitialController()
+                    $this->controller
                 )
             );
             $response->setStatus(
@@ -127,26 +118,6 @@ class Api implements LoggerAwareInterface
         }
 
         return $response;
-    }
-
-    /**
-     * Set the initial controller that the api will begin with.
-     * @param Controller $controller
-     * @returns $this
-     */
-    public function setInitialController(Controller $controller)
-    {
-        $this->controller = $controller;
-        return $this;
-    }
-
-    /**
-     * Get the initial controller that the api will begin with.
-     * @return Controller
-     */
-    public function getInitialController()
-    {
-        return $this->controller;
     }
 
     /**
