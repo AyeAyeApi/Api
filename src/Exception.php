@@ -11,8 +11,10 @@ namespace AyeAye\Api;
 
 /**
  * Class Exception
- * An exception specifically designed to be thrown back to the API end user. It provides a public message and HTTP
- * status code.
+ *
+ * An exception specifically designed to be thrown back to the API end user. It
+ * provides a public message and HTTP status code.
+ *
  * @package AyeAye/Api
  * @see     https://github.com/AyeAyeApi/Api
  */
@@ -28,7 +30,10 @@ class Exception extends \Exception implements \JsonSerializable
     public $publicMessage;
 
     /**
-     * Create a new Exception, include information to pass to the client
+     * Exception constructor.
+     *
+     * Include information to pass to the client.
+     *
      * @param string $publicMessage Message to show the user if not caught. Optional
      * @param int $code HTTP Status code to send to the user
      * @param string $systemMessage Message to show the enter into the log if different from the public message
@@ -68,7 +73,11 @@ class Exception extends \Exception implements \JsonSerializable
     }
 
     /**
-     * Get the message to tell the client
+     * Get the message to tell the client.
+     *
+     * This message should only ever contain information that is useful to the
+     * client and will not compromise the condition of the server.
+     *
      * @return string
      */
     public function getPublicMessage()
@@ -77,7 +86,12 @@ class Exception extends \Exception implements \JsonSerializable
     }
 
     /**
-     * Return data to be serialised into Json
+     * Return data to be serialised into Json.
+     *
+     * The returned data contains the public message and exception code (which
+     * is likely to be the HTTP status code). It will also include any previous
+     * Aye Aye Exceptions.
+     *
      * @return array
      */
     public function jsonSerialize()
