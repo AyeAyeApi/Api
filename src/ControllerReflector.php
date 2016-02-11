@@ -11,9 +11,12 @@ namespace AyeAye\Api;
 
 /**
  * Class ControllerReflector
+ *
  * Takes a Controller and turns it into a ReflectionController.
+ *
  * This class exists purely for dependency injection. Use ControllerReflectorInjector to replace it in order to
- * replace ReflectionController
+ * replace ReflectionController.
+ *
  * @package AyeAye/Api
  * @see     https://github.com/AyeAyeApi/Api
  */
@@ -21,7 +24,9 @@ class ControllerReflector
 {
     /**
      * Reflects a given controller.
-     * Exists purely for Dependency Injection
+     *
+     * Exists purely for Dependency Injection.
+     * 
      * @param Controller $controller
      * @return ReflectionController
      */
