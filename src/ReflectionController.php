@@ -150,18 +150,6 @@ class ReflectionController
     }
 
     /**
-     * Get the child controller object
-     * @throws \RuntimeException If the result of calling the child controller method was not a Controller object
-     * @param $controllerName
-     * @return static
-     */
-    public function getChildControllerReflection($controllerName)
-    {
-        $controller = $this->getChildController($controllerName);
-        return new static($controller);
-    }
-
-    /**
      * Construct the method name for a controller
      * @param string $controller
      * @return string
