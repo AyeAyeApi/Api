@@ -26,7 +26,7 @@ class ControllerReflector
      * Reflects a given controller.
      *
      * Exists purely for Dependency Injection.
-     * 
+     *
      * @param Controller $controller
      * @return ReflectionController
      */

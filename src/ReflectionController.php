@@ -13,8 +13,10 @@ use AyeAye\Formatter\Deserializable;
 
 /**
  * Class ReflectionController
+ *
  * Provides functionality similar to ReflectionObject (which is what is used underneath) to provide Controller specific
  * code reflection.
+ *
  * @package AyeAye/Api
  * @see     https://github.com/AyeAyeApi/Api
  */
@@ -32,6 +34,11 @@ class ReflectionController
 
     /**
      * ReflectionController constructor.
+     *
+     * Initialise a ReflectionController with a valid controller. It will be
+     * reflected into a reflection object that will allow us to analyse its
+     * features.
+     *
      * @param Controller $controller
      */
     public function __construct(Controller $controller)
@@ -41,7 +48,11 @@ class ReflectionController
     }
 
     /**
-     * Check if an endpoint exists for a particular method (http verb)
+     * Check for a particular endpoint.
+     *
+     * Takes the request method (http verb) and endpoint name and checks for a
+     * matching class method.
+     *
      * @param $method
      * @param $endpointName
      * @return bool
@@ -53,6 +64,12 @@ class ReflectionController
     }
 
     /**
+     * Call an endpoint and get the result.
+     *
+     * This method will parse the request into the endpoint methods parameters
+     * so the writer of an endpoint need only describe the information they
+     * need in the method declaration.
+     *
      * @param $method
      * @param $endpointName
      * @param Request $request
@@ -73,7 +90,12 @@ class ReflectionController
     }
 
     /**
-     * Creates an array of parameters with which to call a method
+     * Creates an array of parameters with which to call a method.
+     *
+     * Matches the parameters in a given method to the values available in the
+     * given request. For absent values, either the default, or null, will be
+     * used.
+     *
      * @param \ReflectionMethod $method
      * @param Request $request
      * @return array
@@ -104,7 +126,14 @@ class ReflectionController
     }
 
     /**
-     * Construct the method name for an endpoint
+     * Construct the method name for an endpoint.
+     *
+     * Endpoint methods are constructed like this [method][name]Endpoint. The
+     * method name is lower cased, the endpoint name is upper camel cased, and
+     * the class method name ends with the word "Endpoint".
+     *
+     * @example GET hello-world => getHelloWorldEndpoint
+     *
      * @param string $method
      * @param string $endpoint
      * @return string
@@ -118,8 +147,11 @@ class ReflectionController
 
     /**
      * Check if the named controller exists as a child of this controller.
-     * Note: The name of this is the name of the controller NOT the name of the method, so exclude the word Controller
-     * on the end.
+     *
+     * Takes the requested child controller name and checks for a corresponding
+     * class method name. (Note: The class method will end with the word
+     * Controller)
+     *
      * @param $controllerName
      * @return bool
      */
@@ -130,8 +162,13 @@ class ReflectionController
     }
 
     /**
-     * Get the child controller object
-     * @throws \RuntimeException If the result of calling the child controller method was not a Controller object
+     * Get the child controller object.
+     *
+     * Gets the new child controller object from the child controller class
+     * method. If the method does not exist, or the returned value is not a
+     * controller object, a \RuntimeException is thrown.
+     *
+     * @throws \RuntimeException
      * @param $controllerName
      * @return Controller
      */
@@ -143,7 +180,7 @@ class ReflectionController
         }
 
         $controller = $this->reflection->getMethod($methodName)->invokeArgs($this->controller, []);
-        if (!$controller instanceof Controller) {
+        if (!is_object($controller) || !$controller instanceof Controller) {
             throw new \RuntimeException("{$this->reflection->getName()}::{$methodName} did not return a Controller");
         }
         return $controller;
@@ -151,6 +188,12 @@ class ReflectionController
 
     /**
      * Construct the method name for a controller
+     *
+     * The methods for child controllers are simple named [name]Controller
+     * where [name] is lower camel cased.
+     *
+     * @example hello-world => helloWorldController
+     *
      * @param string $controller
      * @return string
      */
@@ -161,6 +204,10 @@ class ReflectionController
     }
 
     /**
+     * Get the status of the controller.
+     *
+     * This is a simple wrapper function.
+     *
      * @return Status
      */
     public function getStatus()
@@ -169,7 +216,10 @@ class ReflectionController
     }
 
     /**
-     * Returns a list of possible endpoints and controllers
+     * Get the documentation for a controller.
+     *
+     * Creates a documentation object from the reflected controller.
+     *
      * @return ControllerDocumentation
      */
     public function getDocumentation()
