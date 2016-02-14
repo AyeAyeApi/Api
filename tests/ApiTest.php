@@ -196,6 +196,7 @@ class ApiTest extends TestCase
      * @covers ::go
      * @uses \AyeAye\Api\Api::__construct
      * @uses \AyeAye\Api\Api::log
+     * @uses \AyeAye\Api\Status
      * @uses \AyeAye\Api\Injector\LoggerInjector
      * @uses \AyeAye\Api\Injector\ResponseInjector
      * @uses \AyeAye\Api\Injector\RequestInjector
@@ -231,8 +232,8 @@ class ApiTest extends TestCase
             ->willThrowException($exception);
         $response
             ->expects($this->once())
-            ->method('setStatusCode')
-            ->with($code);
+            ->method('setStatus')
+            ->with($this->isInstanceOf(Status::class));
         $response
             ->expects($this->once())
             ->method('prepareResponse');
@@ -295,8 +296,8 @@ class ApiTest extends TestCase
             ->willThrowException($exception);
         $response
             ->expects($this->once())
-            ->method('setStatusCode')
-            ->with(500);
+            ->method('setStatus')
+            ->with($this->isInstanceOf(Status::class));
         $response
             ->expects($this->once())
             ->method('prepareResponse');

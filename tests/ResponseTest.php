@@ -38,35 +38,6 @@ class ResponseTest extends TestCase
 
     /**
      * @test
-     * @covers ::setStatusCode
-     * @uses \AyeAye\Api\Status
-     * @uses \AyeAye\Api\Response::setStatus
-     * @uses \AyeAye\Api\Response::getStatus
-     */
-    public function testStatusCode()
-    {
-        $code = 418;
-        $response = new Response();
-
-        $this->assertNull(
-            $this->getObjectAttribute($response, 'status')
-        );
-        $this->assertSame(
-            $response,
-            $response->setStatusCode(418)
-        );
-        $this->assertInstanceOf(
-            '\AyeAye\Api\Status',
-            $response->getStatus()
-        );
-        $this->assertSame(
-            $code,
-            $response->getStatus()->getCode()
-        );
-    }
-
-    /**
-     * @test
      * @covers ::setRequest
      * @covers ::getRequest
      * @uses \AyeAye\Api\Request

@@ -59,17 +59,6 @@ class Response
     protected $preparedResponse;
 
     /**
-     * Set the Status object that will report the HTTP status to the client using only the HTTP status code
-     * @param int $statusCode
-     * @return $this
-     */
-    public function setStatusCode($statusCode)
-    {
-        $status = new Status($statusCode);
-        return $this->setStatus($status);
-    }
-
-    /**
      * Get the Request the client made
      * @return Request
      */
