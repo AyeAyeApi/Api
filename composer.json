@@ -53,6 +53,9 @@
       ],
       "quality-fix" : [
         "vendor/bin/phpcbf --standard=phpcs.xml src"
+      ],
+      "report" : [
+        "vendor/bin/phploc src"
       ]
     }
 }
