@@ -9,6 +9,7 @@
 
 namespace AyeAye\Api\Tests;
 
+use AyeAye\Api\Injector\RequestInjector;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
@@ -27,6 +28,7 @@ class ResponseTest extends TestCase
 {
 
     use StatusInjectorTest;
+    use RequestInjector;
 
     /**
      * @return Response
@@ -34,31 +36,6 @@ class ResponseTest extends TestCase
     protected function getTestSubject()
     {
         return new Response();
-    }
-
-    /**
-     * @test
-     * @covers ::setRequest
-     * @covers ::getRequest
-     * @uses \AyeAye\Api\Request
-     */
-    public function testRequest()
-    {
-        $response = new Response();
-        $this->assertNull(
-            $response->getRequest()
-        );
-
-        $request = new Request();
-        $this->assertSame(
-            $response,
-            $response->setRequest($request)
-        );
-
-        $this->assertSame(
-            $request,
-            $response->getRequest()
-        );
     }
 
     /**

@@ -9,46 +9,45 @@
 
 namespace AyeAye\Api;
 
+use AyeAye\Api\Injector\RequestInjector;
 use AyeAye\Api\Injector\StatusInjector;
 use AyeAye\Formatter\WriterFactory;
 use AyeAye\Formatter\Writer;
 
 /**
- * Class Response
- * Contains a payload of information to return to the client
+ * Class Response.
+ *
+ * Contains a payload of information to return to the client.
+ *
  * @package AyeAye/Api
  * @see     https://github.com/AyeAyeApi/Api
  */
 class Response
 {
     use StatusInjector;
+    use RequestInjector;
 
     /**
-     * Used to name the data object that is returned to the user where applicable
+     * The name of the object that is returned to the user where appropriate.
+     *
      * @var string
      */
     protected $responseName = 'response';
 
     /**
-     * Response format. Defaults to json
+     * The writer factory to use when the response is to be formatted
      * @var WriterFactory
      */
     protected $writerFactory;
 
     /**
-     * The formatter object used to format this response
+     * The specific writer that will be used to format this response
      * @var Writer
      */
     protected $writer;
 
     /**
-     * The initial request. This will only be shown if debug is on
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * The data you wish to return in the response
+     * The data you wish to return in the response.
      * @var mixed
      */
     protected $body = [];
@@ -57,26 +56,6 @@ class Response
      * @var string
      */
     protected $preparedResponse;
-
-    /**
-     * Get the Request the client made
-     * @return Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Set the Request. This will only be returned in debug mode
-     * @param Request $request
-     * @return $this
-     */
-    public function setRequest(Request $request)
-    {
-        $this->request = $request;
-        return $this;
-    }
 
     /**
      * Get the specifically requested data that is being returned

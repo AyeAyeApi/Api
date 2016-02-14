@@ -417,6 +417,7 @@ class ApiTest extends TestCase
      * @uses \AyeAye\Api\Response
      * @uses \AyeAye\Api\Request
      * @uses \AyeAye\Api\Injector\StatusInjector
+     * @uses \AyeAye\Api\Injector\RequestInjector
      * @uses \AyeAye\Formatter\Writer\Json
      */
     public function testCreateFailSafeResponse()
