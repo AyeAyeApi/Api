@@ -55,14 +55,21 @@ class Response
     protected $body = [];
 
     /**
+     * The formatted response.
+     * We can prepare a response earlier to take advantage of the main API
+     * class' error handling.
      * @var string
      */
     protected $preparedResponse;
 
 
     /**
-     * Get all data that is being returned
-     * @return mixed
+     * Get all data that is being returned.
+     *
+     * This will return an array. Unless otherwise stated, data will usually be
+     * attached to the 'data' key of this array.
+     *
+     * @return array
      */
     public function getBody()
     {
@@ -70,7 +77,28 @@ class Response
     }
 
     /**
-     * Set the data that is to be returned
+     * Set the data that is to be returned.
+     *
+     * If data is directly returned from an endpoint, it will be attached to
+     * the default data name (usually "data").
+     *
+     * @example
+     *   return 'hello world'; becomes { "data" => "hello world" }
+     *
+     * However, if a Generator is returned, the keys returned will be used
+     * instead.
+     *
+     * @example
+     *   yield 'hello' => 'world'; becomes { "hello" => "world" }
+     *
+     * If no key is given, the default will still be used. This is useful to
+     * provide uniformity in response while adding additional data such as
+     * HATEOAS.
+     *
+     * @example
+     *   yield 'hello';
+     *   yield 'links' => $this->generateLinks();
+     *
      * @param $data
      * @return $this
      */
@@ -88,7 +116,10 @@ class Response
     }
 
     /**
-     * Set the format factory that will be used to choose a formatter
+     * Set the writer factory.
+     *
+     * This will be choose a writer to format the data based on the request.
+     *
      * @param WriterFactory $writerFactory
      * @return $this
      */
@@ -99,7 +130,11 @@ class Response
     }
 
     /**
-     * This allows you to manually set the formatter, however it is advisable to use setFormatFactor instead
+     * Set the writer.
+     *
+     * This overrides any choice that might otherwise be made by the writer
+     * factory and should therefore be avoided.
+     *
      * @param Writer $writer
      * @return $this
      */
@@ -110,7 +145,12 @@ class Response
     }
 
     /**
-     * Format and prepare the response and save it for later
+     * Prepare the response.
+     *
+     * This selects a writer from the writer factory and prepares serialises
+     * the data into a string. This is done early to allow exceptions and
+     * errors to be caught and handled earlier.
+     *
      * @return $this
      */
     public function prepareResponse()
@@ -125,7 +165,14 @@ class Response
     }
 
     /**
-     * Format the data and send as a response. Only one response can be sent
+     * Send the response.
+     *
+     * This method sends headers and writes the data to the output stream.
+     *
+     * If the response has not yet been prepared, this method will prepare it
+     * first. This method should be the last thing that happens before the
+     * script ends.
+     *
      * @return $this
      */
     public function respond()
