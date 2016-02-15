@@ -199,7 +199,10 @@ class Status implements \JsonSerializable
     protected $message;
 
     /**
-     * Construct a Status using an HTTP code
+     * Status constructor.
+     *
+     * Construct with the numeric HTTP status code (defaults to 200).
+     *
      * @param int $code Default 200
      * @throws \Exception If invalid code
      */
@@ -222,7 +225,7 @@ class Status implements \JsonSerializable
     }
 
     /**
-     * HTTP code for status
+     * HTTP message for status
      * @return int
      */
     public function getMessage()
