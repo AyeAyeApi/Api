@@ -68,30 +68,6 @@ class ResponseTest extends TestCase
     /**
      * @test
      * @covers ::setBodyData
-     * @covers ::getData
-     */
-    public function testData()
-    {
-        $response = new Response();
-        $this->assertNull(
-            $response->getData()
-        );
-
-        $object = new \stdClass(); // Good for tracking reference
-
-        $this->assertSame(
-            $response,
-            $response->setBodyData($object)
-        );
-        $this->assertSame(
-            $object,
-            $response->getData()
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::setBodyData
      * @covers ::getBody
      * @requires PHP 5.5
      */

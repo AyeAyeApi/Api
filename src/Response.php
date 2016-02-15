@@ -57,17 +57,6 @@ class Response
      */
     protected $preparedResponse;
 
-    /**
-     * Get the specifically requested data that is being returned
-     * @return mixed
-     */
-    public function getData()
-    {
-        if (array_key_exists('data', $this->body)) {
-            return $this->body['data'];
-        }
-        return null;
-    }
 
     /**
      * Get all data that is being returned
