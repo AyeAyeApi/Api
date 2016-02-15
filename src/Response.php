@@ -27,6 +27,8 @@ class Response
     use StatusInjector;
     use RequestInjector;
 
+    const DEFAULT_DATA_NAME = 'data';
+
     /**
      * The name of the object that is returned to the user where appropriate.
      *
@@ -76,12 +78,12 @@ class Response
     {
         if ($data instanceof \Generator) {
             foreach ($data as $key => $value) {
-                $actualKey = $key ?: 'data';
+                $actualKey = $key ?: static::DEFAULT_DATA_NAME;
                 $this->body[$actualKey] = $value;
             }
             return $this;
         }
-        $this->body['data'] = $data;
+        $this->body[static::DEFAULT_DATA_NAME] = $data;
         return $this;
     }
 
