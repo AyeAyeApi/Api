@@ -86,7 +86,7 @@ class Documentation
      *
      * Starting from the beginning of the doc block, this method extracts text
      * until it reaches a full stop at the end of a line, a blank line, or a
-     * line begining with an @ symbol.
+     * line beginning with an @ symbol.
      *
      * @param string[] $lines
      * @return string

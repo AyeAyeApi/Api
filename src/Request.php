@@ -394,7 +394,7 @@ class Request implements \JsonSerializable
      * Used by PHP to get json object.
      *
      * This method is useful for debugging incoming requests. It should not
-     * reveal anything the sender doesn't know, but might help explain how
+     * reveal anything the sender does not know, but might help explain how
      * the request has been processed.
      *
      * @return array|mixed

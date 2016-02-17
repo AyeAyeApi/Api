@@ -170,15 +170,15 @@ class Status implements \JsonSerializable
         510 => 'Not Extended',
         // Not going to be useful in PHP as you're already at the server, see 401
         511 => 'Network Authentication Required',
-        // Taken from Cloudflare. Resource provider sent an error. Use 502 instead
+        // Taken from CloudFlare. Resource provider sent an error. Use 502 instead
         520 => 'Origin Error',
-        // Taken from Cloudflare. Can't connect to resource provider Use 503 instead
+        // Taken from CloudFlare. Can't connect to resource provider Use 503 instead
         521 => 'Web server is down',
-        // Taken from Cloudflare. Connection to resource provider timed out. Use 504 instead
+        // Taken from CloudFlare. Connection to resource provider timed out. Use 504 instead
         522 => 'Connection timed out',
-        // Taken from Cloudflare. Resource has been blocked. Use 401 or 403 instead
+        // Taken from CloudFlare. Resource has been blocked. Use 401 or 403 instead
         523 => 'Proxy Declined Request',
-        // Taken from Cloudflare. Connection to proxy timed out. Use 504 instead
+        // Taken from CloudFlare. Connection to proxy timed out. Use 504 instead
         524 => 'A timeout occurred',
         // Taken from Microsoft. Connection to proxy timed out. Use 504 instead
         598 => 'Network read timeout error',
