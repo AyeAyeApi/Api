@@ -1,129 +1,75 @@
 <?php
 /**
- * Response object
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Response.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
 
-use AyeAye\Formatter\FormatFactory;
-use AyeAye\Formatter\Formatter;
+use AyeAye\Api\Injector\RequestInjector;
+use AyeAye\Api\Injector\StatusInjector;
+use AyeAye\Formatter\WriterFactory;
+use AyeAye\Formatter\Writer;
 
 /**
- * Describes response to client
- * @package AyeAye\Api
+ * Class Response.
+ *
+ * Contains a payload of information to return to the client.
+ *
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 class Response
 {
+    use StatusInjector;
+    use RequestInjector;
+
+    const DEFAULT_DATA_NAME = 'data';
 
     /**
-     * Used to name the data object that is returned to the user where applicable
+     * The name of the object that is returned to the user where appropriate.
+     *
      * @var string
      */
     protected $responseName = 'response';
 
     /**
-     * Response format. Defaults to json
-     * @var FormatFactory
+     * The writer factory to use when the response is to be formatted
+     * @var WriterFactory
      */
-    protected $formatFactory;
+    protected $writerFactory;
 
     /**
-     * The formatter object used to format this response
-     * @var Formatter
+     * The specific writer that will be used to format this response
+     * @var Writer
      */
-    protected $formatter;
+    protected $writer;
 
     /**
-     * The HTTP status of the response
-     * @var Status
-     */
-    protected $status;
-
-    /**
-     * The initial request. This will only be shown if debug is on
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * The data you wish to return in the response
+     * The data you wish to return in the response.
      * @var mixed
      */
     protected $body = [];
 
     /**
+     * The formatted response.
+     * We can prepare a response earlier to take advantage of the main API
+     * class' error handling.
      * @var string
      */
     protected $preparedResponse;
 
-    /**
-     * Get the Status object assigned to the response
-     * @return \AyeAye\Api\Status
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
 
     /**
-     * Set the Status object that will report the HTTP status to the client
-     * @param Status $status
-     * @return $this
-     */
-    public function setStatus(Status $status)
-    {
-        $this->status = $status;
-        return $this;
-    }
-
-    /**
-     * Set the Status object that will report the HTTP status to the client using only the HTTP status code
-     * @param int $statusCode
-     * @return $this
-     */
-    public function setStatusCode($statusCode)
-    {
-        $status = new Status($statusCode);
-        return $this->setStatus($status);
-    }
-
-    /**
-     * Get the Request the client made
-     * @return Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Set the Request. This will only be returned in debug mode
-     * @param Request $request
-     * @return $this
-     */
-    public function setRequest(Request $request)
-    {
-        $this->request = $request;
-        return $this;
-    }
-
-    /**
-     * Get the specifically requested data that is being returned
-     * @return mixed
-     */
-    public function getData()
-    {
-        if (array_key_exists('data', $this->body)) {
-            return $this->body['data'];
-        }
-        return null;
-    }
-
-    /**
-     * Get all data that is being returned
-     * @return mixed
+     * Get all data that is being returned.
+     *
+     * This will return an array. Unless otherwise stated, data will usually be
+     * attached to the 'data' key of this array.
+     *
+     * @return array
      */
     public function getBody()
     {
@@ -131,62 +77,102 @@ class Response
     }
 
     /**
-     * Set the data that is to be returned
-     * @param $data
+     * Set the data that is to be returned.
+     *
+     * If data is directly returned from an endpoint, it will be attached to
+     * the default data name (usually "data").
+     *
+     * @example
+     *   return 'hello world'; becomes { "data" => "hello world" }
+     *
+     * However, if a Generator is returned, the keys returned will be used
+     * instead.
+     *
+     * @example
+     *   yield 'hello' => 'world'; becomes { "hello" => "world" }
+     *
+     * If no key is given, the default will still be used. This is useful to
+     * provide uniformity in response while adding additional data such as
+     * HATEOAS.
+     *
+     * @example
+     *   yield 'hello';
+     *   yield 'links' => $this->generateLinks();
+     *
+     * @param \Generator|mixed $data
      * @return $this
      */
     public function setBodyData($data)
     {
-        if ($data instanceof \Generator) {
-            foreach ($data as $key => $value) {
-                $actualKey = $key ?: 'data';
-                $this->body[$actualKey] = $value;
-            }
+        if (!$data instanceof \Generator) {
+            $this->body[static::DEFAULT_DATA_NAME] = $data;
             return $this;
         }
-        $this->body['data'] = $data;
+        foreach ($data as $key => $value) {
+            $actualKey = $key ?: static::DEFAULT_DATA_NAME;
+            $this->body[$actualKey] = $value;
+        }
         return $this;
     }
 
     /**
-     * Set the format factory that will be used to choose a formatter
-     * @param FormatFactory $formatFactory
+     * Set the writer factory.
+     *
+     * This will be choose a writer to format the data based on the request.
+     *
+     * @param WriterFactory $writerFactory
      * @return $this
      */
-    public function setFormatFactory(FormatFactory $formatFactory)
+    public function setWriterFactory(WriterFactory $writerFactory)
     {
-        $this->formatFactory = $formatFactory;
+        $this->writerFactory = $writerFactory;
         return $this;
     }
 
     /**
-     * This allows you to manually set the formatter, however it is advisable to use setFormatFactor instead
-     * @param Formatter $formatter
+     * Set the writer.
+     *
+     * This overrides any choice that might otherwise be made by the writer
+     * factory and should therefore be avoided.
+     *
+     * @param Writer $writer
      * @return $this
      */
-    public function setFormatter(Formatter $formatter)
+    public function setWriter(Writer $writer)
     {
-        $this->formatter = $formatter;
+        $this->writer = $writer;
         return $this;
     }
 
     /**
-     * Format and prepare the response and save it for later
+     * Prepare the response.
+     *
+     * This selects a writer from the writer factory and prepares serialises
+     * the data into a string. This is done early to allow exceptions and
+     * errors to be caught and handled earlier.
+     *
      * @return $this
      */
     public function prepareResponse()
     {
-        if (!$this->formatter) {
-            $this->formatter = $this->formatFactory->getFormatterFor(
+        if (!$this->writer) {
+            $this->writer = $this->writerFactory->getWriterFor(
                 $this->request->getFormats()
             );
         }
-        $this->preparedResponse = $this->formatter->format($this->getBody(), $this->responseName);
+        $this->preparedResponse = $this->writer->format($this->getBody(), $this->responseName);
         return $this;
     }
 
     /**
-     * Format the data and send as a response. Only one response can be sent
+     * Send the response.
+     *
+     * This method sends headers and writes the data to the output stream.
+     *
+     * If the response has not yet been prepared, this method will prepare it
+     * first. This method should be the last thing that happens before the
+     * script ends.
+     *
      * @return $this
      */
     public function respond()
@@ -199,7 +185,7 @@ class Response
             header($this->status->getHttpHeader());
         }
 
-        header("Content-Type: {$this->formatter->getContentType()}");
+        header("Content-Type: {$this->writer->getContentType()}");
         echo $this->preparedResponse;
 
         return $this;

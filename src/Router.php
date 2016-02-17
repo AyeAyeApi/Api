@@ -1,31 +1,36 @@
 <?php
-
 /**
- * Directs traffic to the correct end points.
- * @author Daniel Mason
- * @copyright Daniel Mason, 2014
+ * Router.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
-use AyeAye\Formatter\Deserializable;
+
+use AyeAye\Api\Injector\ControllerReflectorInjector;
+use AyeAye\Api\Injector\StatusInjector;
 
 /**
- * Describes end points and controllers
- * @author Daniel Mason
- * @package AyeAye\Api
+ * Class Router
+ * Finds the correct endpoint to process a request
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 class Router
 {
-
-    /**
-     * The status object that represents an HTTP status
-     * @var Status
-     */
-    protected $status;
+    use ControllerReflectorInjector;
+    use StatusInjector;
 
     /**
      * Look at a request and work out what to do next.
-     * Call a controller, or an endpoint on this controller.
+     *
+     * Looks at the request chain, takes the first part off, if there is a
+     * matching controller, it will load the controller and recurse. If there
+     * is a matching endpoint it will call the endpoint passing in the
+     * request data.
+     *
      * @param Request $request
      * @param Controller $controller
      * @param array $requestChain
@@ -35,188 +40,46 @@ class Router
     public function processRequest(Request $request, Controller $controller, array $requestChain = null)
     {
 
+        $reflectionController = $this->getControllerReflector()->reflectController($controller);
+
+        // If the request chain is null as apposed to empty, we can get it from the request
         if (is_null($requestChain)) {
             $requestChain = $request->getRequestChain();
         }
 
+        // Get the next element of the front of the chain
         $nextLink = array_shift($requestChain);
         if ($nextLink) {
-            $potentialController = $this->parseControllerName($nextLink);
-            if (method_exists($controller, $potentialController)) {
-                /** @var Controller $nextController */
-                $nextController = $controller->$potentialController();
-                return $this->processRequest($request, $nextController, $requestChain);
+            // If the next element represents a controller, recurse with the new controller and remaining chain
+            if ($reflectionController->hasChildController($nextLink)) {
+                return $this->processRequest(
+                    $request,
+                    $reflectionController->getChildController($nextLink),
+                    $requestChain
+                );
             }
 
-            $potentialEndpoint = $this->parseEndpointName($nextLink, $request->getMethod());
-            if (method_exists($controller, $potentialEndpoint)) {
-                $data = call_user_func_array(
-                    [$controller, $potentialEndpoint],
-                    $this->getParametersFromRequest($request, $controller, $potentialEndpoint)
-                );
-                $this->setStatus($controller->getStatus());
+            // If the next element represents an endpoint, call it, passing in the request data
+            if ($reflectionController->hasEndpoint($request->getMethod(), $nextLink)) {
+                $data = $reflectionController->getEndpointResult($request->getMethod(), $nextLink, $request);
+                $this->setStatus($reflectionController->getStatus());
                 return $data;
             }
 
+            // If we had another element but it doesn't represent anything, throw an exception.
             $message = "Could not find controller or endpoint matching '$nextLink'";
             throw new Exception($message, 404);
         }
 
-        $potentialEndpoint = $this->parseEndpointName('index', $request->getMethod());
-        if (method_exists($controller, $potentialEndpoint)) {
-            return $controller->$potentialEndpoint();
+        // If there were no more links in the chain, call the index endpoint if there is one.
+        // Index endpoints will prevent automated automatic documentation, which may be undesirable. See below.
+        if ($reflectionController->hasEndpoint($request->getMethod(), 'index')) {
+            $data = $reflectionController->getEndpointResult($request->getMethod(), 'index', $request);
+            $this->setStatus($reflectionController->getStatus());
+            return $data;
         }
 
-        return $this->documentController($controller);
-
-    }
-
-    /**
-     * Returns a list of possible endpoints and controllers
-     * @param Controller $controller
-     * @return \stdClass
-     */
-    protected function documentController(Controller $controller)
-    {
-        $data = new \stdClass();
-        $data->controllers = $this->getControllers($controller);
-        $data->endpoints = $this->getEndpoints($controller);
-        return $data;
-    }
-
-    /**
-     * Takes a camelcase string, such as method names, and hyphenates it for urls
-     * @param string $camelcaseString
-     * @return string Hyphenated string for urls
-     */
-    protected function camelcaseToHyphenated($camelcaseString)
-    {
-        return strtolower(preg_replace('/([a-z])([A-Z])/s', '$1-$2', $camelcaseString));
-    }
-
-    /**
-     * Returns a list of endpoints attached to this class
-     * @param Controller $controller
-     * @return array
-     */
-    protected function getEndpoints(Controller $controller)
-    {
-        $documenter = new Documenter();
-        $endpoints = [];
-        $parts = [];
-        $methods = get_class_methods($controller);
-        foreach ($methods as $classMethod) {
-            if (preg_match('/([a-z]+)([A-Z]\w+)Endpoint$/', $classMethod, $parts)) {
-                if (!$controller->isMethodHidden($classMethod)) {
-                    $method = strtolower($parts[1]);
-                    $endpoint = $this->camelcaseToHyphenated($parts[2]);
-                    if (!array_key_exists($method, $endpoints)) {
-                        $endpoints[$method] = array();
-                    }
-                    $endpoints[$method][$endpoint] = $documenter->getMethodDocumentation(
-                        new \ReflectionMethod($controller, $classMethod)
-                    );
-                }
-            }
-        }
-        return $endpoints;
-    }
-
-    /**
-     * Returns a list of controllers attached to this class
-     * @param Controller $controller
-     * @return array
-     */
-    protected function getControllers(Controller $controller)
-    {
-        $methods = get_class_methods($controller);
-        $controllers = [];
-        foreach ($methods as $method) {
-            if (preg_match('/(\w+)Controller$/', $method, $parts)) {
-                if (!$controller->isMethodHidden($method)) {
-                    $controllers[] = $this->camelcaseToHyphenated($parts[1]);
-                }
-            }
-        }
-        return $controllers;
-    }
-
-
-    /**
-     * Construct the method name for an endpoint
-     * @param string $endpoint
-     * @param string $method
-     * @return string
-     */
-    protected function parseEndpointName($endpoint, $method = Request::METHOD_GET)
-    {
-        $endpoint = str_replace(' ', '', ucwords(str_replace(['-', '+', '%20'], ' ', $endpoint)));
-        $method = strtolower($method);
-        return $method . $endpoint . 'Endpoint';
-    }
-
-    /**
-     * Construct the method name for a controller
-     * @param string $controller
-     * @return string
-     */
-    protected function parseControllerName($controller)
-    {
-        $controller = str_replace(' ', '', lcfirst(ucwords(str_replace(['-', '+', '%20'], ' ', $controller))));
-        return $controller . 'Controller';
-    }
-
-    /**
-     * Look at the request, fill out the parameters we have
-     * @param Request $request
-     * @param Controller $controller
-     * @param $method
-     * @return array
-     */
-    protected function getParametersFromRequest(Request $request, Controller $controller, $method)
-    {
-        $parameters = array();
-        $reflectionMethod = new \ReflectionMethod($controller, $method);
-        $reflectionParameters = $reflectionMethod->getParameters();
-        foreach ($reflectionParameters as $reflectionParameter) {
-            $value = $request->getParameter(
-                $reflectionParameter->getName(),
-                $reflectionParameter->isDefaultValueAvailable() ? $reflectionParameter->getDefaultValue() : null
-            );
-            if(
-                $reflectionParameter->getClass() &&
-                $reflectionParameter->getClass()->implementsInterface('\AyeAye\Formatter\Deserializable')
-            ) {
-                /** @var Deserializable $deserializable */
-                $value = $reflectionParameter->getClass()
-                                             ->newInstanceWithoutConstructor()
-                                             ->ayeAyeDeserialize((array)$value);
-            }
-            $parameters[$reflectionParameter->getName()] = $value;
-        }
-        return $parameters;
-    }
-
-    /**
-     * Get the Status object associated with the controller
-     * @return Status
-     */
-    public function getStatus()
-    {
-        if (!$this->status) {
-            $this->status = new Status();
-        }
-        return $this->status;
-    }
-
-    /**
-     * Set the status object associated with the controller
-     * @param Status $status
-     * @return $this
-     */
-    protected function setStatus(Status $status)
-    {
-        $this->status = $status;
-        return $this;
+        // Generate documentation for the current controller and return it.
+        return $reflectionController->getDocumentation();
     }
 }

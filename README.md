@@ -19,7 +19,7 @@ SL Insight:
 Create a project and include Aye Aye
 
 ```bash
-composer init --require="ayeaye/api ^1.0.0@beta" -n
+composer init --require="ayeaye/api ^1.0.0@rc" -n
 composer install
 ```
 

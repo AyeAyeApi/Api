@@ -1,18 +1,21 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 27/07/15
- * Time: 08:23
+ * RequestTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests;
 
 use AyeAye\Api\Request;
+use AyeAye\Formatter\ReaderFactory;
 
 /**
  * Class ControllerTest
  * @package AyeAye\Api\Tests
+ * @see     https://github.com/AyeAyeApi/Api
  * @coversDefaultClass \AyeAye\Api\Request
  */
 class RequestTest extends TestCase
@@ -31,11 +34,47 @@ class RequestTest extends TestCase
         );
 
         $parameters = ['test' => 'testString'];
-        $request = new Request(null, null, ['test' => 'testString']);
+        $request = new Request(null, null, null, ['test' => 'testString']);
         $this->assertSame(
             $parameters,
             $request->getParameters()
         );
+    }
+
+    /**
+     * @test
+     * @covers ::getReaderFactory
+     * @uses \AyeAye\Api\Request
+     */
+    public function testGetReaderFactory()
+    {
+        $readerFactory = new ReaderFactory();
+        $request = new Request();
+        $getReaderFactory = $this->getObjectMethod($request, 'getReaderFactory');
+
+        $this->assertInstanceOf(
+            ReaderFactory::class,
+            $getReaderFactory()
+        );
+
+        $this->assertNotSame(
+            $readerFactory,
+            $getReaderFactory()
+        );
+
+        $request = new Request(null, null, $readerFactory);
+        $getReaderFactory = $this->getObjectMethod($request, 'getReaderFactory');
+
+        $this->assertInstanceOf(
+            ReaderFactory::class,
+            $getReaderFactory()
+        );
+
+        $this->assertSame(
+            $readerFactory,
+            $getReaderFactory()
+        );
+
     }
 
     /**
@@ -221,63 +260,61 @@ class RequestTest extends TestCase
 
     /**
      * @test
-     * @covers ::stringToObject
+     * @covers ::stringToArray
      * @uses \AyeAye\Api\Request
      */
-    public function testStringToClass()
+    public function testStringToArray()
     {
         $request = new Request();
-        $stringToObject = $this->getObjectMethod($request, 'stringToObject');
+        $stringToArray = $this->getObjectMethod($request, 'stringToArray');
 
 
-        $this->assertObjectNotHasAttribute(
+        $this->assertArrayNotHasKey(
             'text',
-            $stringToObject('')
+            $stringToArray('')
         );
 
-        $this->assertObjectHasAttribute(
+        $this->assertArrayHasKey(
             'text',
-            $stringToObject('test')
+            $stringToArray('test')
         );
         $this->assertSame(
             'test',
-            $stringToObject('test')->text
+            $stringToArray('test')['text']
         );
 
         $json = '{"key":"value"}';
 
-        $this->assertObjectNotHasAttribute(
+        $this->assertArrayNotHasKey(
             'text',
-            $stringToObject($json)
+            $stringToArray($json)
         );
-        $this->assertObjectHasAttribute(
+        $this->assertArrayHasKey(
             'key',
-            $stringToObject($json)
+            $stringToArray($json)
         );
         $this->assertSame(
             'value',
-            $stringToObject($json)->key
+            $stringToArray($json)['key']
         );
 
         $xml = '<container><key>anotherValue</key></container>';
 
-        $this->assertObjectNotHasAttribute(
+        $this->assertArrayNotHasKey(
             'text',
-            $stringToObject($xml)
+            $stringToArray($xml)
         );
-        $this->assertObjectHasAttribute(
+        $this->assertArrayHasKey(
             'key',
-            $stringToObject($xml)
+            $stringToArray($xml)
         );
 
-        // ToDo: How does this even???
-//        /** @var \SimpleXMLElement $object */
-//        $object = $stringToObject($xml);
-//        print_r($object->children()->text()); die;
-//        $this->assertSame(
-//            'anotherValue',
-//            $stringToObject($xml)->key[0]
-//        );
+//         ToDo: How does this even???
+        /** @var \SimpleXMLElement $object */
+        $this->assertSame(
+            'anotherValue',
+            $stringToArray($xml)['key']
+        );
     }
 
     /**
@@ -307,7 +344,7 @@ class RequestTest extends TestCase
      */
     public function testGetParameter()
     {
-        $request = new Request(null, null, [
+        $request = new Request(null, null, null, [
             'key' => 'value1',
             'Key' => 'value2'
         ]);
@@ -364,7 +401,7 @@ class RequestTest extends TestCase
         );
 
         $expected = ['key' => 'value', 'alpha' => 'beta'];
-        $request = new Request(null, null, $expected);
+        $request = new Request(null, null, null, $expected);
         $this->assertSame(
             $expected,
             $request->getParameters()

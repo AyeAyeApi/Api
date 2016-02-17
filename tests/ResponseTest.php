@@ -1,105 +1,41 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 27/07/15
- * Time: 08:23
+ * ResponseTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests;
 
+use AyeAye\Api\Injector\RequestInjector;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\GeneratorController;
-use AyeAye\Formatter\FormatFactory;
-use AyeAye\Formatter\Formatter;
-use AyeAye\Formatter\Formats\Json;
+use AyeAye\Api\Tests\Injector\StatusInjectorTest;
+use AyeAye\Formatter\WriterFactory;
+use AyeAye\Formatter\Writer;
+use AyeAye\Formatter\Writer\Json;
 
 /**
  * Class ResponseTest
  * @package AyeAye\Api\Tests
+ * @see     https://github.com/AyeAyeApi/Api
  * @coversDefaultClass \AyeAye\Api\Response
  */
 class ResponseTest extends TestCase
 {
 
-    /**
-     * @test
-     * @covers ::getStatus
-     * @covers ::setStatus
-     * @uses \AyeAye\Api\Status
-     */
-    public function testStatus()
-    {
-        $response = new Response();
-        $status = new Status();
-
-        $this->assertNull(
-            $response->getStatus()
-        );
-        $this->assertSame(
-            $response,
-            $response->setStatus($status)
-        );
-        $this->assertSame(
-            $status,
-            $response->getStatus()
-        );
-    }
+    use StatusInjectorTest;
+    use RequestInjector;
 
     /**
-     * @test
-     * @covers ::setStatusCode
-     * @uses \AyeAye\Api\Status
-     * @uses \AyeAye\Api\Response::setStatus
-     * @uses \AyeAye\Api\Response::getStatus
+     * @return Response
      */
-    public function testStatusCode()
+    protected function getTestSubject()
     {
-        $code = 418;
-        $response = new Response();
-
-        $this->assertNull(
-            $response->getStatus()
-        );
-        $this->assertSame(
-            $response,
-            $response->setStatusCode(418)
-        );
-        $this->assertInstanceOf(
-            '\AyeAye\Api\Status',
-            $response->getStatus()
-        );
-        $this->assertSame(
-            $code,
-            $response->getStatus()->getCode()
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::setRequest
-     * @covers ::getRequest
-     * @uses \AyeAye\Api\Request
-     */
-    public function testRequest()
-    {
-        $response = new Response();
-        $this->assertNull(
-            $response->getRequest()
-        );
-
-        $request = new Request();
-        $this->assertSame(
-            $response,
-            $response->setRequest($request)
-        );
-
-        $this->assertSame(
-            $request,
-            $response->getRequest()
-        );
+        return new Response();
     }
 
     /**
@@ -132,42 +68,23 @@ class ResponseTest extends TestCase
     /**
      * @test
      * @covers ::setBodyData
-     * @covers ::getData
-     */
-    public function testData()
-    {
-        $response = new Response();
-        $this->assertNull(
-            $response->getData()
-        );
-
-        $object = new \stdClass(); // Good for tracking reference
-
-        $this->assertSame(
-            $response,
-            $response->setBodyData($object)
-        );
-        $this->assertSame(
-            $object,
-            $response->getData()
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::setBodyData
      * @covers ::getBody
      * @requires PHP 5.5
      */
     public function testBodyGenerator()
     {
-        $controller = new GeneratorController();
+        $generator = function() {
+            yield 'data' => 'data';
+            yield 'string' => 'string';
+            yield 'integer' => 42;
+        };
+
         $response = new Response();
 
         $this->assertSame(
             $response,
             $response->setBodyData(
-                $controller->getGeneratorEndpoint()
+                $generator()
             )
         );
 
@@ -183,47 +100,47 @@ class ResponseTest extends TestCase
 
     /**
      * @test
-     * @covers ::setFormatFactory
-     * @uses \AyeAye\Formatter\FormatFactory
+     * @covers ::setWriterFactory
+     * @uses \AyeAye\Formatter\WriterFactory
      */
-    public function testFormatFactory()
+    public function testWriterFactory()
     {
-        $expectedFormatFactory = new FormatFactory([]);
+        $expectedWriterFactory = new WriterFactory([]);
         $response = new Response();
 
         $this->assertSame(
             $response,
-            $response->setFormatFactory($expectedFormatFactory)
+            $response->setWriterFactory($expectedWriterFactory)
         );
 
-        $actualFormatFactory = $this->getObjectAttribute($response, 'formatFactory');
+        $actualWriterFactory = $this->getObjectAttribute($response, 'writerFactory');
 
         $this->assertSame(
-            $expectedFormatFactory,
-            $actualFormatFactory
+            $expectedWriterFactory,
+            $actualWriterFactory
         );
     }
 
     /**
      * @test
-     * @covers ::setFormatter
-     * @uses \AyeAye\Formatter\Formats\Json
+     * @covers ::setWriter
+     * @uses \AyeAye\Formatter\Writer\Json
      */
-    public function testFormatter()
+    public function testWriter()
     {
-        $expectedFormatter = new Json();
+        $expectedWriter = new Json();
         $response = new Response();
 
         $this->assertSame(
             $response,
-            $response->setFormatter($expectedFormatter)
+            $response->setWriter($expectedWriter)
         );
 
-        $actualFormatter = $this->getObjectAttribute($response, 'formatter');
+        $actualWriter = $this->getObjectAttribute($response, 'writer');
 
         $this->assertSame(
-            $expectedFormatter,
-            $actualFormatter
+            $expectedWriter,
+            $actualWriter
         );
     }
 
@@ -231,7 +148,7 @@ class ResponseTest extends TestCase
      * @test
      * @covers ::prepareResponse
      * @uses \AyeAye\Api\Request
-     * @uses \AyeAye\Api\Response::setFormatFactory
+     * @uses \AyeAye\Api\Response::setWriterFactory
      * @uses \AyeAye\Api\Response::setRequest
      * @uses \AyeAye\Api\Response::getBody
      * @uses \AyeAye\Api\Response::setBodyData
@@ -239,8 +156,8 @@ class ResponseTest extends TestCase
     public function testPrepareResponse()
     {
         $response = new Response();
-        $formats = [
-            'testFormat'
+        $writers = [
+            'testWriter'
         ];
         $data = 'data';
         $expectedBody = [
@@ -249,32 +166,30 @@ class ResponseTest extends TestCase
         $response->setBodyData($data);
 
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
-        $request = $this->getMock('\AyeAye\Api\Request');
-        $request->expects($this->once())
+        $request = $this->getMockRequest();
+        $request
+            ->expects($this->once())
             ->method('getFormats')
             ->with()
-            ->will($this->returnValue($formats));
+            ->will($this->returnValue($writers));
 
-        $formatter = $this->getMock('\AyeAye\Formatter\Formatter');
-        $formatter
+        $writer = $this->getMockWriter();
+        $writer
             ->expects($this->once())
             ->method('format')
             ->with($expectedBody, 'response')
             ->will($this->returnValue(json_encode($expectedBody)));
 
-        /** @var FormatFactory|\PHPUnit_Framework_MockObject_MockObject $formatFactory */
-        $formatFactory =
-            $this->getMockBuilder('\AyeAye\Formatter\FormatFactory')
-                ->disableOriginalConstructor()
-                ->getMock();
-        $formatFactory
+        /** @var WriterFactory|\PHPUnit_Framework_MockObject_MockObject $writerFactory */
+        $writerFactory = $this->getMockWriterFactory();
+        $writerFactory
             ->expects($this->once())
-            ->method('getFormatterFor')
-            ->with($formats)
-            ->will($this->returnValue($formatter));
+            ->method('getWriterFor')
+            ->with($writers)
+            ->will($this->returnValue($writer));
 
         $response
-            ->setFormatFactory($formatFactory)
+            ->setWriterFactory($writerFactory)
             ->setRequest($request);
 
         $this->assertSame(
@@ -300,25 +215,23 @@ class ResponseTest extends TestCase
      */
     public function testRespond(Response $response)
     {
-        /** @var Formatter|\PHPUnit_Framework_MockObject_MockObject $formatter */
-        $formatter = $this->getMock('\AyeAye\Formatter\Formatter');
-        $formatter
+        /** @var Writer|\PHPUnit_Framework_MockObject_MockObject $writer */
+        $writer = $this->getMockWriter();
+        $writer
             ->expects($this->exactly(2))
             ->method('getContentType')
             ->with()
             ->will($this->returnValue(''));
 
         /** @var Status|\PHPUnit_Framework_MockObject_MockObject $status */
-        $status = $this->getMockBuilder('\AyeAye\Api\Status')
-                       ->disableOriginalConstructor()
-                       ->getMock();
+        $status = $this->getMockStatus();
         $status
             ->expects($this->once())
             ->method('getHttpHeader')
             ->with()
             ->will($this->returnValue(null));
 
-        $response->setFormatter($formatter);
+        $response->setWriter($writer);
 
         ob_start();
         $this->assertSame(
@@ -350,7 +263,7 @@ class ResponseTest extends TestCase
      * @runInSeparateProcess
      * @covers ::respond
      * @uses \AyeAye\Api\Request
-     * @uses \AyeAye\Api\Response::setFormatFactory
+     * @uses \AyeAye\Api\Response::setWriterFactory
      * @uses \AyeAye\Api\Response::setRequest
      * @uses \AyeAye\Api\Response::getBody
      * @uses \AyeAye\Api\Response::setBodyData
@@ -359,8 +272,8 @@ class ResponseTest extends TestCase
     public function testRespondFull()
     {
         $response = new Response();
-        $formats = [
-            'testFormat'
+        $writers = [
+            'testWriter'
         ];
         $data = 'data';
         $expectedBody = [
@@ -369,39 +282,34 @@ class ResponseTest extends TestCase
         $response->setBodyData($data);
 
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
-        $request = $this->getMock('\AyeAye\Api\Request');
+        $request = $this->getMockRequest();
         $request->expects($this->once())
             ->method('getFormats')
             ->with()
-            ->will($this->returnValue($formats));
+            ->will($this->returnValue($writers));
 
-        $formatter = $this->getMock('\AyeAye\Formatter\Formatter');
-        $formatter
+        $writer = $this->getMockWriter();
+        $writer
             ->expects($this->once())
             ->method('format')
             ->with($expectedBody, 'response')
             ->will($this->returnValue(json_encode($expectedBody)));
-        $formatter
+        $writer
             ->expects($this->once())
             ->method('getContentType')
             ->with()
             ->will($this->returnValue(''));
 
-        /** @var FormatFactory|\PHPUnit_Framework_MockObject_MockObject $formatFactory */
-        $formatFactory =
-            $this->getMockBuilder('\AyeAye\Formatter\FormatFactory')
-                ->disableOriginalConstructor()
-                ->getMock();
-        $formatFactory
+        /** @var WriterFactory|\PHPUnit_Framework_MockObject_MockObject $writerFactory */
+        $writerFactory = $this->getMockWriterFactory();
+        $writerFactory
             ->expects($this->once())
-            ->method('getFormatterFor')
-            ->with($formats)
-            ->will($this->returnValue($formatter));
+            ->method('getWriterFor')
+            ->with($writers)
+            ->will($this->returnValue($writer));
 
         /** @var Status|\PHPUnit_Framework_MockObject_MockObject $status */
-        $status = $this->getMockBuilder('\AyeAye\Api\Status')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $status = $this->getMockStatus();
         $status
             ->expects($this->once())
             ->method('getHttpHeader')
@@ -409,7 +317,7 @@ class ResponseTest extends TestCase
             ->will($this->returnValue(null));
 
         $response
-            ->setFormatFactory($formatFactory)
+            ->setWriterFactory($writerFactory)
             ->setRequest($request)
             ->setStatus($status);
 

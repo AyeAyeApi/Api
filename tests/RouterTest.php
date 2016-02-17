@@ -1,432 +1,346 @@
 <?php
 /**
- * Author: Daniel Mason
- * Package: Api
+ * RouterTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests;
 
-use AyeAye\Api\Request;
 use AyeAye\Api\Router;
-use AyeAye\Api\Status;
-use AyeAye\Api\Tests\TestData\DeserializeController;
-use AyeAye\Api\Tests\TestData\DocumentedController;
-use AyeAye\Api\Tests\TestData\IndexedController;
+use AyeAye\Api\Tests\Injector\ControllerReflectorInjectorTest;
 
 /**
  * Class RouterTest
  * @package AyeAye\Api\Tests
+ * @see     https://github.com/AyeAyeApi/Api
  * @coversDefaultClass AyeAye\Api\Router
  */
 class RouterTest extends TestCase
 {
+    use ControllerReflectorInjectorTest;
 
     /**
-     * @test
-     * @covers ::processRequest
-     * @uses AyeAye\Api\Documenter
-     * @uses AyeAye\Api\Request
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::getEndpoints
-     * @uses AyeAye\Api\Router::getControllers
-     * @uses AyeAye\Api\Router::camelcaseToHyphenated
-     * @uses AyeAye\Api\Router::documentController
-     * @uses AyeAye\Api\Router::getParametersFromRequest
+     * @return Router
      */
-    public function testProcessRequestSelfDocumented()
+    protected function getTestSubject()
     {
-        $controller = new DocumentedController();
-        $request = new Request();
-
-        $router = new Router();
-        $response = $router->processRequest($request, $controller);
-        $this->assertObjectHasAttribute(
-            'controllers',
-            $response
-        );
-        $this->assertObjectHasAttribute(
-            'endpoints',
-            $response
-        );
-
+        return new Router();
     }
 
     /**
      * @test
      * @covers ::processRequest
-     * @uses AyeAye\Api\Request
-     * @uses AyeAye\Api\Status
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::parseControllerName
-     * @uses AyeAye\Api\Router::getParametersFromRequest
-     * @uses AyeAye\Api\Router::setStatus
+     * @uses \AyeAye\Api\Injector\ControllerReflectorInjector
      */
-    public function testProcessRequestEndpointOnly()
+    public function testProcessRequestNoRoute()
     {
-        $controller = new DocumentedController();
-        $request = new Request('GET', 'documented');
+        $method = 'get';
+        $index = 'index';
+        $documentation = $this->getMockControllerDocumentation();
+
+        $controller = $this->getMockController();
+
+        $request = $this->getMockRequest();
+        $request
+            ->expects($this->once())
+            ->method('getMethod')
+            ->with()
+            ->will($this->returnValue($method));
+        $request
+            ->expects($this->once())
+            ->method('getRequestChain')
+            ->with()
+            ->will($this->returnValue([]));
+
+        $reflectionController = $this->getMockReflectionController();
+
+        $reflectionController
+            ->expects($this->once())
+            ->method('hasEndpoint')
+            ->with($method, $index)
+            ->will($this->returnValue(false));
+        $reflectionController
+            ->expects($this->once())
+            ->method('getDocumentation')
+            ->with()
+            ->will($this->returnValue($documentation));
+
+        $controllerReflector = $this->getMockControllerReflector();
+        $controllerReflector
+            ->expects($this->once())
+            ->method('reflectController')
+            ->with($controller)
+            ->will($this->returnValue($reflectionController));
 
         $router = new Router();
-        $this->assertSame(
-            'information',
-            $router->processRequest($request, $controller, null)
-        );
+        $router->setControllerReflector($controllerReflector);
 
+        $this->assertSame(
+            $documentation,
+            $router->processRequest($request, $controller)
+        );
     }
 
     /**
      * @test
      * @covers ::processRequest
-     * @uses AyeAye\Api\Request
-     * @uses AyeAye\Api\Status
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::parseControllerName
-     * @uses AyeAye\Api\Router::getParametersFromRequest
-     * @uses AyeAye\Api\Router::setStatus
+     * @uses \AyeAye\Api\Router::setStatus
+     * @uses \AyeAye\Api\Injector\ControllerReflectorInjector
      */
-    public function testProcessRequestIndexedController()
+    public function testProcessRequestIndexOverride()
     {
-        $controller = new IndexedController();
+        $method = 'post';
+        $index = 'index';
+        $requestChain = [];
+        $data = new \stdClass();
 
-        $request = new Request('GET', '');
+        $status = $this->getMockStatus();
+
+        $controller = $this->getMockController();
+
+        $request = $this->getMockRequest();
+        $request
+            ->expects($this->exactly(2))
+            ->method('getMethod')
+            ->with()
+            ->will($this->returnValue($method));
+
+        $reflectionController = $this->getMockReflectionController();
+        $reflectionController
+            ->expects($this->never())
+            ->method('hasChildController');
+        $reflectionController
+            ->expects($this->once())
+            ->method('hasEndpoint')
+            ->with($method, $index)
+            ->will($this->returnValue(true));
+        $reflectionController
+            ->expects($this->once())
+            ->method('getEndpointResult')
+            ->with($method, $index, $request)
+            ->will($this->returnValue($data));
+        $reflectionController
+            ->expects($this->once())
+            ->method('getStatus')
+            ->with()
+            ->will($this->returnValue($status));
+
+        $controllerReflector = $this->getMockControllerReflector();
+        $controllerReflector
+            ->expects($this->once())
+            ->method('reflectController')
+            ->with($controller)
+            ->will($this->returnValue($reflectionController));
+
         $router = new Router();
-        $this->assertSame(
-            'Got Index',
-            $router->processRequest($request, $controller, null)
-        );
+        $router->setControllerReflector($controllerReflector);
 
-        $request = new Request('PUT', '');
-        $router = new Router();
         $this->assertSame(
-            'Put Index',
-            $router->processRequest($request, $controller, null)
+            $data,
+            $router->processRequest($request, $controller, $requestChain)
         );
-
     }
 
     /**
      * @test
      * @covers ::processRequest
-     * @uses AyeAye\Api\Request
-     * @uses AyeAye\Api\Status
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::parseControllerName
-     * @uses AyeAye\Api\Router::getParametersFromRequest
-     * @uses AyeAye\Api\Router::setStatus
+     * @uses \AyeAye\Api\Router::setStatus
+     * @uses \AyeAye\Api\Injector\ControllerReflectorInjector
      */
-    public function testProcessRequestControllerToEndpoint()
+    public function testProcessRequestSingleEndpoint()
     {
-        $controller = new DocumentedController();
-        $request = new Request('GET', 'self-reference/documented');
+        $method = 'get';
+        $endpointName = 'test';
+        $requestChain = [$endpointName];
+        $data = new \stdClass();
+
+        $status = $this->getMockStatus();
+
+        $controller = $this->getMockController();
+
+        $request = $this->getMockRequest();
+        $request
+            ->expects($this->exactly(2))
+            ->method('getMethod')
+            ->with()
+            ->will($this->returnValue($method));
+
+        $reflectionController = $this->getMockReflectionController();
+        $reflectionController
+            ->expects($this->once())
+            ->method('hasChildController')
+            ->with($endpointName)
+            ->will($this->returnValue(false));
+        $reflectionController
+            ->expects($this->once())
+            ->method('hasEndpoint')
+            ->with($method, $endpointName)
+            ->will($this->returnValue(true));
+        $reflectionController
+            ->expects($this->once())
+            ->method('getEndpointResult')
+            ->with($method, $endpointName, $request)
+            ->will($this->returnValue($data));
+        $reflectionController
+            ->expects($this->once())
+            ->method('getStatus')
+            ->with()
+            ->will($this->returnValue($status));
+
+        $controllerReflector = $this->getMockControllerReflector();
+        $controllerReflector
+            ->expects($this->once())
+            ->method('reflectController')
+            ->with($controller)
+            ->will($this->returnValue($reflectionController));
 
         $router = new Router();
-        $this->assertSame(
-            'information',
-            $router->processRequest($request, $controller, null)
-        );
+        $router->setControllerReflector($controllerReflector);
 
+        $this->assertSame(
+            $data,
+            $router->processRequest($request, $controller, $requestChain)
+        );
     }
 
     /**
      * @test
-     * @expectedException        \AyeAye\Api\Exception
-     * @expectedExceptionCode    404
-     * @expectedExceptionMessage Could not find controller or endpoint matching 'nonsense'
      * @covers ::processRequest
-     * @uses AyeAye\Api\Exception
-     * @uses AyeAye\Api\Request
-     * @uses AyeAye\Api\Status
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::parseControllerName
+     * @uses \AyeAye\Api\Router::setStatus
+     * @uses \AyeAye\Api\Injector\ControllerReflectorInjector
      */
-    public function testProcessRequestNotFound()
+    public function testProcessRequestControllerRoutedEndpoint()
     {
-        $controller = new DocumentedController();
-        $request = new Request('GET', 'nonsense');
+        $method = 'get';
+        $controller1 = 'controller-one';
+        $controller2 = 'controller-two';
+        $endpointName = 'test';
+        $requestChain = [$controller1, $controller2, $endpointName];
+        $data = new \stdClass();
+
+        $status = $this->getMockStatus();
+
+        $controller = $this->getMockController();
+
+        $request = $this->getMockRequest();
+        $request
+            ->expects($this->exactly(2))
+            ->method('getMethod')
+            ->with()
+            ->will($this->returnValue($method));
+
+        $reflectionController = $this->getMockReflectionController();
+        $reflectionController
+            ->expects($this->at(0))
+            ->method('hasChildController')
+            ->with($controller1)
+            ->will($this->returnValue(true));
+        $reflectionController
+            ->expects($this->at(1))
+            ->method('getChildController')
+            ->with($controller1)
+            ->will($this->returnValue($controller));
+        $reflectionController
+            ->expects($this->at(2))
+            ->method('hasChildController')
+            ->with($controller2)
+            ->will($this->returnValue(true));
+        $reflectionController
+            ->expects($this->at(3))
+            ->method('getChildController')
+            ->with($controller2)
+            ->will($this->returnValue($controller));
+        $reflectionController
+            ->expects($this->at(4))
+            ->method('hasChildController')
+            ->with($endpointName)
+            ->will($this->returnValue(false));
+        $reflectionController
+            ->expects($this->once())
+            ->method('hasEndpoint')
+            ->with($method, $endpointName)
+            ->will($this->returnValue(true));
+        $reflectionController
+            ->expects($this->once())
+            ->method('getEndpointResult')
+            ->with($method, $endpointName, $request)
+            ->will($this->returnValue($data));
+        $reflectionController
+            ->expects($this->once())
+            ->method('getStatus')
+            ->with()
+            ->will($this->returnValue($status));
+
+        $controllerReflector = $this->getMockControllerReflector();
+        $controllerReflector
+            ->expects($this->any())
+            ->method('reflectController')
+            ->with($controller)
+            ->will($this->returnValue($reflectionController));
+
         $router = new Router();
-        $router->processRequest($request, $controller, null);
-
-    }
-
-
-    /**
-     * @test
-     * @covers ::documentController
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Documenter
-     * @uses AyeAye\Api\Router::parseEndpointName
-     * @uses AyeAye\Api\Router::getEndpoints
-     * @uses AyeAye\Api\Router::getControllers
-     * @uses AyeAye\Api\Router::camelcaseToHyphenated
-     */
-    public function testDocumentController()
-    {
-        $controller = new DocumentedController();
-        $router = new Router();
-
-        $documentController = $this->getObjectMethod($router, 'documentController');
-        $documentation = $documentController($controller);
-        $this->assertObjectHasAttribute(
-            'controllers',
-            $documentation
-        );
-        $this->assertObjectHasAttribute(
-            'endpoints',
-            $documentation
-        );
-
-    }
-
-    /**
-     * @test
-     * @covers ::camelcaseToHyphenated
-     */
-    public function testCamelcaseToHyphenated()
-    {
-        $router = new Router();
-        $camelcaseToHyphenated = $this->getObjectMethod($router, 'camelcaseToHyphenated');
+        $router->setControllerReflector($controllerReflector);
 
         $this->assertSame(
-            'camelcase-to-hyphenated',
-            $camelcaseToHyphenated('camelcaseToHyphenated')
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::getEndpoints
-     * @uses AyeAye\Api\Documenter
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::camelcaseToHyphenated
-     */
-    public function testGetEndpoints()
-    {
-        $router = new Router();
-        $getEndpoints = $this->getObjectMethod($router, 'getEndpoints');
-
-        $controller = new DocumentedController();
-        $endpoints = $getEndpoints($controller);
-        $this->assertArrayHasKey(
-            'get',
-            $endpoints
-        );
-        $this->assertArrayNotHasKey(
-            'put',
-            $endpoints
-        );
-
-        $controller = new IndexedController();
-        $endpoints = $getEndpoints($controller);
-        $this->assertArrayHasKey(
-            'get',
-            $endpoints
-        );
-        $this->assertArrayHasKey(
-            'put',
-            $endpoints
+            $data,
+            $router->processRequest($request, $controller, $requestChain)
         );
     }
 
     /**
      * @test
-     * @covers ::getControllers
-     * @uses AyeAye\Api\Controller
-     * @uses AyeAye\Api\Router::camelcaseToHyphenated
+     * @covers ::processRequest
+     * @uses \AyeAye\Api\Router::setStatus
+     * @uses \AyeAye\Api\Exception
+     * @uses \AyeAye\Api\Injector\ControllerReflectorInjector
+     * @expectedException \AyeAye\Api\Exception
+     * @expectedExceptionCode 404
+     * @expectedExceptionMessage Could not find controller or endpoint matching 'test'
      */
-    public function testGetControllers()
+    public function testProcessRequestUnknownEndpoint()
     {
+        $method = 'get';
+        $endpointName = 'test';
+        $requestChain = [$endpointName];
+        $data = new \stdClass();
+
+        $controller = $this->getMockController();
+
+        $request = $this->getMockRequest();
+        $request
+            ->expects($this->once())
+            ->method('getMethod')
+            ->with()
+            ->will($this->returnValue($method));
+
+        $reflectionController = $this->getMockReflectionController();
+        $reflectionController
+            ->expects($this->once())
+            ->method('hasChildController')
+            ->with($endpointName)
+            ->will($this->returnValue(false));
+        $reflectionController
+            ->expects($this->once())
+            ->method('hasEndpoint')
+            ->with($method, $endpointName)
+            ->will($this->returnValue(false));
+
+        $controllerReflector = $this->getMockControllerReflector();
+        $controllerReflector
+            ->expects($this->once())
+            ->method('reflectController')
+            ->with($controller)
+            ->will($this->returnValue($reflectionController));
+
         $router = new Router();
-        $getControllers = $this->getObjectMethod($router, 'getControllers');
-
-        $controller = new DocumentedController();
-        $controllers = $getControllers($controller);
-        $this->assertContains(
-            'self-reference',
-            $controllers
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::parseEndpointName
-     */
-    public function testParseEndpointName()
-    {
-        $router = new Router();
-        $parseEndpointName = $this->getObjectMethod($router, 'parseEndpointName');
+        $router->setControllerReflector($controllerReflector);
 
         $this->assertSame(
-            'getTestEndpoint',
-            $parseEndpointName('test')
-        );
-
-        $this->assertSame(
-            'putCamelCaseEndpoint',
-            $parseEndpointName('camel-case', 'put')
-        );
-
-        $this->assertSame(
-            'postCamelCaseEndpoint',
-            $parseEndpointName('camel+case', 'POST')
-        );
-
-        $this->assertSame(
-            'optionsCamelCaseEndpoint',
-            $parseEndpointName('camel%20case', 'oPtIoNs')
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::parseControllerName
-     */
-    public function testParseControllerName()
-    {
-        $router = new Router();
-        $parseControllerName = $this->getObjectMethod($router, 'parseControllerName');
-
-        // ToDo: Should this be an error?
-        $this->assertSame(
-            'Controller',
-            $parseControllerName('')
-        );
-
-        $this->assertSame(
-            'camelCaseController',
-            $parseControllerName('camel-case')
-        );
-
-        $this->assertSame(
-            'camelCaseController',
-            $parseControllerName('camel%20case')
-        );
-
-        $this->assertSame(
-            'camelCaseController',
-            $parseControllerName('camel+case')
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::getParametersFromRequest
-     * @uses AyeAye\Api\Request
-     */
-    public function testGetParametersFromRequest()
-    {
-        $router = new Router();
-        $request = new Request(null, null, [
-            'integer' => 20,
-            'string' => false,
-            'not-used' => 'anything',
-        ]);
-        $controller = new DocumentedController();
-        $method = 'getDocumentedEndpoint';
-
-        $getParametersFromRequest = $this->getObjectMethod($router, 'getParametersFromRequest');
-
-        $this->assertSame(
-            [
-                'incomplete' => null,
-                'integer' => 20,
-                'string' => false,
-            ],
-            $getParametersFromRequest($request, $controller, $method)
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::getParametersFromRequest
-     * @uses AyeAye\Api\Request
-     */
-    public function testGetParametersFromRequestDeserialize()
-    {
-        $router = new Router();
-        $request = new Request(null, null, [
-            'object' => (object)[
-                'data' => 'testString'
-            ]
-        ]);
-        $controller = new DeserializeController();
-        $method = 'getDeserializeEndpoint';
-
-        $getParametersFromRequest = $this->getObjectMethod($router, 'getParametersFromRequest');
-
-        /** @var \AyeAye\Api\Tests\TestData\DeserializableObject[] $parameters */
-        $parameters = $getParametersFromRequest($request, $controller, $method);
-        $this->assertCount(
-            1,
-            $parameters
-        );
-        $this->assertArrayHasKey(
-            'object',
-            $parameters
-        );
-        $this->assertInstanceOf(
-            '\AyeAye\Api\Tests\TestData\DeserializableObject',
-            $parameters['object']
-        );
-        $this->assertSame(
-            'testString',
-            $parameters['object']->getData()
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::getStatus
-     * @uses AyeAye\Api\Status
-     * @uses AyeAye\Api\Router::setStatus
-     */
-    public function testGetStatus()
-    {
-        $router = new Router();
-
-        $this->assertSame(
-            200,
-            $router->getStatus()->getCode()
-        );
-        $this->assertSame(
-            'OK',
-            $router->getStatus()->getMessage()
-        );
-
-        $status = new Status(500);
-        $setStatus = $this->getObjectMethod($router, 'setStatus');
-        $setStatus($status);
-
-        $this->assertSame(
-            500,
-            $router->getStatus()->getCode()
-        );
-        $this->assertSame(
-            'Internal Server Error',
-            $router->getStatus()->getMessage()
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::setStatus
-     * @uses AyeAye\Api\Status
-     * @uses AyeAye\Api\Router::getStatus
-     */
-    public function testSetStatus()
-    {
-        $status = new Status(418);
-        $router = new Router();
-
-        $setStatus = $this->getObjectMethod($router, 'setStatus');
-        $setStatus($status);
-        $this->assertSame(
-            $status,
-            $router->getStatus()
+            $data,
+            $router->processRequest($request, $controller, $requestChain)
         );
     }
 }
