@@ -187,7 +187,6 @@ class Documentation
 
 
                 // Clean up description
-                // ToDo: Got to be a better way than this
                 $lines = preg_split("/((\r?\n)|(\r\n?))/", $description);
                 foreach ($lines as $key => $value) {
                     $value = preg_replace('/\r/', '', $value);

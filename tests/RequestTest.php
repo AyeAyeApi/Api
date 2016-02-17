@@ -308,8 +308,7 @@ class RequestTest extends TestCase
             'key',
             $stringToArray($xml)
         );
-
-//         ToDo: How does this even???
+        
         /** @var \SimpleXMLElement $object */
         $this->assertSame(
             'anotherValue',

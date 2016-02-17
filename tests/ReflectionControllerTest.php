@@ -392,7 +392,6 @@ class ReflectionControllerTest extends TestCase
 
         $parseControllerName = $this->getObjectMethod($reflectionController, 'parseControllerName');
 
-        // ToDo: Should this be an error?
         $this->assertSame(
             'Controller',
             $parseControllerName('')
