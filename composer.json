@@ -36,8 +36,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "AyeAye\\Api\\Tests\\": "tests/",
-            "AyeAye\\Api\\TestsOld\\": "tests_old/"
+            "AyeAye\\Api\\Tests\\": "tests/"
         }
     },
     "config": {
