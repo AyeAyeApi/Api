@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": "^5.5 || ^7.0",
-        "ayeaye/formatters": "^1.0.0@rc",
+        "ayeaye/formatters": "^1.0.0",
         "psr/log": "^1.0.0"
     },
     "require-dev": {

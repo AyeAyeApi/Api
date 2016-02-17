@@ -17,7 +17,7 @@ develop with and to scale from tiny projects to world devouring titans.
 Create a project and include Aye Aye
 
 ```bash
-composer init --require="ayeaye/api ^1.0.0@rc" -n
+composer init --require="ayeaye/api ^1.0.0" -n
 composer install
 ```
 
