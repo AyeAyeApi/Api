@@ -4,6 +4,7 @@
 
 ## [1.0.0-rc.2] - 2016-02-17
 ### Added
+- Added this file
 - Tests now lint first
 - Report script creates detailed artifacts for PHPCS, PHPLOC, PDEPEND, PHPCPD
 - Injector traits to help with DI while keeping things simple.
@@ -13,7 +14,7 @@
 ### Changed
 - Higher quality PHP DocBlocks for all classes and methods
 - Tests no longer use TestData
-- Response body now an array instead of object
+- Response body is now returned as an array instead of object
 
 ### Removed
 - `->getData()` in Response was unnecessary, use `->getBody()` instead.
