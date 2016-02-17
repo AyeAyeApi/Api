@@ -3,7 +3,7 @@
  * ControllerReflectorTest.php
  * @author    Daniel Mason <daniel@ayeayeapi.com>
  * @copyright (c) 2016 Daniel Mason <daniel@ayeayeapi.com>
- * @license   GPL 3
+ * @license   MIT
  * @see       https://github.com/AyeAyeApi/Api
  */
 

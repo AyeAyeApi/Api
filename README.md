@@ -3,7 +3,7 @@
 Aye Aye API is a micro framework for building API's, and we mean _micro_. It's designed to be easy to use, fast to
 develop with and to scale from tiny projects to world devouring titans.
 
-**License**: [GPL-3.0+](https://www.gnu.org/copyleft/gpl.html)
+**License**: [MIT](https://opensource.org/licenses/MIT)
 
 Development Build Status:
 
