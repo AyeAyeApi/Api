@@ -1,9 +1,9 @@
 <?php
 /**
  * Controller.php
- * @author    Daniel Mason <daniel@danielmason.com>
- * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
- * @license   GPL 3
+ * @author    Daniel Mason <daniel@ayeayeapi.com>
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@ayeayeapi.com>
+ * @license   MIT
  * @see       https://github.com/AyeAyeApi/Api
  */
 
