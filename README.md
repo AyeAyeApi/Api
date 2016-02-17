@@ -1,18 +1,16 @@
 # Aye Aye API
 
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg)]
+(https://php.net/)
+[![License](https://img.shields.io/packagist/l/ayeaye/api.svg)]
+(https://raw.githubusercontent.com/AyeAyeApi/Api/master/LICENSE.txt)
+[![Version](https://img.shields.io/packagist/vpre/ayeaye/api.svg)]
+(https://packagist.org/packages/ayeaye/api)
+[![Build Status](https://img.shields.io/travis/AyeAyeApi/Api/master.svg)]
+(https://travis-ci.org/AyeAyeApi/Api/branches)
+
 Aye Aye API is a micro framework for building API's, and we mean _micro_. It's designed to be easy to use, fast to
 develop with and to scale from tiny projects to world devouring titans.
-
-**License**: [MIT](https://opensource.org/licenses/MIT)
-
-Development Build Status:
-
-Travis CI: [![Build Status](https://travis-ci.org/AyeAyeApi/Api.svg?branch=master)](https://travis-ci.org/AyeAyeApi/Api)
-[Report](https://travis-ci.org/AyeAyeApi/Api)
-
-SL Insight: 
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/a3c4a2b4-c143-49cf-ab0a-2ea649f9d7ea/mini.png)]
-(https://insight.sensiolabs.com/projects/a3c4a2b4-c143-49cf-ab0a-2ea649f9d7ea)
 
 ## Quick Start Guide
 
