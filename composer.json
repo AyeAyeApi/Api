@@ -43,7 +43,11 @@
         "github-protocols": ["https"]
     },
     "scripts" : {
+      "lint" : [
+        "find -L src tests -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l"
+      ],
       "test" : [
+        "@lint",
         "vendor/bin/phpunit"
       ],
       "quality" : [
