@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [1.0.0] - 2016-02-17
+### Changed
+- Now uses Formatters 1.0.0
+- My email is now listed as @ayeayeapi.com. Hopefully this will keep important Aye Aye related stuff out of the noise
+  of my older inbox.
+- New license will be MIT
+- Updated badges in README
+
+### Removed
+- References to old tests had been left in composer.json
+- Build folder contained scripts for building in Jenkins. This has all been moved to composer.json scripts
+
 ## [1.0.0-rc.2] - 2016-02-17
 ### Added
 - Added this file
@@ -26,6 +38,7 @@
 ### Added
 - 1.0.0 release candidate 
 
-[Unreleased]: https://github.com/AyeAyeApi/Api/compare/1.0.0-rc.2...HEAD
+[Unreleased]: https://github.com/AyeAyeApi/Api/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/AyeAyeApi/Api/compare/1.0.0-rc.2...1.0.0
 [1.0.0-rc.2]: https://github.com/AyeAyeApi/Api/compare/1.0.0-rc.1...1.0.0-rc.2
 

@@ -12,8 +12,13 @@ matrix:
     - php: hhvm
     - php: nightly
 
+sudo: false
+
 before_script:
-  composer install
+  travis_retry composer install
+
+script:
+  composer test
 
 notifications:
   slack: danielmason:mwiobPacEYneLE6a9iBAZvVB
