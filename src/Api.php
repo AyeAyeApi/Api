@@ -2,7 +2,7 @@
 /**
  * Api.php
  * @author    Daniel Mason <daniel@danielmason.com>
- * @copyright 2015 Daniel Mason
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
  * @license   GPL 3
  * @see       https://github.com/AyeAyeApi/Api
  */
@@ -16,7 +16,6 @@ use AyeAye\Api\Injector\RouterInjector;
 use AyeAye\Api\Injector\WriterFactoryInjector;
 use AyeAye\Formatter\Writer\Json;
 use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
@@ -27,7 +26,6 @@ use Psr\Log\LogLevel;
  */
 class Api implements LoggerAwareInterface
 {
-
     use LoggerInjector;
     use RequestInjector;
     use ResponseInjector;
@@ -41,27 +39,26 @@ class Api implements LoggerAwareInterface
     protected $controller;
 
     /**
-     * Initialise the API with a controller that forms the starting point of routing information
-     * @param Router $router The router to power the api
-     * @param Controller $initialController The starting point for the Api
-     * @param LoggerInterface $logger Provide a logger
+     * Set up the API
+     *
+     * Initialise the API with a controller that forms the starting point of
+     * routing information.
+     *
+     * @param Controller      $initialController The starting point for the Api
      */
-    public function __construct(Controller $initialController, Router $router = null, LoggerInterface $logger = null)
+    public function __construct(Controller $initialController)
     {
-        if ($logger) {
-            $this->setLogger($logger);
-        }
-        $this->setInitialController($initialController);
-        if ($router) {
-            $this->setRouter($router);
-        }
+        $this->controller = $initialController;
     }
 
     /**
-     * Write to the pre-set logger
-     * @param $level
-     * @param $message
-     * @param array $context
+     * Write to the logger.
+     *
+     * Implementing the PSR LogAware interface.
+     *
+     * @param integer $level
+     * @param string  $message
+     * @param array   $context
      * @return $this
      */
     protected function log($level, $message, array $context = array())
@@ -72,9 +69,10 @@ class Api implements LoggerAwareInterface
 
     /**
      * Process the request, get a response and return it.
-     * Exceptions thrown in most places will be handled here, though currently there's no way to handle exceptions
-     * int the Response object itself (eg, invalid formats)e
-     * Tip. You can ->respond() straight off this method
+     *
+     * Exceptions thrown in most places will be handled here.
+     * Currently there's no nice way to handle exceptions in Response::respond
+     *
      * @return Response
      * @SuppressWarnings(PHPMD.ShortMethodName)
      */
@@ -93,7 +91,7 @@ class Api implements LoggerAwareInterface
             $response->setBodyData(
                 $this->getRouter()->processRequest(
                     $this->getRequest(),
-                    $this->getInitialController()
+                    $this->controller
                 )
             );
             $response->setStatus(
@@ -103,12 +101,12 @@ class Api implements LoggerAwareInterface
             $this->log(LogLevel::INFO, $e->getPublicMessage());
             $this->log(LogLevel::ERROR, $e->getMessage(), ['exception' => $e]);
             $response->setBodyData($e->getPublicMessage());
-            $response->setStatusCode($e->getCode());
+            $response->setStatus(new Status($e->getCode()));
         } catch (\Exception $e) {
             $status = new Status(500);
             $this->log(LogLevel::CRITICAL, $e->getMessage(), ['exception' => $e]);
             $response->setBodyData($status->getMessage());
-            $response->setStatusCode($status->getCode());
+            $response->setStatus($status);
         }
 
         // Ultimate fail safe
@@ -123,27 +121,16 @@ class Api implements LoggerAwareInterface
     }
 
     /**
-     * Set the initial controller that the api will begin with
-     * @param Controller $controller
-     * @returns $this
-     */
-    public function setInitialController(Controller $controller)
-    {
-        $this->controller = $controller;
-        return $this;
-    }
-
-    /**
-     * Get the initial controller that the api will begin with
-     * @return Controller
-     */
-    public function getInitialController()
-    {
-        return $this->controller;
-    }
-
-    /**
-     * In the event of a catastrophic failure, this response can be used to return JSON
+     * Returns a standardised 500 error.
+     *
+     * To be used in the event of a catastrophic failure, this method creates
+     * all new objects, ignoring dependency injection and returns in JSON.
+     *
+     * This will be problematic for users expecting a response in a format
+     * other than JSON and should only be called if the format they are
+     * actually expecting can not be provided when using
+     * Response::prepareResponse.
+     *
      * @return Response
      */
     protected function createFailSafeResponse()

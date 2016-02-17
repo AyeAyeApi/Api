@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 07/02/2016
- * Time: 15:24
+ * ControllerReflectorInjector.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Injector;
@@ -12,7 +13,9 @@ use AyeAye\Api\ControllerReflector;
 
 /**
  * Trait ControllerReflectorInjector
- * @package AyeAye\Api\Injector
+ * Allows the injection and management of a ControllerReflector object. Provides a default if one isn't set.
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 trait ControllerReflectorInjector
 {
@@ -22,6 +25,11 @@ trait ControllerReflectorInjector
     private $controllerReflector;
 
     /**
+     * Get the controller reflector.
+     *
+     * If a controller reflector has not been set, a default is set and then
+     * returned.
+     *
      * @return ControllerReflector
      */
     public function getControllerReflector()
@@ -33,6 +41,10 @@ trait ControllerReflectorInjector
     }
 
     /**
+     * Set a controller reflector object.
+     *
+     * This allows Dependency Injection.
+     *
      * @param ControllerReflector $controllerReflector
      * @return $this
      */

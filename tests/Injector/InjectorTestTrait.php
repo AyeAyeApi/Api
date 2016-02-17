@@ -1,13 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 04/02/2016
- * Time: 23:52
+ * InjectorTestTrait.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests\Injector;
-
 
 use AyeAye\Api\ControllerReflector;
 use AyeAye\Api\Request;
@@ -17,6 +17,13 @@ use AyeAye\Api\Status;
 use AyeAye\Formatter\WriterFactory;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Trait InjectorTestTrait
+ * Add to the any injected test to provide information on functionality of our TestCase.
+ * Note: This class may need to be updated if the signatures of our TestCase methods change
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
+ */
 trait InjectorTestTrait
 {
     /**

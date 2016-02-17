@@ -2,7 +2,7 @@
 /**
  * Api.php
  * @author    Daniel Mason <daniel@danielmason.com>
- * @copyright 2015 Daniel Mason
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
  * @license   GPL 3
  * @see       https://github.com/AyeAyeApi/Api
  */
@@ -17,7 +17,6 @@ namespace AyeAye\Api;
  */
 class Status implements \JsonSerializable
 {
-
     /**
      * A list of common HTTP status codes and their associated messages
      * @var array
@@ -171,15 +170,15 @@ class Status implements \JsonSerializable
         510 => 'Not Extended',
         // Not going to be useful in PHP as you're already at the server, see 401
         511 => 'Network Authentication Required',
-        // Taken from Cloudflare. Resource provider sent an error. Use 502 instead
+        // Taken from CloudFlare. Resource provider sent an error. Use 502 instead
         520 => 'Origin Error',
-        // Taken from Cloudflare. Can't connect to resource provider Use 503 instead
+        // Taken from CloudFlare. Can't connect to resource provider Use 503 instead
         521 => 'Web server is down',
-        // Taken from Cloudflare. Connection to resource provider timed out. Use 504 instead
+        // Taken from CloudFlare. Connection to resource provider timed out. Use 504 instead
         522 => 'Connection timed out',
-        // Taken from Cloudflare. Resource has been blocked. Use 401 or 403 instead
+        // Taken from CloudFlare. Resource has been blocked. Use 401 or 403 instead
         523 => 'Proxy Declined Request',
-        // Taken from Cloudflare. Connection to proxy timed out. Use 504 instead
+        // Taken from CloudFlare. Connection to proxy timed out. Use 504 instead
         524 => 'A timeout occurred',
         // Taken from Microsoft. Connection to proxy timed out. Use 504 instead
         598 => 'Network read timeout error',
@@ -200,7 +199,10 @@ class Status implements \JsonSerializable
     protected $message;
 
     /**
-     * Construct a Status using an HTTP code
+     * Status constructor.
+     *
+     * Construct with the numeric HTTP status code (defaults to 200).
+     *
      * @param int $code Default 200
      * @throws \Exception If invalid code
      */
@@ -223,7 +225,7 @@ class Status implements \JsonSerializable
     }
 
     /**
-     * HTTP code for status
+     * HTTP message for status
      * @return int
      */
     public function getMessage()

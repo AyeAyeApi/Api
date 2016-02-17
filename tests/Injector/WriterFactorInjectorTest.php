@@ -1,21 +1,22 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 01/02/2016
- * Time: 23:01
+ * WriterFactorInjectorTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests\Injector;
 
 /**
  * Trait WriterFactorInjectorTest
- * @package AyeAye\Api\Tests\Injector
- * @coversDefaultClass \AyeAye\Api\Injector\WriterFactoryInjector
+ * Add to the test class for any class that uses the WriterFactorInjector trait
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
  */
 trait WriterFactorInjectorTest
 {
-
     use InjectorTestTrait;
 
     /**

@@ -2,13 +2,14 @@
 /**
  * ResponseTest.php
  * @author    Daniel Mason <daniel@danielmason.com>
- * @copyright 2015 Daniel Mason
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
  * @license   GPL 3
  * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests;
 
+use AyeAye\Api\Injector\RequestInjector;
 use AyeAye\Api\Request;
 use AyeAye\Api\Response;
 use AyeAye\Api\Status;
@@ -27,6 +28,7 @@ class ResponseTest extends TestCase
 {
 
     use StatusInjectorTest;
+    use RequestInjector;
 
     /**
      * @return Response
@@ -34,60 +36,6 @@ class ResponseTest extends TestCase
     protected function getTestSubject()
     {
         return new Response();
-    }
-
-    /**
-     * @test
-     * @covers ::setStatusCode
-     * @uses \AyeAye\Api\Status
-     * @uses \AyeAye\Api\Response::setStatus
-     * @uses \AyeAye\Api\Response::getStatus
-     */
-    public function testStatusCode()
-    {
-        $code = 418;
-        $response = new Response();
-
-        $this->assertNull(
-            $this->getObjectAttribute($response, 'status')
-        );
-        $this->assertSame(
-            $response,
-            $response->setStatusCode(418)
-        );
-        $this->assertInstanceOf(
-            '\AyeAye\Api\Status',
-            $response->getStatus()
-        );
-        $this->assertSame(
-            $code,
-            $response->getStatus()->getCode()
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::setRequest
-     * @covers ::getRequest
-     * @uses \AyeAye\Api\Request
-     */
-    public function testRequest()
-    {
-        $response = new Response();
-        $this->assertNull(
-            $response->getRequest()
-        );
-
-        $request = new Request();
-        $this->assertSame(
-            $response,
-            $response->setRequest($request)
-        );
-
-        $this->assertSame(
-            $request,
-            $response->getRequest()
-        );
     }
 
     /**
@@ -114,30 +62,6 @@ class ResponseTest extends TestCase
         $this->assertSame(
             $object,
             $response->getBody()['data']
-        );
-    }
-
-    /**
-     * @test
-     * @covers ::setBodyData
-     * @covers ::getData
-     */
-    public function testData()
-    {
-        $response = new Response();
-        $this->assertNull(
-            $response->getData()
-        );
-
-        $object = new \stdClass(); // Good for tracking reference
-
-        $this->assertSame(
-            $response,
-            $response->setBodyData($object)
-        );
-        $this->assertSame(
-            $object,
-            $response->getData()
         );
     }
 

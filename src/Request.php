@@ -2,7 +2,7 @@
 /**
  * Request.php
  * @author    Daniel Mason <daniel@danielmason.com>
- * @copyright 2015 Daniel Mason
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
  * @license   GPL 3
  * @see       https://github.com/AyeAyeApi/Api
  */
@@ -14,14 +14,15 @@ use AyeAye\Formatter\Reader\Xml;
 use AyeAye\Formatter\ReaderFactory;
 
 /**
- * Class Request
- * Describes every detail of a request from the client to the server
+ * Class Request.
+ *
+ * Describes the details of a request from the client.
+ *
  * @package AyeAye/Api
  * @see     https://github.com/AyeAyeApi/Api
  */
 class Request implements \JsonSerializable
 {
-
     // HTTP verbs as defined in http://www.ietf.org/rfc/rfc2616
     const METHOD_GET = 'GET';
     const METHOD_HEAD = 'HEAD';
@@ -59,34 +60,46 @@ class Request implements \JsonSerializable
     protected $requestMethod = null;
 
     /**
+     * What uri did the client request
      * @var string
      */
     protected $requestedUri = '';
 
     /**
-     * The requested uri as an array
+     * The requested uri as an array.
      * @var array
      */
     protected $requestChain = null;
 
     /**
-     * An amalgamation of all parameters sent in any way
+     * An amalgamation of all parameters sent in any way.
      * @var array
      */
     protected $parameters = [];
 
     /**
+     * The reader factory contains readers that might be able to read the body
      * @var ReaderFactory
      */
     protected $readerFactory;
 
     /**
-     * Create a Request object. You can override any request information
+     * Request constructor.
+     *
+     * To take the request as is from PHP, instantiate this class without
+     * specifying and arguments. The constructor can be used to immediately
+     * override any part of the request or even be used to arbitrarily define
+     * request parameters.
+     *
+     * Note: If any parameters are defined, this will block the actual request
+     * parameters from being used.
+     *
      * @param string $requestedMethod
      * @param string $requestedUri
      * @param ReaderFactory $readerFactory
-     * @param array|object ...$parameters Any number of arrays or objects containing request parameters
-     *                                    such as _GET, _POST. If omitted, defaults will be used.
+     * @param array|object ...$parameters Any number of arrays or objects containing request parameters such as _GET,
+     *                                   _POST. This will override the defaults which will otherwise be taken from the
+     *                                   url and _REQUEST global variable.
      */
     public function __construct(
         $requestedMethod = null,
@@ -109,7 +122,10 @@ class Request implements \JsonSerializable
 
     /**
      * Get the reader factory.
-     * If none is set, then create one, set it and return it.
+     *
+     * If none is set, then create one, set it and return it. By default it
+     * will only be able to read Xml and Json.
+     *
      * @return ReaderFactory
      */
     protected function getReaderFactory()
@@ -124,10 +140,14 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Get the HTTP verb for this request
-     * Checks it's one the API allows for. Can be overridden with override.
-     * @return string
+     * Get the HTTP verb for this request.
+     *
+     * The actual verb can be overridden simply by setting it in the
+     * constructor. If no verb is set, and for some reason it can not be found
+     * in the _SERVER global variable, a default of 'GET' will be returned.
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
+     * @return string
      */
     protected function getRequestMethod()
     {
@@ -142,9 +162,13 @@ class Request implements \JsonSerializable
 
     /**
      * Get the requested uri.
-     * Can be overridden with override.
-     * @return string
+     *
+     * The actual uri can be overridden simply by setting it in the
+     * constructor. If no uri is set, and for some reason it can not be found
+     * in the _SERVER global variable, a default of '' will be returned.
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
+     * @return string
      */
     protected function getRequestedUri()
     {
@@ -159,7 +183,11 @@ class Request implements \JsonSerializable
 
     /**
      * Get parameters associated with this request.
-     * Starts with _REQUEST super global, adds headers, then body, overriding in that order
+     *
+     * Starts the url itself, then the _REQUEST super global, adds headers,
+     * then body, overriding in that order (i.e. if a body variable overrides
+     * a header, the body will be used instead).
+     *
      * @return array
      * @SuppressWarnings(PHPMD.Superglobals)
      */
@@ -173,7 +201,12 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Parse headers
+     * Parse headers.
+     *
+     * This method should be passed the _SERVER global array. Most http headers
+     * in PHP are prefixed with HTTP_ however, there are two values prefixed
+     * with CONTENT_. All other values in the array will be ignored.
+     *
      * @param string[] $headers
      * @return string
      */
@@ -194,7 +227,10 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Reads in the body of the request
+     * Reads in the body of the request.
+     *
+     * Uses php streams to get the body of a request.
+     *
      * @return string
      */
     protected function readBody()
@@ -203,7 +239,14 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Turns a url string into an array of parameters
+     * Turns a url string into an array of parameters.
+     *
+     * This can be a little bit confusing but it allows people to create
+     * pretty uri's for an API. This array simply parametrises the uri
+     * by assuming each slug is the key for the following one.
+     *
+     * @example 'here/is/an/example' => ['here' => 'is', 'is' => 'an', 'an' => 'example']
+     *
      * @param string $url
      * @return array
      * @SuppressWarnings(PHPMD.Superglobals)
@@ -223,10 +266,15 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Tries to turn a string of data into an object. Accepts json, xml or a php serialised object
-     * Failing all else, if there was a string it will return a standard class with it attached to a 'text' attribute
-     * eg. $this->stringObject('fail')->body == 'fail'
-     * @param string $string a string of data
+     * Tries to turn a string of data into an array.
+     *
+     * This method uses a ReaderFactory that will attempt to read the sting
+     * as a number of predefined strings, accepting the first one that returns
+     * something. Failing all else, if there was a string it will return an
+     * array with the text attached to a 'text' key
+     * eg. $this->stringToArray('fail')['body'] == 'fail'
+     *
+     * @param string $string
      * @return array
      */
     protected function stringToArray($string)
@@ -246,7 +294,10 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * The http method being used
+     * The http method being used.
+     *
+     * Get the http verb used for the request.
+     *
      * @return string
      */
     public function getMethod()
@@ -255,7 +306,11 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Look for the given parameter anywhere in the request
+     * Look up the value of a requested parameter.
+     *
+     * A default can be specified. If the parameter is not found the default
+     * will be returned. The 'default' defaults to null.
+     *
      * @param string $key
      * @param bool $default
      * @return mixed
@@ -277,7 +332,11 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Flatten a variable name by removing all non alpha numeric characters and making it lower case
+     * Flatten a variable name.
+     *
+     * Simply removes all non alpha numeric characters (except hyphen and
+     * underscore) and makes it lower case.
+     *
      * @param $name
      * @return string
      */
@@ -287,7 +346,10 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Returns all parameters. Does not return header or body parameters, maybe it should
+     * Returns all parameters.
+     *
+     * This method should only be used for debugging.
+     *
      * @return array
      */
     public function getParameters()
@@ -296,7 +358,11 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Get the requested route
+     * Get the requested route.
+     *
+     * Breaks the uri into an array that can be used by the router to determine
+     * which controller and endpoint should be called.
+     *
      * @return string[]
      */
     public function getRequestChain()
@@ -308,7 +374,11 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * The request could specify the desired response format in a number of ways, this returns them all
+     * Returns an array of possible formats.
+     *
+     * The request could specify the desired response format in a number of
+     * ways, this method returns them all including a final default fallback.
+     *
      * @return string
      */
     public function getFormats()
@@ -321,7 +391,12 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Used by PHP to get json object
+     * Used by PHP to get json object.
+     *
+     * This method is useful for debugging incoming requests. It should not
+     * reveal anything the sender does not know, but might help explain how
+     * the request has been processed.
+     *
      * @return array|mixed
      */
     public function jsonSerialize()
@@ -334,7 +409,15 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Get the format from the url
+     * Get the format from the url.
+     *
+     * If the request had a suffix in the url, this method will discover it and
+     * return it.
+     *
+     * @example /hello-world.json => json
+     * @example /hello-world.xml => xml
+     * @example /hello-world => null
+     *
      * @param $requestedUri
      * @return string|null
      */
@@ -350,7 +433,10 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Breaks a url into useful parts
+     * Breaks up the uri.
+     *
+     * Breaks the uri into slugs used to work out the route.
+     *
      * @param string $requestedUri
      * @return string[]
      */
@@ -370,7 +456,12 @@ class Request implements \JsonSerializable
     }
 
     /**
-     * Add a set of parameters to the Request
+     * Add a set of parameters to the Request.
+     *
+     * This method is for internal use only. It allows setting of key => value
+     * parameters, including for string objects (assuming a Reader has been set
+     * up for them).
+     *
      * @param array|object $newParameters
      * @throws \Exception
      * @returns $this
@@ -391,6 +482,9 @@ class Request implements \JsonSerializable
 
     /**
      * Add a parameter
+     *
+     * Adds a single parameter, checking the parameter name is scalar.
+     *
      * @param $name
      * @param $value
      * @return bool Returns true of value was set

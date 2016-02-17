@@ -1,13 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 17/12/2015
- * Time: 13:58
+ * ReflectionControllerTest.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api\Tests;
-
 
 use AyeAye\Api\Controller;
 use AyeAye\Api\ControllerDocumentation;
@@ -378,58 +378,6 @@ class ReflectionControllerTest extends TestCase
         $this->setObjectAttribute($reflectionController, 'reflection', $reflectionOverride);
 
         $reflectionController->getChildController('child');
-    }
-
-    /**
-     * @test
-     * @covers ::getChildControllerReflection
-     * @uses \AyeAye\Api\ReflectionController::__construct
-     * @uses \AyeAye\Api\ReflectionController::parseControllerName
-     * @uses \AyeAye\Api\ReflectionController::hasChildController
-     * @uses \AyeAye\Api\ReflectionController::getChildController
-     */
-    public function getChildControllerReflection()
-    {
-        $controller = $this->getMockController();
-        $childController = $this->getMockController();
-        $controllerMethod =
-            $this
-                ->getMockBuilder(\ReflectionMethod::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-        $controllerMethod
-            ->expects($this->once())
-            ->method('invokeArgs')
-            ->with($controller)
-            ->will($this->returnValue($childController));
-        $reflectionOverride =
-            $this
-                ->getMockBuilder(\ReflectionObject::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-        $reflectionOverride
-            ->expects($this->once())
-            ->method('hasMethod')
-            ->with('testController')
-            ->will($this->returnValue(true));
-        $reflectionOverride
-            ->expects($this->once())
-            ->method('getMethod')
-            ->with('testController')
-            ->will($this->returnValue($controllerMethod));
-
-        $reflectionController = new ReflectionController($controller);
-        $this->setObjectAttribute($reflectionController, 'reflection', $reflectionOverride);
-
-        $childReflectionController = $reflectionController->getChildControllerReflection('test');
-        $this->assertInstanceOf(
-            ReflectionController::class,
-            $childReflectionController
-        );
-        $this->assertSame(
-            $childController,
-            $this->getObjectAttribute($childReflectionController, 'controller')
-        );
     }
 
     /**

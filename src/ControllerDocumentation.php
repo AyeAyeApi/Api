@@ -1,18 +1,28 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: daniel
- * Date: 16/12/2015
- * Time: 12:20
+ * ControllerDocumentation.php
+ * @author    Daniel Mason <daniel@danielmason.com>
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
+ * @license   GPL 3
+ * @see       https://github.com/AyeAyeApi/Api
  */
 
 namespace AyeAye\Api;
 
 use AyeAye\Formatter\Serializable;
 
+/**
+ * Class ControllerDocumentation
+ *
+ * Parses the relevant child controller and endpoint methods of a Controller
+ * object through a Documentation object and returns the result as an array.
+ * This is used to provide API documentation to end users.
+ *
+ * @package AyeAye/Api
+ * @see     https://github.com/AyeAyeApi/Api
+ */
 class ControllerDocumentation implements Serializable
 {
-
     /**
      * @var \ReflectionObject
      */
@@ -37,7 +47,11 @@ class ControllerDocumentation implements Serializable
 
     /**
      * ControllerDocumentation constructor.
+     *
+     * The reflection object must contain a valid controller class.
+     *
      * @param \ReflectionObject $reflectedController
+     * @throws \InvalidArgumentException
      */
     public function __construct(\ReflectionObject $reflectedController)
     {
@@ -53,7 +67,12 @@ class ControllerDocumentation implements Serializable
     }
 
     /**
-     * Returns a list of endpoints attached to the controller being examined
+     * List the endpoints the controller provides.
+     *
+     * It is the endpoint name, not the method name that is given. Endpoints
+     * are grouped by http verb and will have their documentation listed. If
+     * the endpoint has been "hidden" by the controller, it will not be listed.
+     *
      * @return array
      */
     protected function getEndpoints()
@@ -81,7 +100,11 @@ class ControllerDocumentation implements Serializable
     }
 
     /**
-     * Returns a list of controllers attached to the controller being examined
+     * Lists child controllers the controller provides.
+     *
+     * It is the controller name, not the method name that is given. If the
+     * controller has been "hidden" by the controller, it will not be listed.
+     *
      * @return array
      */
     protected function getControllers()
@@ -103,7 +126,10 @@ class ControllerDocumentation implements Serializable
     }
 
     /**
-     * Takes a camelcase string, such as method names, and hyphenates it for urls
+     * Turns camel case strings into lowercase hyphenated strings.
+     *
+     * Hyphenated strings are more useful for breaking up words in urls.
+     *
      * @param string $camelcaseString
      * @return string Hyphenated string for urls
      */
@@ -113,7 +139,12 @@ class ControllerDocumentation implements Serializable
     }
 
     /**
-     * Gets a callable method from the original controller
+     * Gets a callable method from the original controller.
+     *
+     * Given a method name in the controller, this method will return a
+     * callable function that will invoke the method with any arguments you
+     * provide.
+     *
      * @param string $methodName
      * @return \Closure
      */
@@ -127,7 +158,12 @@ class ControllerDocumentation implements Serializable
     }
 
     /**
-     * Returns the documentation of the controller
+     * Returns the documentation of the controller.
+     *
+     * Returns an array containing bother child controllers and endpoints with
+     * their respective documentation. This can be given to an end user so that
+     * they can understand how this controller deals with requests.
+     *
      * @return array
      */
     public function getDocumentation()
@@ -139,7 +175,9 @@ class ControllerDocumentation implements Serializable
     }
 
     /**
-     * Returns the documentation of the controller
+     * Returns the documentation of the controller.
+     *
+     * @see ::getDocumentation
      * @return array
      */
     public function ayeAyeSerialize()

@@ -26,7 +26,8 @@
         "pdepend/pdepend": "^2.0",
         "phpmd/phpmd": "^2.2",
         "sebastian/phpcpd": "^2.0",
-        "theseer/phpdox": "^0.7"
+        "phpdocumentor/phpdocumentor": "^2.8",
+        "nikic/php-parser": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -43,7 +44,11 @@
         "github-protocols": ["https"]
     },
     "scripts" : {
+      "lint" : [
+        "find -L src tests -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l"
+      ],
       "test" : [
+        "@lint",
         "vendor/bin/phpunit"
       ],
       "quality" : [
@@ -53,6 +58,16 @@
       ],
       "quality-fix" : [
         "vendor/bin/phpcbf --standard=phpcs.xml src"
+      ],
+      "report" : [
+        "vendor/bin/phploc --count-tests --log-csv reports/logs/phploc.csv --log-xml reports/logs/phploc.xml src tests",
+        "vendor/bin/pdepend --jdepend-xml=reports/logs/jdepend.xml --jdepend-chart=reports/dependencies.svg --overview-pyramid=reports/overview-pyramid.svg src",
+        "# vendor/bin/phpmd src xml tests reports/logs/pmd.xml",
+        "vendor/bin/phpcs --report=checkstyle --report-file=reports/logs/checkstyle.xml --standard=phpcs.xml src",
+        "vendor/bin/phpcpd --log-pmd reports/logs/pmd-cpd.xml src"
+      ],
+      "doc" : [
+        "vendor/bin/phpdoc"
       ]
     }
 }

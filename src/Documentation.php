@@ -2,7 +2,7 @@
 /**
  * Documentation.php
  * @author    Daniel Mason <daniel@danielmason.com>
- * @copyright 2015 Daniel Mason
+ * @copyright (c) 2015 - 2016 Daniel Mason <daniel@danielmason.com>
  * @license   GPL 3
  * @see       https://github.com/AyeAyeApi/Api
  */
@@ -11,15 +11,20 @@ namespace AyeAye\Api;
 
 /**
  * Class Documentation
- * Parses PHP doc blocks
+ *
+ * Parses PHP DocBlocks of methods based on PSR-5.
+ *
  * @package AyeAye/Api
  * @see     https://github.com/AyeAyeApi/Api
  */
 class Documentation
 {
-
     /**
      * Breaks the doc block of the given method into its component parts
+     *
+     * Takes a Reflection method and returns an array containing the summary,
+     * and description (if they exist), as well as parameters and return type.
+     *
      * @param \ReflectionMethod $method
      * @return array
      */
@@ -49,7 +54,13 @@ class Documentation
     }
 
     /**
-     * Get the doc block comment in front of a method and remove the surrounding asterisks
+     * Get a cleaned up version of the method comment.
+     *
+     * Reflection methods return the doc block with the surrounding stars still
+     * in the string. This method breaks the continuous string into individual
+     * lines, removes the starting asterisks, and trims the line. Finally the
+     * first and last lines of the comment are removed if they are empty.
+     *
      * @param \ReflectionMethod $method
      * @return string[]
      */
@@ -61,7 +72,7 @@ class Documentation
             $line = preg_replace('/^\s*(\/\*\*|\*\/?)\s*/', '', $line);
             $line = trim($line);
             $lines[$i] = $line;
-            if (!$line && (!$i || $i == $count-1)) { // If first or last lines are blank
+            if (!$line && ($i == 0 || $i == $count - 1)) { // If first or last lines are blank
                 unset($lines[$i]);
             }
         }
@@ -72,8 +83,11 @@ class Documentation
 
     /**
      * Gets the summary of a method.
-     * Looks at the main comment of a doc block, and returns the string up to the first full stop at a line ending or
-     * double line break.
+     *
+     * Starting from the beginning of the doc block, this method extracts text
+     * until it reaches a full stop at the end of a line, a blank line, or a
+     * line beginning with an @ symbol.
+     *
      * @param string[] $lines
      * @return string
      */
@@ -96,7 +110,7 @@ class Documentation
             }
 
             // Otherwise we're good for summary
-            $summary .= $line."\n";
+            $summary .= $line . "\n";
             if (substr($line, -1) == '.') {
                 break;
             }
@@ -107,7 +121,13 @@ class Documentation
 
     /**
      * Gets a methods description.
-     * This is an example of a description. In PSR-5 it follows the summary.
+     *
+     * Skips over the summary (as described above), then if there are further
+     * lines before the first line that begins with an @, then this will
+     * extract them as the description.
+     *
+     * This line and the paragraph above would all be extracted as description.
+     *
      * @param string[] $lines
      * @return string
      */
@@ -133,7 +153,7 @@ class Documentation
                 break;
             }
             if ($line && $summaryPassed) {
-                $description .= $line."\n";
+                $description .= $line . "\n";
             }
         }
         return trim($description);
@@ -141,7 +161,10 @@ class Documentation
 
     /**
      * Gets the parameters of a method.
-     * Returns a keyed array with parameter name as the key, containing another array with 'type' and 'description'.
+     *
+     * Returns a keyed array with parameter name as the key, containing
+     * another array with 'type' and 'description'.
+     *
      * @param string[] $lines
      * @return array
      */
@@ -176,7 +199,7 @@ class Documentation
 
                 // Sort out the values
                 $params[$name] = [
-                    'type'        => trim($type),
+                    'type' => trim($type),
                     'description' => trim($description),
                 ];
             }
@@ -187,8 +210,11 @@ class Documentation
 
     /**
      * Gets the return types from a method or function's comment.
-     * This method assumes multiple possible return types split with | so returns an array.
-     * It will also replace '$this' with 'self' to (somewhat) hide internals
+     *
+     * This method will always return an array to allow for the possibility of
+     * multiple return types split with | pipe. It will also replace '$this'
+     * with 'self' to (somewhat) hide internals.
+     *
      * @param array $lines
      * @return string[]
      */
