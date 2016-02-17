@@ -55,7 +55,11 @@
         "vendor/bin/phpcbf --standard=phpcs.xml src"
       ],
       "report" : [
-        "vendor/bin/phploc src"
+        "vendor/bin/phploc --count-tests --log-csv reports/logs/phploc.csv --log-xml reports/logs/phploc.xml src tests",
+        "vendor/bin/pdepend --jdepend-xml=reports/logs/jdepend.xml --jdepend-chart=reports/dependencies.svg --overview-pyramid=reports/overview-pyramid.svg src",
+        "# vendor/bin/phpmd src xml tests reports/logs/pmd.xml",
+        "vendor/bin/phpcs --report=checkstyle --report-file=reports/logs/checkstyle.xml --standard=phpcs.xml src",
+        "vendor/bin/phpcpd --log-pmd reports/logs/pmd-cpd.xml src"
       ]
     }
 }
