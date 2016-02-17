@@ -99,19 +99,19 @@ class Response
      *   yield 'hello';
      *   yield 'links' => $this->generateLinks();
      *
-     * @param $data
+     * @param \Generator|mixed $data
      * @return $this
      */
     public function setBodyData($data)
     {
-        if ($data instanceof \Generator) {
-            foreach ($data as $key => $value) {
-                $actualKey = $key ?: static::DEFAULT_DATA_NAME;
-                $this->body[$actualKey] = $value;
-            }
+        if (!$data instanceof \Generator) {
+            $this->body[static::DEFAULT_DATA_NAME] = $data;
             return $this;
         }
-        $this->body[static::DEFAULT_DATA_NAME] = $data;
+        foreach ($data as $key => $value) {
+            $actualKey = $key ?: static::DEFAULT_DATA_NAME;
+            $this->body[$actualKey] = $value;
+        }
         return $this;
     }
 
