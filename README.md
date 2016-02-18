@@ -9,10 +9,10 @@
 [![Build Status](https://img.shields.io/travis/AyeAyeApi/Api/master.svg)]
 (https://travis-ci.org/AyeAyeApi/Api/branches)
 
-Aye Aye API is a micro framework for building API's, and we mean _micro_. It's designed to be easy to use, fast to
-develop with and to scale from tiny projects to world devouring titans.
+Aye Aye API is a micro framework for building API's written in PHP. It's designed to be easy to use, fast to
+develop with and to scale from tiny micro-services to gargantuan behemoths.
 
-## Quick Start Guide
+## Installation
 
 Create a project and include Aye Aye
 
@@ -21,7 +21,11 @@ composer init --require="ayeaye/api ^1.0.0" -n
 composer install
 ```
 
-Write your first controller
+## Quick Start Guide
+
+When working with Aye Aye, you will do almost all of your work in Controller classes.
+
+Here's our ubiquitous Hello World controller:
 
 ```php
 <?php
@@ -43,7 +47,13 @@ class HelloWorldController extends Controller
 }
 ```
 
-Write an entry point into the API
+Controllers contain endpoints and child controllers. The above controller has a single endpoint `hello` that will 
+respond to HTTP GET requests. This is reflected in the name which takes the form `[verb][Name]Endpoint`.
+
+The endpoint takes one parameter, `name`, which will default to `'Captain'` if not otherwise provided. The return is
+a string.
+
+The API needs an entry point, which will put in index.php
 
 ```php
 <?php
@@ -60,14 +70,31 @@ $api = new Api($initialController);
 $api->go()->respond();
 ```
 
-Enjoy
+First we grab composer's autoloader, and our controller (which we haven't added to the autoloader). We instantiate our
+HelloWorldController, and pass it into the constructor of our Api object. This becomes our initialController, and it's
+the only one Aye Aye needs to know about, we'll come onto why later.
+
+Finally the `->go()` method produces a Response object, with which we can `->respond()`.
+
+We can test this using PHP's build in server:
 
 ```bash
 $ php -S localhost:8000 index.php &
-$ curl localhost:8000/hello
-$ curl localhost:8000/hello?name=Sandwiches
-$ curl localhost:8000
+
+$ curl localhost:8000/hello                 // {"data":"Aye Aye Captain"}
+$ curl localhost:8000/hello?name=Sandwiches // {"data":"Aye Aye Sandwiches"}
 ```
+
+Notice how the string has been converted into a serialised object (JSON by default but the format can be selected with
+an `Accept` header or a file suffix).
+
+That tests our endpoint, but what happens if you just query the root of the Api.
+
+```
+$ curl localhost:8000 // {"data":{"controllers":[],"endpoints":{"get":{"hello":{"summary":"Says hello","parameters":{"name":{"type":"string","description":"Optional, defaults to 'Captain'"}},"returnType":["s string"]}}}}}
+```
+
+We'll explain this later on.
 
 Don't forget to close the server down when you're done
 
