@@ -4,7 +4,7 @@
 (https://php.net/)
 [![License](https://img.shields.io/packagist/l/ayeaye/api.svg)]
 (https://raw.githubusercontent.com/AyeAyeApi/Api/master/LICENSE.txt)
-[![Version](https://img.shields.io/packagist/vpre/ayeaye/api.svg)]
+[![Version](https://img.shields.io/packagist/v/ayeaye/api.svg)]
 (https://packagist.org/packages/ayeaye/api)
 [![Build Status](https://img.shields.io/travis/AyeAyeApi/Api/master.svg)]
 (https://travis-ci.org/AyeAyeApi/Api/branches)
