@@ -15,10 +15,11 @@ matrix:
 sudo: false
 
 before_script:
-  travis_retry composer install
+  - travis_retry composer self-update
+  - travis_retry composer install
 
 script:
-  composer test
+  - composer test
 
 notifications:
   slack: danielmason:mwiobPacEYneLE6a9iBAZvVB
