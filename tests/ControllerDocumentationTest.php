@@ -29,8 +29,7 @@ class ControllerDocumentationTest extends TestCase
         $mockReflection = $this->getMockReflectionObject();
         $mockReflection
             ->expects($this->once())
-            ->method('isSubclassOf')
-            ->with(Controller::class)
+            ->method('isInstance')
             ->will($this->returnValue(true));
         return $mockReflection;
     }
@@ -41,13 +40,13 @@ class ControllerDocumentationTest extends TestCase
      */
     public function testConstruct()
     {
-        $mockReflection = $this->getMockReflectedController();
+        $mockController = $this->getMockController();
 
-        $controllerDocumentation = new ControllerDocumentation($mockReflection);
+        $controllerDocumentation = new ControllerDocumentation($mockController);
 
         $this->assertSame(
-            $mockReflection,
-            $this->getObjectAttribute($controllerDocumentation, 'reflectedController')
+            $mockController,
+            $this->getObjectAttribute($controllerDocumentation, 'controller')
         );
     }
 
@@ -55,10 +54,12 @@ class ControllerDocumentationTest extends TestCase
      * @test
      * @covers ::__construct
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The ControllerDocumentation class can only document Controllers
+     * @expectedExceptionMessage Controller did not match ReflectionObject
      */
     public function testConstructException()
     {
+        $mockController =$this->getMockController();
+
         /** @var \ReflectionObject|\PHPUnit_Framework_MockObject_MockObject $mockReflection */
         $mockReflection = $this
             ->getMockBuilder('\ReflectionObject')
@@ -66,11 +67,11 @@ class ControllerDocumentationTest extends TestCase
             ->getMock();
         $mockReflection
             ->expects($this->once())
-            ->method('isSubclassOf')
-            ->with(Controller::class)
+            ->method('isInstance')
+            ->with($mockController)
             ->will($this->returnValue(false));
 
-        new ControllerDocumentation($mockReflection);
+        new ControllerDocumentation($mockController, $mockReflection);
     }
 
     /**
@@ -117,6 +118,8 @@ class ControllerDocumentationTest extends TestCase
             ->method('getName')
             ->will($this->returnValue($methodName4));
 
+        $mockController = $this->getMockController();
+
         $mockReflection = $this->getMockReflectedController();
         $mockReflection
             ->expects($this->once())
@@ -128,6 +131,7 @@ class ControllerDocumentationTest extends TestCase
                 $method3,
                 $method4,
             ]));
+
         $mockReflection
             ->expects($this->once())
             ->method('getMethod')
@@ -140,7 +144,7 @@ class ControllerDocumentationTest extends TestCase
             ->method('getMethodDocumentation')
             ->will($this->returnValue([]));
 
-        $controllerDocumentation = new ControllerDocumentation($mockReflection);
+        $controllerDocumentation = new ControllerDocumentation($mockController, $mockReflection);
         $this->setObjectAttribute($controllerDocumentation, 'documentation', $documentation);
 
         $getEndpoints = $this->getObjectMethod($controllerDocumentation, 'getEndpoints');
@@ -170,9 +174,10 @@ class ControllerDocumentationTest extends TestCase
         // Quick check
         $endpoints = new \stdClass();
 
+        $mockController = $this->getMockController();
         $mockReflection = $this->getMockReflectedController();
 
-        $controllerDocumentation = new ControllerDocumentation($mockReflection);
+        $controllerDocumentation = new ControllerDocumentation($mockController, $mockReflection);
         $this->setObjectAttribute($controllerDocumentation, 'endpointsCache', $endpoints);
         $getEndpoints = $this->getObjectMethod($controllerDocumentation, 'getEndpoints');
 
@@ -243,7 +248,9 @@ class ControllerDocumentationTest extends TestCase
             ->with('isMethodHidden')
             ->will($this->returnValue($reflectedMethod));
 
-        $controllerDocumentation = new ControllerDocumentation($mockReflection);
+        $mockController = $this->getMockController();
+
+        $controllerDocumentation = new ControllerDocumentation($mockController, $mockReflection);
 
         $getControllers = $this->getObjectMethod($controllerDocumentation, 'getControllers');
 
@@ -266,9 +273,10 @@ class ControllerDocumentationTest extends TestCase
         // Easy to track
         $controllers = new \stdClass();
 
+        $mockController = $this->getMockController();
         $mockReflection = $this->getMockReflectedController();
 
-        $controllerDocumentation = new ControllerDocumentation($mockReflection);
+        $controllerDocumentation = new ControllerDocumentation($mockController, $mockReflection);
         $this->setObjectAttribute($controllerDocumentation, 'controllersCache', $controllers);
         $getControllers = $this->getObjectMethod($controllerDocumentation, 'getControllers');
 
@@ -285,9 +293,10 @@ class ControllerDocumentationTest extends TestCase
      */
     public function testCamelcaseToHyphenated()
     {
+        $mockController = $this->getMockController();
         $mockReflection = $this->getMockReflectedController();
 
-        $controllerDocumentation = new ControllerDocumentation($mockReflection);
+        $controllerDocumentation = new ControllerDocumentation($mockController, $mockReflection);
 
         $camelcaseToHyphenated = $this->getObjectMethod($controllerDocumentation, 'camelcaseToHyphenated');
 
@@ -310,6 +319,8 @@ class ControllerDocumentationTest extends TestCase
 
         $mockReflectedObject = $this->getMockReflectedController();
 
+        $mockController = $this->getMockController();
+
         /** @var \ReflectionMethod|\PHPUnit_Framework_MockObject_MockObject $mockReflectedMethod */
         $mockReflectedMethod = $this->getMockReflectionMethod();
         $mockReflectedMethod
@@ -320,7 +331,7 @@ class ControllerDocumentationTest extends TestCase
         $mockReflectedMethod
             ->expects($this->once())
             ->method('invokeArgs')
-            ->with($mockReflectedObject, [$param1, $param2])
+            ->with($mockController, [$param1, $param2])
             ->will($this->returnValue(true));
 
         $mockReflectedObject
@@ -329,7 +340,7 @@ class ControllerDocumentationTest extends TestCase
             ->with($methodName)
             ->will($this->returnValue($mockReflectedMethod));
 
-        $controllerDocumentation = new ControllerDocumentation($mockReflectedObject);
+        $controllerDocumentation = new ControllerDocumentation($mockController, $mockReflectedObject);
 
         $getControllerMethod = $this->getObjectMethod($controllerDocumentation, 'getControllerMethod');
 
@@ -353,9 +364,10 @@ class ControllerDocumentationTest extends TestCase
         $endpoints = new \stdClass();
         $controllers = new \stdClass();
 
+        $mockController = $this->getMockController();
         $mockReflection = $this->getMockReflectedController();
 
-        $controllerDocumentation = new ControllerDocumentation($mockReflection);
+        $controllerDocumentation = new ControllerDocumentation($mockController, $mockReflection);
 
         $this->setObjectAttribute($controllerDocumentation, 'endpointsCache', $endpoints);
         $this->setObjectAttribute($controllerDocumentation, 'controllersCache', $controllers);
@@ -383,9 +395,10 @@ class ControllerDocumentationTest extends TestCase
         $endpoints = new \stdClass();
         $controllers = new \stdClass();
 
+        $mockController = $this->getMockController();
         $mockReflection = $this->getMockReflectedController();
 
-        $controllerDocumentation = new ControllerDocumentation($mockReflection);
+        $controllerDocumentation = new ControllerDocumentation($mockController, $mockReflection);
 
         $this->setObjectAttribute($controllerDocumentation, 'endpointsCache', $endpoints);
         $this->setObjectAttribute($controllerDocumentation, 'controllersCache', $controllers);
