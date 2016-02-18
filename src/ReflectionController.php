@@ -224,6 +224,6 @@ class ReflectionController
      */
     public function getDocumentation()
     {
-        return new ControllerDocumentation($this->reflection);
+        return new ControllerDocumentation($this->controller, $this->reflection);
     }
 }

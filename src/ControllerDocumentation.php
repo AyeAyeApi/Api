@@ -24,6 +24,11 @@ use AyeAye\Formatter\Serializable;
 class ControllerDocumentation implements Serializable
 {
     /**
+     * @var Controller
+     */
+    protected $controller;
+
+    /**
      * @var \ReflectionObject
      */
     protected $reflectedController;
@@ -50,19 +55,22 @@ class ControllerDocumentation implements Serializable
      *
      * The reflection object must contain a valid controller class.
      *
-     * @param \ReflectionObject $reflectedController
+     * @param Controller $controller
+     * @param \ReflectionObject $reflectionController
      * @throws \InvalidArgumentException
      */
-    public function __construct(\ReflectionObject $reflectedController)
+    public function __construct(Controller $controller, \ReflectionObject $reflectionController = null)
     {
-        if (!$reflectedController->isSubclassOf(Controller::class)
-            && $reflectedController->getName() !== Controller::class
-        ) {
+        $this->controller = $controller;
+        $this->reflectedController = $reflectionController;
+        if(!$this->reflectedController) {
+            $this->reflectedController = new \ReflectionObject($this->controller);
+        }
+        if(!$this->reflectedController->isInstance($controller)) {
             throw new \InvalidArgumentException(
-                'The ControllerDocumentation class can only document Controllers'
+                'Controller did not match ReflectionObject'
             );
         }
-        $this->reflectedController = $reflectedController;
         $this->documentation = new Documentation();
     }
 
@@ -153,7 +161,7 @@ class ControllerDocumentation implements Serializable
         $reflectionMethod = $this->reflectedController->getMethod($methodName);
         $reflectionMethod->setAccessible(true);
         return function () use ($reflectionMethod) {
-            return $reflectionMethod->invokeArgs($this->reflectedController, func_get_args());
+            return $reflectionMethod->invokeArgs($this->controller, func_get_args());
         };
     }
 
