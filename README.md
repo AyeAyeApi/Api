@@ -1,8 +1,8 @@
 # Aye Aye API
 
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg)]
+[![PHP >= 5.4](https://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg)]
 (https://php.net/)
-[![License](https://img.shields.io/packagist/l/ayeaye/api.svg)]
+[![License: MIT](https://img.shields.io/packagist/l/ayeaye/api.svg)]
 (https://raw.githubusercontent.com/AyeAyeApi/Api/master/LICENSE.txt)
 [![Version](https://img.shields.io/packagist/v/ayeaye/api.svg)]
 (https://packagist.org/packages/ayeaye/api)
