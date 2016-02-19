@@ -165,7 +165,7 @@ Endpoints are methods on the controllers that are named in this way `[verb][name
 - The `[name]` is the name of the endpoint.
 - `Endpoint` is literally the word "Endpoint". It helps us know what we're dealing with.
 
-You can put define any parameters you like for the method, and Aye Aye will automatically populate them for you.
+You can define any parameters you like for the method, and Aye Aye will automatically populate them for you.
 
 Controllers can also reference other controllers with methods named like this `[name]Controller()`
 
