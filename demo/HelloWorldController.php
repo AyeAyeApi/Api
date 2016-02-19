@@ -8,7 +8,7 @@ class HelloWorldController extends Controller
     /**
      * Yo ho ho
      * @param string $name Optional, defaults to 'Captain'
-     * @returns string
+     * @return string
      */
     public function getAyeAyeEndpoint($name = 'Captain')
     {
@@ -17,7 +17,7 @@ class HelloWorldController extends Controller
 
     /**
      * lol...
-     * @returns $this
+     * @return $this
      */
     public function ayeController()
     {
