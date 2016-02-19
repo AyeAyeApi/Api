@@ -280,10 +280,7 @@ To report problems, please open an Issue on the [GitHub Issue Tracker](https://g
 
 ### Changes
 
-To make changes, clone the repository and use `composer install` with the developer dependencies. 
-
-Branch from `develop`. We (now) use the Git Flow naming convention with date of creation (YYYY-MM-DD). See [this guide]
-(http://nvie.com/posts/a-successful-git-branching-model/) for how Git Flow works.
+Send me pull requests. Send me lots of them.
 
 We follow the [PSR-1](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md) and
 [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) coding standards.
