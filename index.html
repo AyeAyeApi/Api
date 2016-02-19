@@ -22,23 +22,28 @@
       <h1>
 <a id="aye-aye-api" class="anchor" href="#aye-aye-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Aye Aye API</h1>
 
-<p><a href="https://php.net/"><img src="https://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg" alt="Minimum PHP Version"></a>
-<a href="https://raw.githubusercontent.com/AyeAyeApi/Api/master/LICENSE.txt"><img src="https://img.shields.io/packagist/l/ayeaye/api.svg" alt="License"></a>
-<a href="https://packagist.org/packages/ayeaye/api"><img src="https://img.shields.io/packagist/vpre/ayeaye/api.svg" alt="Version"></a>
+<p><a href="https://php.net/"><img src="https://img.shields.io/badge/php-%3E%3D%205.5-8892BF.svg" alt="PHP &gt;= 5.5"></a>
+<a href="https://raw.githubusercontent.com/AyeAyeApi/Api/master/LICENSE.txt"><img src="https://img.shields.io/packagist/l/ayeaye/api.svg" alt="License: MIT"></a>
+<a href="https://packagist.org/packages/ayeaye/api"><img src="https://img.shields.io/packagist/v/ayeaye/api.svg" alt="Version"></a>
 <a href="https://travis-ci.org/AyeAyeApi/Api/branches"><img src="https://img.shields.io/travis/AyeAyeApi/Api/master.svg" alt="Build Status"></a></p>
 
-<p>Aye Aye API is a micro framework for building API's, and we mean <em>micro</em>. It's designed to be easy to use, fast to
-develop with and to scale from tiny projects to world devouring titans.</p>
+<p>Aye Aye API is a micro framework for building API's written in PHP. It's designed to be easy to use, fast to
+develop with and to scale from tiny micro-services to world devouring titans.</p>
 
 <h2>
-<a id="quick-start-guide" class="anchor" href="#quick-start-guide" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Quick Start Guide</h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
 
-<p>Create a project and include Aye Aye</p>
+<p>Create a project and include Aye Aye.</p>
 
 <div class="highlight highlight-source-shell"><pre>composer init --require=<span class="pl-s"><span class="pl-pds">"</span>ayeaye/api ^1.0.0<span class="pl-pds">"</span></span> -n
 composer install</pre></div>
 
-<p>Write your first controller</p>
+<h2>
+<a id="quick-start-guide" class="anchor" href="#quick-start-guide" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Quick Start Guide</h2>
+
+<p>When working with Aye Aye, you will do almost all of your work in Controller classes.</p>
+
+<p>Here's our ubiquitous Hello World controller:</p>
 
 <div class="highlight highlight-text-html-php"><pre><span class="pl-pse">&lt;?php</span><span class="pl-s1"></span>
 <span class="pl-s1"><span class="pl-c">// HelloWorldController.php</span></span>
@@ -48,17 +53,23 @@ composer install</pre></div>
 <span class="pl-s1"><span class="pl-k">class</span> <span class="pl-en">HelloWorldController</span> <span class="pl-k">extends</span> <span class="pl-e">Controller</span></span>
 <span class="pl-s1">{</span>
 <span class="pl-s1">    <span class="pl-c">/**</span></span>
-<span class="pl-s1"><span class="pl-c">     * Says hello</span></span>
+<span class="pl-s1"><span class="pl-c">     * Yo ho ho</span></span>
 <span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $name Optional, defaults to 'Captain'</span></span>
-<span class="pl-s1"><span class="pl-c">     * @returns string</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@return</span> string</span></span>
 <span class="pl-s1"><span class="pl-c">     */</span></span>
-<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">getHelloEndpoint</span>(<span class="pl-smi">$name</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>Captain<span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">getAyeAyeEndpoint</span>(<span class="pl-smi">$name</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>Captain<span class="pl-pds">'</span></span>)</span>
 <span class="pl-s1">    {</span>
 <span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">"</span>Aye Aye <span class="pl-smi">$name</span><span class="pl-pds">"</span></span>;</span>
 <span class="pl-s1">    }</span>
 <span class="pl-s1">}</span></pre></div>
 
-<p>Write an entry point into the API</p>
+<p>Controllers contain endpoints and child controllers. The above controller has a single endpoint <code>hello</code> that will 
+respond to HTTP GET requests. This is reflected in the name which takes the form <code>[verb][Name]Endpoint</code>.</p>
+
+<p>The endpoint takes one parameter, <code>name</code>, which will default to <code>'Captain'</code> if not otherwise provided. The return is
+a string.</p>
+
+<p>The API needs an entry point, which will put in index.php</p>
 
 <div class="highlight highlight-text-html-php"><pre><span class="pl-pse">&lt;?php</span><span class="pl-s1"></span>
 <span class="pl-s1"><span class="pl-c">// index.php</span></span>
@@ -73,14 +84,54 @@ composer install</pre></div>
 <span class="pl-s1"></span>
 <span class="pl-s1"><span class="pl-smi">$api</span><span class="pl-k">-&gt;</span>go()<span class="pl-k">-&gt;</span>respond();</span></pre></div>
 
-<p>Enjoy</p>
+<p>First we grab composer's autoloader, and our controller (which we haven't added to the autoloader). We instantiate our
+HelloWorldController, and pass it into the constructor of our Api object. This becomes our initialController, and it's
+the only one Aye Aye needs to know about, we'll come onto why later.</p>
+
+<p>Finally the <code>-&gt;go()</code> method produces a Response object, with which we can <code>-&gt;respond()</code>.</p>
+
+<p>We can test this using PHP's build in server:</p>
 
 <div class="highlight highlight-source-shell"><pre>$ php -S localhost:8000 index.php <span class="pl-k">&amp;</span>
-$ curl localhost:8000/hello
-$ curl localhost:8000/hello<span class="pl-k">?</span>name=Sandwiches
-$ curl localhost:8000</pre></div>
 
-<p>Don't forget to close the server down when you're done</p>
+$ curl localhost:8000/aye-aye                 <span class="pl-c"># {"data":"Aye Aye Captain"}</span>
+$ curl localhost:8000/aye-aye<span class="pl-k">?</span>name=Sandwiches <span class="pl-c"># {"data":"Aye Aye Sandwiches"}</span></pre></div>
+
+<p>Notice how the string has been converted into a serialised object (JSON by default but the format can be selected with
+an <code>Accept</code> header or a file suffix).</p>
+
+<p>That tests our endpoint, but what happens if you just query the root of the Api.</p>
+
+<div class="highlight highlight-source-shell"><pre>$ curl localhost:8000 <span class="pl-c"># {"data":{"controllers":[],"endpoints":{"get":{"aye-aye":{"summary":"Yo ho ho","parameters":{"name":{"type":"string","description":"Optional, defaults to 'Captain'"}},"returnType":["string"]}}}}} </span></pre></div>
+
+<p>Lets take take a closer look at that returned string. </p>
+
+<div class="highlight highlight-source-json"><pre>{
+  <span class="pl-s"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>: {
+    <span class="pl-s"><span class="pl-pds">"</span>controllers<span class="pl-pds">"</span></span>: [],
+    <span class="pl-s"><span class="pl-pds">"</span>endpoints<span class="pl-pds">"</span></span>: {
+      <span class="pl-s"><span class="pl-pds">"</span>get<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>aye-aye<span class="pl-pds">"</span></span>: {
+          <span class="pl-s"><span class="pl-pds">"</span>summary<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Yo ho ho<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>parameters<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>: {
+              <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>,
+              <span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Optional, defaults to 'Captain'<span class="pl-pds">"</span></span>
+            }
+          },
+          <span class="pl-s"><span class="pl-pds">"</span>returnType<span class="pl-pds">"</span></span>: [
+            <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>
+          ]
+        }
+      }
+    }
+  }
+}</pre></div>
+
+<p>As you can see, it is an explanation of how our controller is structured. We didn't write anything more than what was
+expected of us, and it makes sense to both the back end developers, and the consumers of your Api.</p>
+
+<p>Don't forget to close the server down when you're done.</p>
 
 <div class="highlight highlight-source-shell"><pre>$ <span class="pl-c1">fg</span>
 ^C</pre></div>
@@ -89,36 +140,24 @@ $ curl localhost:8000</pre></div>
 <a id="why-should-you-use-it" class="anchor" href="#why-should-you-use-it" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Why should you use it?</h2>
 
 <p>Developing in Aye Aye is simple, clean and logical. Aye Aye processes requests and gives them to the appropriate
-endpoint on the appropriate controller. You write the code to process the data and return the result. That's it.
-Seriously.</p>
+endpoint on the appropriate controller. That endpoint is simply a method, that takes a set of parameters and returns
+some data. Aye Aye will work out where to find those parameters in the request, and it will format the data on return. 
+It even supports multiple data formats and will automatically switch based on what the user requests.</p>
 
 <p>There's no fluff. You don't need to learn new database tools, or logging interfaces (assuming you know <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md">PSR-3</a>, and you should) or
-authentication methods.</p>
+authentication methods. Aye Aye only provides routing, request parsing and response handling. You can use whatever
+you like for the rest.</p>
 
 <p>If you follow <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md">PSR-4</a>, then
-your API will look a lot like your directory structure, making maintainence a breeze.</p>
+your API will look a lot like your directory structure, making maintenance a breeze.</p>
 
-<p>Aye Aye is self aware... though not in the scary killer robot way. It knows about itself. It knows what endpoints
-and what sub-controllers are available on any given controller, and by reading the documentation in the doc-block
-comments, it can tell users what those end points do! You only need to write your documentation once, for developers,
-and Aye Aye will read it and tell your users what those end points do, and what parameters they take.</p>
+<p>Aye Aye knows about itself. It knows what endpoints and what sub-controllers are available on any given controller, and
+by reading the documentation in the doc-block comments, it can tell users what those end points do. You only need to 
+write your documentation once, and Aye Aye will read it and tell your users what those end points do, and what
+parameters they take.</p>
 
-<p>By default it can read and format data as json (the default) and xml. It also reads GET, POST and HEADER. Data from
-these sources is passed into your methods for you. In the traditional computational model <code>input -&gt; process -&gt; output</code>
-Aye Aye takes care of the in and out, you just have to worry about the process!</p>
-
-<h2>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
-
-<p>Currently, Aye Aye only supports installation via <a href="https://github.com/composer/composer">Composer</a>, and requires PHP 5.4
-or above. Aye Aye should also work with <a href="https://github.com/facebook/hhvm">HHVM</a> though this isn't actively supported.</p>
-
-<p>To include Aye Aye in your Composer project we recommend using the following.</p>
-
-<div class="highlight highlight-source-shell"><pre>composer require --prefer-dist <span class="pl-s"><span class="pl-pds">"</span>AyeAye/Api 0.13.*<span class="pl-pds">"</span></span></pre></div>
-
-<p><strong>Important</strong>: While Aye Aye has stable and usable releases, it's version 1 release has not yet been finalised. Minor
-version increments (see <a href="http://semver.org">Semantic Versioning</a>) may break backwards compatibility.</p>
+<p>By default it can read and write data as json (the default) and xml, though more formats can easily be added. It also
+reads GET, POST and HEADER, and parametrises url slugs. Data from these sources is passed into your methods for you.</p>
 
 <h2>
 <a id="quick-start-explained" class="anchor" href="#quick-start-explained" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Quick Start explained</h2>
@@ -137,7 +176,7 @@ endpoints, and access to other controllers.</p>
 <code>Endpoint</code> is literally the word "Endpoint". It helps us know what we're dealing with.</li>
 </ul>
 
-<p>You can put define any parameters you like for the method, and Aye Aye will automatically populate them for you.</p>
+<p>You can define any parameters you like for the method, and Aye Aye will automatically populate them for you.</p>
 
 <p>Controllers can also reference other controllers with methods named like this <code>[name]Controller()</code></p>
 
@@ -156,11 +195,11 @@ endpoints, and access to other controllers.</p>
 <span class="pl-s1"><span class="pl-k">class</span> <span class="pl-en">HelloWorldController</span> <span class="pl-k">extends</span> <span class="pl-e">Controller</span></span>
 <span class="pl-s1">{</span>
 <span class="pl-s1">    <span class="pl-c">/**</span></span>
-<span class="pl-s1"><span class="pl-c">     * Says hello</span></span>
+<span class="pl-s1"><span class="pl-c">     * Yo ho ho</span></span>
 <span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $name Optional, defaults to 'Captain'</span></span>
-<span class="pl-s1"><span class="pl-c">     * @returns string</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@return</span> string</span></span>
 <span class="pl-s1"><span class="pl-c">     */</span></span>
-<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">getHelloEndpoint</span>(<span class="pl-smi">$name</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>Captain<span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">getAyeAyeEndpoint</span>(<span class="pl-smi">$name</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>Captain<span class="pl-pds">'</span></span>)</span>
 <span class="pl-s1">    {</span>
 <span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">"</span>Aye Aye <span class="pl-smi">$name</span><span class="pl-pds">"</span></span>;</span>
 <span class="pl-s1">    }</span>
@@ -176,23 +215,22 @@ endpoints, and access to other controllers.</p>
 
 <p>So how did we go from that, to sending and receiving the data with curl?</p>
 
-<p>When we created the Api object, we passed it HelloWorldController as a parameter, this tells the Api this is our
-starting point. The Aye Aye identifies getHelloEndpoint as an endpoint called "hello" that is triggered with a GET
+<p>When we created the Api object, we passed it a HelloWorldController object as a parameter, this tells the Api this is 
+our starting point. The Aye Aye identifies getAyeEndpoint as an endpoint called "aye" that is triggered with a GET
 request.</p>
 
 <p>You'll notice that we used a PHP Doc Block to explain what the method does. This is <em>really</em> important. Not only does
-it tell other developers what this end point does... it tells your API's users too!</p>
+it tell other developers what this end point does... it tells your API's users too, and they'll be using it in just the
+same way.</p>
 
-<p>Going back to the Quick Start guide, you might have tried querying "/", and you will have seen that the Api tells you
-it has one GET endpoint, called 'hello, that it takes one parameter, as string called name, and it described all
-of these things with the documentation you made for the method!</p>
-
-<p>That's right, the API is truly self documenting!</p>
+<p>In the quick start guide we queryied "/", and you will have seen that the Api tells you it has one GET endpoint,
+called 'aye, that it takes one parameter, as string called name, and it described all of these things with the 
+documentation you made for the method!</p>
 
 <h3>
 <a id="child-controllers" class="anchor" href="#child-controllers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Child Controllers</h3>
 
-<p>Obviously just having one controller is pretty useless. To go from one controller to the next, we use the 
+<p>Obviously just having one controller is pretty useless. To go from one controller to the next, we create a
 <code>[name]Controller()</code> method. This method should return another object that extends Controller. To demonstrate that in
 our application quick start application, we can just return <code>$this</code>.</p>
 
@@ -204,11 +242,11 @@ our application quick start application, we can just return <code>$this</code>.<
 <span class="pl-s1"><span class="pl-k">class</span> <span class="pl-en">HelloWorldController</span> <span class="pl-k">extends</span> <span class="pl-e">Controller</span></span>
 <span class="pl-s1">{</span>
 <span class="pl-s1">    <span class="pl-c">/**</span></span>
-<span class="pl-s1"><span class="pl-c">     * Says hello</span></span>
+<span class="pl-s1"><span class="pl-c">     * Yo ho ho</span></span>
 <span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $name Optional, defaults to 'Captain'</span></span>
 <span class="pl-s1"><span class="pl-c">     * @returns string</span></span>
 <span class="pl-s1"><span class="pl-c">     */</span></span>
-<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">getHelloEndpoint</span>(<span class="pl-smi">$name</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>Captain<span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">getAyeAyeEndpoint</span>(<span class="pl-smi">$name</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>Captain<span class="pl-pds">'</span></span>)</span>
 <span class="pl-s1">    {</span>
 <span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">"</span>Aye Aye <span class="pl-smi">$name</span><span class="pl-pds">"</span></span>;</span>
 <span class="pl-s1">    }</span>
@@ -226,7 +264,7 @@ our application quick start application, we can just return <code>$this</code>.<
 <p>Now when we start our application and the fun begins!</p>
 
 <div class="highlight highlight-source-shell"><pre>$ php -S localhost:8000 public/index.php <span class="pl-k">&amp;</span>
-curl localhost:8000/aye/aye/aye/aye/hello<span class="pl-k">?</span>name=Aye%20Aye</pre></div>
+curl localhost:8000/aye/aye/aye/aye/aye-aye<span class="pl-k">?</span>name=Aye%20Aye <span class="pl-c"># {"data":"Aye Aye Aye Aye"}</span></pre></div>
 
 <h2>
 <a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributing</h2>
@@ -241,9 +279,7 @@ curl localhost:8000/aye/aye/aye/aye/hello<span class="pl-k">?</span>name=Aye%20A
 <h3>
 <a id="changes" class="anchor" href="#changes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changes</h3>
 
-<p>To make changes, clone the repository and use <code>composer install</code> with the developer dependencies. </p>
-
-<p>Branch from <code>develop</code>. We (now) use the Git Flow naming convention with date of creation (YYYY-MM-DD). See <a href="http://nvie.com/posts/a-successful-git-branching-model/">this guide</a> for how Git Flow works.</p>
+<p>Send me pull requests. Send me lots of them.</p>
 
 <p>We follow the <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md">PSR-1</a> and
 <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md">PSR-2</a> coding standards.
