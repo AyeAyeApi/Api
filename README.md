@@ -36,11 +36,11 @@ use AyeAye\Api\Controller;
 class HelloWorldController extends Controller
 {
     /**
-     * Says hello
+     * Yo ho ho
      * @param string $name Optional, defaults to 'Captain'
-     * @returns string
+     * @return string
      */
-    public function getHelloEndpoint($name = 'Captain')
+    public function getAyeAyeEndpoint($name = 'Captain')
     {
         return "Aye Aye $name";
     }
@@ -81,8 +81,8 @@ We can test this using PHP's build in server:
 ```bash
 $ php -S localhost:8000 index.php &
 
-$ curl localhost:8000/hello                 // {"data":"Aye Aye Captain"}
-$ curl localhost:8000/hello?name=Sandwiches // {"data":"Aye Aye Sandwiches"}
+$ curl localhost:8000/aye-aye                 # {"data":"Aye Aye Captain"}
+$ curl localhost:8000/aye-aye?name=Sandwiches # {"data":"Aye Aye Sandwiches"}
 ```
 
 Notice how the string has been converted into a serialised object (JSON by default but the format can be selected with
@@ -90,13 +90,39 @@ an `Accept` header or a file suffix).
 
 That tests our endpoint, but what happens if you just query the root of the Api.
 
-```
-$ curl localhost:8000 // {"data":{"controllers":[],"endpoints":{"get":{"hello":{"summary":"Says hello","parameters":{"name":{"type":"string","description":"Optional, defaults to 'Captain'"}},"returnType":["s string"]}}}}}
+```bash
+$ curl localhost:8000 # {"data":{"controllers":[],"endpoints":{"get":{"aye-aye":{"summary":"Yo ho ho","parameters":{"name":{"type":"string","description":"Optional, defaults to 'Captain'"}},"returnType":["string"]}}}}} 
 ```
 
-We'll explain this later on.
+Lets take take a closer look at that returned string. 
 
-Don't forget to close the server down when you're done
+```json
+{
+  "data": {
+    "controllers": [],
+    "endpoints": {
+      "get": {
+        "aye-aye": {
+          "summary": "Yo ho ho",
+          "parameters": {
+            "name": {
+              "type": "string",
+              "description": "Optional, defaults to 'Captain'"
+            }
+          },
+          "returnType": [
+            "string"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+As you can see, it is an explanation of how our controller is structured. We didn't write anything more than what was
+expected of us, and it makes sense to both the back end developers, and the consumers of your Api.
+
+Don't forget to close the server down when you're done.
 
 ```bash
 $ fg
@@ -171,11 +197,11 @@ use AyeAye\Api\Controller;
 class HelloWorldController extends Controller
 {
     /**
-     * Says hello
+     * Yo ho ho
      * @param string $name Optional, defaults to 'Captain'
-     * @returns string
+     * @return string
      */
-    public function getHelloEndpoint($name = 'Captain')
+    public function getAyeAyeEndpoint($name = 'Captain')
     {
         return "Aye Aye $name";
     }
@@ -217,11 +243,11 @@ use AyeAye\Api\Controller;
 class HelloWorldController extends Controller
 {
     /**
-     * Says hello
+     * Yo ho ho
      * @param string $name Optional, defaults to 'Captain'
      * @returns string
      */
-    public function getHelloEndpoint($name = 'Captain')
+    public function getAyeAyeEndpoint($name = 'Captain')
     {
         return "Aye Aye $name";
     }
@@ -241,7 +267,7 @@ Now when we start our application and the fun begins!
 
 ```bash
 $ php -S localhost:8000 public/index.php &
-curl localhost:8000/aye/aye/aye/aye/hello?name=Aye%20Aye
+curl localhost:8000/aye/aye/aye/aye/aye-aye?name=Aye%20Aye # {"data":"Aye Aye Aye Aye"}
 ```
 
 ## Contributing
