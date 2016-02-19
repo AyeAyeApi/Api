@@ -14,7 +14,7 @@ develop with and to scale from tiny micro-services to gargantuan behemoths.
 
 ## Installation
 
-Create a project and include Aye Aye
+Create a project and include Aye Aye.
 
 ```bash
 composer init --require="ayeaye/api ^1.0.0" -n
@@ -132,38 +132,25 @@ $ fg
 ## Why should you use it?
 
 Developing in Aye Aye is simple, clean and logical. Aye Aye processes requests and gives them to the appropriate
-endpoint on the appropriate controller. You write the code to process the data and return the result. That's it.
-Seriously.
+endpoint on the appropriate controller. That endpoint is simply a method, that takes a set of parameters and returns
+some data. Aye Aye will work out where to find those parameters in the request, and it will format the data on return. 
+It even supports multiple data formats and will automatically switch based on what the user requests.
 
 There's no fluff. You don't need to learn new database tools, or logging interfaces (assuming you know [PSR-3]
 (https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md), and you should) or
-authentication methods.
+authentication methods. Aye Aye only provides routing, request parsing and response handling. You can use whatever
+you like for the rest.
 
 If you follow [PSR-4](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md), then
-your API will look a lot like your directory structure, making maintainence a breeze.
+your API will look a lot like your directory structure, making maintenance a breeze.
 
-Aye Aye is self aware... though not in the scary killer robot way. It knows about itself. It knows what endpoints
-and what sub-controllers are available on any given controller, and by reading the documentation in the doc-block
-comments, it can tell users what those end points do! You only need to write your documentation once, for developers,
-and Aye Aye will read it and tell your users what those end points do, and what parameters they take.
+Aye Aye knows about itself. It knows what endpoints and what sub-controllers are available on any given controller, and
+by reading the documentation in the doc-block comments, it can tell users what those end points do. You only need to 
+write your documentation once, and Aye Aye will read it and tell your users what those end points do, and what
+parameters they take.
 
-By default it can read and format data as json (the default) and xml. It also reads GET, POST and HEADER. Data from
-these sources is passed into your methods for you. In the traditional computational model `input -> process -> output`
-Aye Aye takes care of the in and out, you just have to worry about the process!
-
-## Installation
-
-Currently, Aye Aye only supports installation via [Composer](https://github.com/composer/composer), and requires PHP 5.4
-or above. Aye Aye should also work with [HHVM](https://github.com/facebook/hhvm) though this isn't actively supported.
-
-To include Aye Aye in your Composer project we recommend using the following.
-
-```bash
-composer require --prefer-dist "AyeAye/Api 0.13.*"
-```
-
-__Important__: While Aye Aye has stable and usable releases, it's version 1 release has not yet been finalised. Minor
-version increments (see [Semantic Versioning](http://semver.org)) may break backwards compatibility.
+By default it can read and write data as json (the default) and xml, though more formats can easily be added. It also
+reads GET, POST and HEADER, and parametrises url slugs. Data from these sources is passed into your methods for you.
 
 ## Quick Start explained
 
@@ -215,22 +202,21 @@ The one method in this controller tells you everything you need to know.
  
 So how did we go from that, to sending and receiving the data with curl?
 
-When we created the Api object, we passed it HelloWorldController as a parameter, this tells the Api this is our
-starting point. The Aye Aye identifies getHelloEndpoint as an endpoint called "hello" that is triggered with a GET
+When we created the Api object, we passed it a HelloWorldController object as a parameter, this tells the Api this is 
+our starting point. The Aye Aye identifies getAyeEndpoint as an endpoint called "aye" that is triggered with a GET
 request.
 
 You'll notice that we used a PHP Doc Block to explain what the method does. This is _really_ important. Not only does
-it tell other developers what this end point does... it tells your API's users too!
+it tell other developers what this end point does... it tells your API's users too, and they'll be using it in just the
+same way.
 
-Going back to the Quick Start guide, you might have tried querying "/", and you will have seen that the Api tells you
-it has one GET endpoint, called 'hello, that it takes one parameter, as string called name, and it described all
-of these things with the documentation you made for the method!
-
-That's right, the API is truly self documenting!
+In the quick start guide we queryied "/", and you will have seen that the Api tells you it has one GET endpoint,
+called 'aye, that it takes one parameter, as string called name, and it described all of these things with the 
+documentation you made for the method!
 
 ### Child Controllers
 
-Obviously just having one controller is pretty useless. To go from one controller to the next, we use the 
+Obviously just having one controller is pretty useless. To go from one controller to the next, we create a
 `[name]Controller()` method. This method should return another object that extends Controller. To demonstrate that in
 our application quick start application, we can just return `$this`.
  
