@@ -10,7 +10,7 @@
 (https://travis-ci.org/AyeAyeApi/Api/branches)
 
 Aye Aye API is a micro framework for building API's written in PHP. It's designed to be easy to use, fast to
-develop with and to scale from tiny micro-services to gargantuan behemoths.
+develop with and to scale from tiny micro-services to world devouring titans.
 
 ## Installation
 
