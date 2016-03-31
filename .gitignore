@@ -5,3 +5,6 @@ composer.phar
 phpunit.xml
 build/cache.properties
 /reports
+/.vagrant/*
+/provisioning/*
+Vagrantfile
