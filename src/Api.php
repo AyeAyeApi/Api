@@ -9,6 +9,7 @@
 
 namespace AyeAye\Api;
 
+use AyeAye\Api\Exception as AyeAyeException;
 use AyeAye\Api\Injector\LoggerInjector;
 use AyeAye\Api\Injector\RequestInjector;
 use AyeAye\Api\Injector\ResponseInjector;
@@ -97,7 +98,7 @@ class Api implements LoggerAwareInterface
             $response->setStatus(
                 $this->controller->getStatus()
             );
-        } catch (Exception $e) {
+        } catch (AyeAyeException $e) {
             $this->log(LogLevel::INFO, $e->getPublicMessage());
             $this->log(LogLevel::ERROR, $e->getMessage(), ['exception' => $e]);
             $response->setBodyData($e->getPublicMessage());
